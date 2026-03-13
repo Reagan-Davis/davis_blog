@@ -22,7 +22,7 @@
         <div class="brand-mark" aria-hidden="true">R</div>
         <div>
           <div>Reagan Davis</div>
-          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Epic Placeholder</div>
+          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Not a Portfolio</div>
         </div>
       </a>
 
@@ -108,8 +108,8 @@
         <div class="container hero-grid">
           <article class="hero-card hero-quote-card" aria-labelledby="hero-heading">
             <div>
-              <div class="eyebrow">Reference</div>
-              <h1 id="hero-heading">A home for recommendations, writing, maps, and remembered lines.</h1>
+              <div class="eyebrow">Not a Portfolio</div>
+              <h1 id="hero-heading">A centralized hub for everything from ___ to ___.</h1>
 
               <div>
                 <div class="hero-actions">
@@ -1117,10 +1117,10 @@
 
     const projects = [
       {
-        slug: "historical-borders-project",
-        title: "Historical Borders Project",
-        overview: "A map-centered project for visualizing territorial change, borders, and political history across time.",
-        href: "projects/historical-borders-project.html"
+        slug: "historical-borders-atlas",
+        title: "Historical Borders Atlas",
+        overview: "Drawing on historical military surveys, cadastres, treaties, and archival boundary records, this project reconstructs political boundaries between 1648 and 1848, the period associated with the Enlightenment and the emergence of the modern nation state. The Historical Borders Atlas contains spatiotemporal datasets of administrative lines and territorial units at sub-300-meter resolution intended for electoral analysis, demographic research, and the study of long-term territorial change.",
+        href: "projects/historical-borders-atlas.html"
       },
       {
         slug: "lexicological-comparison-tool",
@@ -3557,6 +3557,10 @@
 
     vaultControlsToggle.addEventListener('click', () => {
       toggleCollapse(vaultControlsToggle, vaultControlsBody);
+    });
+
+    document.getElementById('shuffleQuotesButton')?.addEventListener('click', () => {
+      renderQuotes();
     });
 
     spotifyToggle?.addEventListener('click', (event) => {
