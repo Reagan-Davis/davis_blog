@@ -445,7 +445,7 @@
             <h2 style="font-size:1.6rem;">About</h2>
             <p class="muted">
               Metrics. Metrics are everything. At least that is what I've been telling myself lately.<br><br>
-              At the start of 2026 I set out to do a number of things outside of my comfort zone. Some worked out pretty well. Others not so much. But the year is far from over.<br><br>
+              At the start of 2026 I set out to do a great many things outside of my comfort zone. Some worked out pretty well. Others not so much. But the year is far from over.<br><br>
               One of those things I neglected the most was establishing the systems I need to hold myself accountable for how I spend my time.<br><br>
               With that growing sensation of every year progressing faster, certain aspects of how I spend my free time have become non-negotiable. I read for an hour a day. I learn languages for an hour a day. I realize that if I do not do these things and many others, I will never reach all of my goals in what little time a lifetime truly is.<br><br>
               I contemplated for a long time over what the best way to go about this would be.<br><br>
@@ -496,23 +496,59 @@
   <div class="startup-modal" id="startupModal" aria-hidden="true">
     <div class="startup-modal__backdrop"></div>
 
+    <!-- Step 1 -->
     <div
-      class="startup-modal__panel"
+      class="startup-modal__panel startup-modal__panel--step is-active"
+      id="startupModalStep1"
       role="dialog"
       aria-modal="true"
       aria-labelledby="startupModalTitle"
     >
       <p class="startup-modal__eyebrow">Note</p>
+
       <h2 id="startupModalTitle" class="startup-modal__title">
         The site is a continuous work in progress. <br><br>
-        It's full of placeholder text. It's designed for web but works on mobile.<br><br>
-        It's missing a whole lot of things. <br><br>
+        It is full of placeholder text. It is designed for web but is *mostly* functional on mobile.<br><br>
+        It is still missing a whole lot of things. <br><br>
         You have been warned.
       </h2>
-      <button class="startup-modal__button" id="startupModalContinue" type="button">
-        Enter the Dungeon
-      </button>
-      <button id="exitSiteButton" class="exit-button">Turn Back</button>
+
+      <div class="startup-modal__actions">
+        <button class="startup-modal__button" id="startupModalContinue" type="button">
+          Enter the Dungeon
+        </button>
+
+        <button id="exitSiteButton" class="exit-button">
+          Turn Back
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div
+      class="startup-modal__panel startup-modal__panel--step"
+      id="startupModalStep2"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="startupDungeonTitle"
+    >
+      <p class="startup-modal__eyebrow">Dungeon Entrance</p>
+
+      <h2 id="startupDungeonTitle" class="startup-modal__title">
+        > You enter the dungeon.
+      </h2>
+
+      <p class="startup-modal__text">
+        The corridor ahead is lined with maps, quotations, and unfinished features.<br>
+        Somewhere in the distance, a loose JavaScript function rattles its chains.<br><br>
+        A small sign reads: <em>"Work in progress."</em>
+      </p>
+
+      <div class="startup-modal__actions">
+        <button class="startup-modal__button" id="startupModalEnterSite" type="button">
+          Proceed
+        </button>
+      </div>
     </div>
   </div>
 
@@ -532,10 +568,17 @@
   <script>
     (function () {
       const STORAGE_KEY = "rrr_site_notice_seen";
-      const modal = document.getElementById("startupModal");
-      const button = document.getElementById("startupModalContinue");
 
-      if (!modal || !button) return;
+      const modal = document.getElementById("startupModal");
+      const backdrop = modal?.querySelector(".startup-modal__backdrop");
+
+      const step1 = document.getElementById("startupModalStep1");
+      const step2 = document.getElementById("startupModalStep2");
+
+      const continueBtn = document.getElementById("startupModalContinue");
+      const enterForRealBtn = document.getElementById("startupModalEnterForReal");
+
+      if (!modal || !step1 || !step2 || !continueBtn || !enterForRealBtn) return;
 
       const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
 
@@ -543,6 +586,13 @@
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
+        step1.classList.add("is-active");
+        step2.classList.remove("is-active");
+      }
+
+      function showStep(stepNumber) {
+        step1.classList.toggle("is-active", stepNumber === 1);
+        step2.classList.toggle("is-active", stepNumber === 2);
       }
 
       function closeModal() {
@@ -552,12 +602,16 @@
         localStorage.setItem(STORAGE_KEY, "true");
       }
 
-      button.addEventListener("click", closeModal);
+      continueBtn.addEventListener("click", () => {
+        showStep(2);
+      });
 
-      modal.addEventListener("click", (event) => {
-        if (event.target.classList.contains("startup-modal__backdrop")) {
-          closeModal();
-        }
+      enterForRealBtn.addEventListener("click", () => {
+        closeModal();
+      });
+
+      backdrop?.addEventListener("click", () => {
+        closeModal();
       });
     })();
   </script>
