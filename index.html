@@ -508,7 +508,7 @@
 
       <h2 id="startupModalTitle" class="startup-modal__title">
         The site is a continuous work in progress. <br><br>
-        It is full of placeholder text. It is designed for web but is *mostly* functional on mobile.<br><br>
+        It is full of placeholder text. It is designed for monitors but is *mostly* functional on mobile.<br><br>
         It is still missing a whole lot of things. <br><br>
         You have been warned.
       </h2>
@@ -535,13 +535,13 @@
       <p class="startup-modal__eyebrow">Dungeon Entrance</p>
 
       <h2 id="startupDungeonTitle" class="startup-modal__title">
-        > You enter the dungeon.
+        > <em>You enter the dungeon.</em>
       </h2>
 
       <p class="startup-modal__text">
-        The corridor ahead is lined with maps, quotations, and unfinished features.<br>
-        Somewhere in the distance, a loose JavaScript function rattles its chains.<br><br>
-        A small sign reads: <em>"Work in progress."</em>
+        You are standing in a narrow stone corridor.<br>
+        A rusted gate lies before you. It appears locked.<br><br>
+        Etched in the wood bracing to your right: <em>"No Return"</em>
       </p>
 
       <div class="startup-modal__actions">
@@ -576,7 +576,7 @@
       const step2 = document.getElementById("startupModalStep2");
 
       const continueBtn = document.getElementById("startupModalContinue");
-      const enterForRealBtn = document.getElementById("startupModalEnterForReal");
+      const enterForRealBtn = document.getElementById("startupModalEnterSite");
 
       if (!modal || !step1 || !step2 || !continueBtn || !enterForRealBtn) return;
 
