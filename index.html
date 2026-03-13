@@ -1352,8 +1352,8 @@
       <a class="brand" href="#home" aria-label="R R Recommends home" data-view-link="homeView">
         <div class="brand-mark" aria-hidden="true">R</div>
         <div>
-          <div>R R Recommends</div>
-          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Collected taste, writing, quotations, language, and travel</div>
+          <div>Reagan Davis</div>
+          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Epic Placeholder Text</div>
         </div>
       </a>
 
@@ -2057,6 +2057,13 @@
 
     const navLinks = Array.from(document.querySelectorAll('[data-view-link]'));
 
+    const STORAGE_KEYS = {
+      theme: 'rr-theme',
+      activeView: 'rr-active-view',
+      activePost: 'rr-active-post',
+      activeEntry: 'rr-active-entry'
+    };
+
     let activeFilter = 'All';
     let searchTerm = '';
     let sortMode = 'score-desc';
@@ -2302,17 +2309,31 @@
       }
     }
 
-    function showView(viewId) {
+    function showView(viewId, options = {}) {
+      const { skipPersist = false } = options;
+
       Object.entries(allViews).forEach(([id, el]) => {
         el.hidden = id !== viewId;
         if (id === viewId) {
-          el.scrollTop = 0;
+          window.scrollTo({ top: 0, behavior: 'auto' });
         }
       });
 
       navLinks.forEach(link => {
         link.classList.toggle('active', link.getAttribute('data-view-link') === viewId);
       });
+
+      if (!skipPersist) {
+        localStorage.setItem(STORAGE_KEYS.activeView, viewId);
+
+        if (viewId !== 'postView') {
+          localStorage.removeItem(STORAGE_KEYS.activePost);
+        }
+
+        if (viewId !== 'entryView') {
+          localStorage.removeItem(STORAGE_KEYS.activeEntry);
+        }
+      }
 
       closeMobileMenu();
       ensureMapForView(viewId);
@@ -2716,6 +2737,9 @@
       `;
 
       renderComments(postComments, post.comments);
+      localStorage.setItem(STORAGE_KEYS.activePost, slug);
+      localStorage.removeItem(STORAGE_KEYS.activeEntry);
+      localStorage.setItem(STORAGE_KEYS.activeView, 'postView');
       showView('postView');
     }
 
@@ -2751,6 +2775,9 @@
       `;
 
       renderComments(entryComments, item.comments);
+      localStorage.setItem(STORAGE_KEYS.activeEntry, slug);
+      localStorage.removeItem(STORAGE_KEYS.activePost);
+      localStorage.setItem(STORAGE_KEYS.activeView, 'entryView');
       showView('entryView');
     }
 
@@ -2758,7 +2785,7 @@
       document.body.classList.toggle('theme-dark', mode === 'dark');
       icon.textContent = mode === 'dark' ? '☼' : '☾';
       toggle.setAttribute('aria-label', mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-      localStorage.setItem('theme', mode);
+      localStorage.setItem(STORAGE_KEYS.theme, mode);
     }
 
     function setCollapseState(button, body, isExpanded) {
@@ -2920,7 +2947,7 @@
       if (!travelView.hidden) renderTravelMap();
     });
 
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
     if (savedTheme === 'dark' || savedTheme === 'light') {
       setTheme(savedTheme);
     } else {
@@ -2974,6 +3001,35 @@
     vaultControlsToggle.addEventListener('click', () => {
       toggleCollapse(vaultControlsToggle, vaultControlsBody);
     });
+    
+    function restoreLastLocation() {
+      const savedView = localStorage.getItem(STORAGE_KEYS.activeView);
+      const savedPost = localStorage.getItem(STORAGE_KEYS.activePost);
+      const savedEntry = localStorage.getItem(STORAGE_KEYS.activeEntry);
+
+      if (savedView === 'postView' && savedPost) {
+        const postExists = posts.some(post => post.slug === savedPost);
+        if (postExists) {
+          openPost(savedPost);
+          return;
+        }
+      }
+
+      if (savedView === 'entryView' && savedEntry) {
+        const entryExists = items.some(item => item.slug === savedEntry);
+        if (entryExists) {
+          openEntry(savedEntry);
+          return;
+        }
+      }
+
+      if (savedView && allViews[savedView]) {
+        showView(savedView, { skipPersist: true });
+        return;
+      }
+
+      showView('homeView', { skipPersist: true });
+    }
 
     function runTests() {
       console.assert(getRankValue(items[0]) === 5, 'Item rank 5 test failed');
@@ -3005,7 +3061,7 @@
     renderCurrentPanel();
     renderFinishedPanel();
     updateVaultView();
-    showView('homeView');
+    restoreLastLocation();
   </script>
 </body>
 </html>
