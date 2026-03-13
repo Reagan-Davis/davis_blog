@@ -2536,6 +2536,91 @@
       opacity: 0.94;
     }
 
+    .startup-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .startup-modal.is-open {
+      display: flex;
+    }
+
+    .startup-modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 12, 0.58);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .startup-modal__panel {
+      position: relative;
+      z-index: 1;
+      width: min(92vw, 460px);
+      padding: 24px 22px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(24, 24, 28, 0.9);
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      color: #f3efe8;
+      text-align: center;
+    }
+
+    .startup-modal__eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(243, 239, 232, 0.6);
+    }
+
+    .startup-modal__title {
+      margin: 0 0 18px;
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      line-height: 1.35;
+      font-weight: 500;
+      color: #f7f3ec;
+    }
+
+    .startup-modal__button {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 248, 238, 0.08);
+      color: #f7f3ec;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font: inherit;
+      cursor: pointer;
+      transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+    }
+
+    .startup-modal__button:hover {
+      background: rgba(255, 248, 238, 0.14);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .startup-modal__button:active {
+      transform: translateY(1px);
+    }
+
+    @media (max-width: 640px) {
+      .startup-modal {
+        padding: 16px;
+      }
+
+      .startup-modal__panel {
+        padding: 20px 18px 18px;
+        border-radius: 16px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2631,7 +2716,7 @@
         <div class="container hero-grid">
           <article class="hero-card hero-quote-card" aria-labelledby="hero-heading">
             <div>
-              <div class="eyebrow">Personal archive · curated, opinionated, searchable</div>
+              <div class="eyebrow">Reference</div>
               <h1 id="hero-heading">A home for recommendations, writing, maps, and remembered lines.</h1>
 
               <div>
@@ -3001,6 +3086,25 @@
     </div>
   </main>
 
+  <div class="startup-modal" id="startupModal" aria-hidden="true">
+    <div class="startup-modal__backdrop"></div>
+
+    <div
+      class="startup-modal__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="startupModalTitle"
+    >
+      <p class="startup-modal__eyebrow">Note</p>
+      <h2 id="startupModalTitle" class="startup-modal__title">
+        The site is a continuous work in progress.
+      </h2>
+      <button class="startup-modal__button" id="startupModalContinue" type="button">
+        Continue
+      </button>
+    </div>
+  </div>
+
   <footer>
     <div class="container">
       <div class="panel footer-card">
@@ -3009,6 +3113,43 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "rrr_site_notice_seen";
+      const modal = document.getElementById("startupModal");
+      const button = document.getElementById("startupModalContinue");
+
+      if (!modal || !button) return;
+
+      const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
+
+      if (!hasSeenModal) {
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        localStorage.setItem(STORAGE_KEY, "true");
+      }
+
+      button.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (event) => {
+        if (event.target.classList.contains("startup-modal__backdrop")) {
+          closeModal();
+        }
+      });
+    })();
+  </script>
 
   <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 
@@ -3130,8 +3271,8 @@
         comments: []
       },
       {
-        slug: "letters-to-lucilius",
-        title: "Letters to Lucilius",
+        slug: "epistles-of-seneca",
+        title: "Epistles of Seneca",
         type: "Literature",
         subtype: "Letters",
         year: 65,
@@ -3483,7 +3624,7 @@
         character: "Mephistopheles"
       },
       {
-        title: "Letters to Lucilius",
+        title: "Epistles of Seneca",
         text: "We suffer more often in imagination than in reality.",
         source: "Seneca",
         character: "Seneca"
