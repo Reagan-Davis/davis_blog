@@ -878,6 +878,23 @@
       margin-bottom: 0.3rem;
     }
 
+    .comments-box {
+      display: block;
+      margin-top: 1rem;
+    }
+
+    .comments-embed {
+      width: 100%;
+      min-height: 220px;
+    }
+
+    .comments-placeholder {
+      color: var(--muted);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.92rem;
+      padding: 0.25rem 0;
+    }
+
     .map-grid {
       display: grid;
       gap: 1rem;
@@ -2125,6 +2142,14 @@
       activeEntry: 'rr-active-entry'
     };
 
+    const COMMENTS_CONFIG = {
+      provider: 'utterances',
+      repo: 'Reagan-Davis/davis_blog',
+      issueTermPrefix: 'rr-recommends',
+      themeLight: 'github-light',
+      themeDark: 'github-dark'
+    };
+
     let activeFilter = 'All';
     let searchTerm = '';
     let sortMode = 'score-desc';
@@ -2525,7 +2550,7 @@
           <div class="date">${escapeHtml(post.date)}</div>
           <h3>${escapeHtml(post.title)}</h3>
           <p class="muted">${escapeHtml(post.excerpt)}</p>
-          <div class="comment-meta">${post.commentCount} comments</div>
+          <div class="comment-meta">GitHub discussion</div>
           <div class="card-footer">
             <span class="tag">${escapeHtml(post.tags[0])}</span>
             <button class="footer-link" type="button" data-open-post="${escapeHtml(post.slug)}" aria-label="Open post ${escapeHtml(post.title)}">Open post →</button>
@@ -2571,7 +2596,7 @@
                 </div>
               ` : ''}
               <div class="card-footer">
-                <span class="comment-meta">${item.commentCount || 0} comments</span>
+                <span class="comment-meta">GitHub discussion</span>
                 <button class="footer-link" type="button" data-open-entry="${escapeHtml(item.slug)}" aria-label="Open entry ${escapeHtml(item.title)}">Open entry →</button>
               </div>
             </div>
@@ -2764,21 +2789,63 @@
       renderRankingList(tvList, rankings.tv, 'television creators');
     }
 
-    function renderComments(target, comments) {
-      if (!comments || !comments.length) {
-        target.innerHTML = '<div class="muted">No comments yet.</div>';
+    function getCommentsTheme() {
+      return document.body.classList.contains('theme-dark')
+        ? COMMENTS_CONFIG.themeDark
+        : COMMENTS_CONFIG.themeLight;
+    }
+
+    function buildCommentIssueTerm(kind, slug) {
+      return `${COMMENTS_CONFIG.issueTermPrefix}:${kind}:${slug}`;
+    }
+
+    function renderUtterancesComments(target, kind, slug) {
+      if (!target) return;
+
+      target.innerHTML = '';
+
+      const wrap = document.createElement('div');
+      wrap.className = 'comments-embed';
+      target.appendChild(wrap);
+
+      const script = document.createElement('script');
+      script.src = 'https://utteranc.es/client.js';
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+
+      script.setAttribute('repo', COMMENTS_CONFIG.repo);
+
+      // Using issue-term gives you stable mapping for SPA-style routes.
+      script.setAttribute('issue-term', buildCommentIssueTerm(kind, slug));
+
+      script.setAttribute('label', 'comments');
+      script.setAttribute('theme', getCommentsTheme());
+
+      wrap.appendChild(script);
+    }
+
+    function refreshCurrentCommentsTheme() {
+      const frame = document.querySelector('.utterances-frame');
+      if (!frame) return;
+
+      frame.contentWindow?.postMessage(
+        {
+          type: 'set-theme',
+          theme: getCommentsTheme()
+        },
+        'https://utteranc.es'
+      );
+    }
+
+    function renderComments(target, kind, slug) {
+      if (!target || !kind || !slug) {
+        if (target) {
+          target.innerHTML = '<div class="comments-placeholder">Comments unavailable.</div>';
+        }
         return;
       }
 
-      target.innerHTML = comments.map(comment => `
-        <div class="comment-item">
-          <div class="comment-head">
-            <strong>${escapeHtml(comment.author)}</strong>
-            <span>${escapeHtml(comment.date)}</span>
-          </div>
-          <div>${escapeHtml(comment.text)}</div>
-        </div>
-      `).join('');
+      renderUtterancesComments(target, kind, slug);
     }
 
     function openPost(slug) {
@@ -2792,12 +2859,12 @@
           ${post.body.map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join('')}
         </div>
         <div class="card-footer" style="margin-top:1rem;">
-          <span class="comment-meta">${post.commentCount} comments</span>
+          <span class="comment-meta">Comments on GitHub</span>
           <span class="tag">${escapeHtml(post.tags.join(' · '))}</span>
         </div>
       `;
 
-      renderComments(postComments, post.comments);
+      renderComments(postComments, 'post', post.slug);
       localStorage.setItem(STORAGE_KEYS.activePost, slug);
       localStorage.removeItem(STORAGE_KEYS.activeEntry);
       localStorage.setItem(STORAGE_KEYS.activeView, 'postView');
@@ -2830,12 +2897,12 @@
           ` : ''}
         </div>
         <div class="card-footer" style="margin-top:1rem;">
-          <span class="comment-meta">${item.commentCount} comments</span>
+          <span class="comment-meta">Comments on GitHub</span>
           <span class="tag">${escapeHtml(item.tags.join(' · '))}</span>
         </div>
       `;
 
-      renderComments(entryComments, item.comments);
+      renderComments(entryComments, 'entry', item.slug);
       localStorage.setItem(STORAGE_KEYS.activeEntry, slug);
       localStorage.removeItem(STORAGE_KEYS.activePost);
       localStorage.setItem(STORAGE_KEYS.activeView, 'entryView');
@@ -3004,6 +3071,7 @@
     toggle.addEventListener('click', () => {
       const isDark = document.body.classList.contains('theme-dark');
       setTheme(isDark ? 'light' : 'dark');
+      refreshCurrentCommentsTheme();
       if (!languageView.hidden) renderLanguageMap();
       if (!travelView.hidden) renderTravelMap();
     });
