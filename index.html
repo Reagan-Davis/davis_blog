@@ -2621,6 +2621,21 @@
       }
     }
 
+    .exit-button {
+      border: 1px solid var(--soft);
+      background: transparent;
+      color: var(--ink);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .exit-button:hover {
+      background: var(--paper);
+    }
+
   </style>
 </head>
 <body>
@@ -3097,14 +3112,15 @@
     >
       <p class="startup-modal__eyebrow">Note</p>
       <h2 id="startupModalTitle" class="startup-modal__title">
-        The site is a continuous work in progress. <br>
-        It's full of placeholder text right now. <br>
-        It's missing countless entries. <br>
+        The site is a continuous work in progress. <br><br>
+        It's full of placeholder text right now. <br><br>
+        It's missing a whole lot of things. <br><br>
         You have been warned.
       </h2>
       <button class="startup-modal__button" id="startupModalContinue" type="button">
-        Continue
+        Enter the Dungeon
       </button>
+      <button id="exitSiteButton" class="exit-button">Turn Back</button>
     </div>
   </div>
 
@@ -6168,6 +6184,21 @@
     renderFinishedPanel();
     updateVaultView();
     restoreLastLocation();
+  </script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const exitBtn = document.getElementById("exitSiteButton");
+    if (!exitBtn) return;
+
+    exitBtn.addEventListener("click", () => {
+      if (document.referrer && history.length > 1) {
+        history.back();
+      } else {
+        window.location.replace("https://google.com");
+      }
+    });
+  });
   </script>
 </body>
 </html>
