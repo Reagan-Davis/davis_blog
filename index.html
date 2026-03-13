@@ -2656,11 +2656,11 @@
           <a href="#home" data-view-link="homeView" class="active">Home</a>
           <a href="#about" data-view-link="aboutView">About</a>
           <a href="#writing" data-view-link="writingView">Writing</a>
-          <a href="#quotes" data-view-link="quotesView">Quotes</a>
           <a href="#vault" data-view-link="recommendationsView">Vault</a>
-          <a href="#language" data-view-link="languageView">Language</a>
+          <a href="#quotes" data-view-link="quotesView">Quotes</a>
+          <!-- <a href="#language" data-view-link="languageView">Language</a>
           <a href="#travel" data-view-link="travelView">Travel</a>
-          <!-- <a href="#rankings" data-view-link="rankingsView">Rankings</a> -->
+          <a href="#rankings" data-view-link="rankingsView">Rankings</a> -->
         </nav>
 
         <div class="mobile-nav">
@@ -2671,11 +2671,11 @@
             <a href="#home" data-view-link="homeView" class="active">Home</a>
             <a href="#about" data-view-link="aboutView">About</a>
             <a href="#writing" data-view-link="writingView">Writing</a>
-            <a href="#quotes" data-view-link="quotesView">Quotes</a>
             <a href="#vault" data-view-link="recommendationsView">Vault</a>
-            <a href="#language" data-view-link="languageView">Language</a>
+            <a href="#quotes" data-view-link="quotesView">Quotes</a>
+            <!-- <a href="#language" data-view-link="languageView">Language</a>
             <a href="#travel" data-view-link="travelView">Travel</a>
-            <!-- <a href="#rankings" data-view-link="rankingsView">Rankings</a> -->
+            <a href="#rankings" data-view-link="rankingsView">Rankings</a> -->
           </div>
         </div>
 
@@ -3113,7 +3113,7 @@
       <p class="startup-modal__eyebrow">Note</p>
       <h2 id="startupModalTitle" class="startup-modal__title">
         The site is a continuous work in progress. <br><br>
-        It's full of placeholder text right now. <br><br>
+        It's full of placeholder text. It's designed for web but works on mobile.<br><br>
         It's missing a whole lot of things. <br><br>
         You have been warned.
       </h2>
@@ -4747,7 +4747,7 @@
         get value() { return mapState.travelEuropeLegendCollapsed; }
       });
 
-      // ---------- US MAP ----------
+      //  US MAP 
       {
         const { container, svg, width, height } = usContainerInfo;
         const config = getMapConfig(width, height);
@@ -4874,7 +4874,7 @@
         });
       }
 
-      // ---------- EUROPE MAP ----------
+      //  EUROPE MAP
       {
         const { container, svg, width, height } = europeContainerInfo;
         const config = getMapConfig(width, height);
@@ -5732,7 +5732,6 @@
 
       script.setAttribute('repo', COMMENTS_CONFIG.repo);
 
-      // Using issue-term gives you stable mapping for SPA-style routes.
       script.setAttribute('issue-term', buildCommentIssueTerm(kind, slug));
 
       script.setAttribute('label', 'comments');
