@@ -1615,30 +1615,6 @@
         min-width: 0;
       }
 
-      .status-mini-actions {
-        margin-top: auto;
-        display: flex;
-        justify-content: flex-end;
-        padding-top: 0.25rem;
-      }
-
-      .status-mini-open {
-        border: 1px solid var(--line);
-        background: transparent;
-        color: var(--accent);
-        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        font-size: 0.72rem;
-        font-weight: 700;
-        padding: 0.38rem 0.55rem;
-        cursor: pointer;
-        min-height: 32px;
-      }
-
-      .status-mini-open:hover {
-        border-color: var(--accent);
-        background: color-mix(in srgb, var(--accent) 6%, transparent);
-      }
-
       .heroQuoteTyping::after,
       .heroMetaTyping::after {
         content: "";
@@ -1940,6 +1916,113 @@
       #homeView {
         overflow-y: auto;
       }
+    }
+
+    .status-mini-card {
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
+      padding: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+      min-height: 0;
+      height: auto;
+      overflow: hidden;
+    }
+
+    .status-mini-link {
+      cursor: pointer;
+      transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+    }
+
+    .status-mini-link:hover,
+    .status-mini-link:focus-visible {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 6%, var(--paper-strong));
+      transform: translateY(-1px);
+    }
+
+    .status-mini-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.3rem;
+    }
+
+    .status-mini-type {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--soft);
+      line-height: 1.1;
+    }
+
+    .status-mini-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.18rem;
+      flex: 0 0 auto;
+    }
+
+    .status-mini-arrow {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.68rem;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      position: relative;
+      z-index: 2;
+    }
+
+    .status-mini-arrow:hover {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 6%, transparent);
+    }
+
+    .status-mini-main {
+      min-width: 0;
+    }
+
+    .status-mini-title {
+      font-size: 0.74rem;
+      line-height: 1.05;
+      margin: 0;
+    }
+
+    .status-mini-meta {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.64rem;
+      color: var(--soft);
+      line-height: 1.08;
+      margin-top: 0.1rem;
+    }
+
+    .status-mini-blurb {
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1.16;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
+
+    .status-mini-empty {
+      color: var(--muted);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.68rem;
+      line-height: 1.2;
+    }
+
+    .status-mini-link {
+      cursor: pointer;
     }
 
   </style>
@@ -4330,7 +4413,13 @@
         const item = matches[index];
 
         return `
-          <article class="status-mini-card">
+          <article
+            class="status-mini-card status-mini-link"
+            tabindex="0"
+            role="link"
+            data-open-entry="${escapeHtml(item.slug)}"
+            aria-label="Open ${escapeHtml(item.title)} in vault"
+          >
             <div class="status-mini-head">
               <div class="status-mini-type">${escapeHtml(type)}</div>
               <div class="status-mini-controls">
@@ -4359,17 +4448,6 @@
             </div>
 
             <div class="status-mini-blurb">${escapeHtml((item.blurb || '').slice(0, 88))}${item.blurb && item.blurb.length > 88 ? '…' : ''}</div>
-
-            <div class="status-mini-actions">
-              <button
-                class="status-mini-open"
-                type="button"
-                data-open-entry="${escapeHtml(item.slug)}"
-                aria-label="Open ${escapeHtml(item.title)} in vault"
-              >
-                Vault →
-              </button>
-            </div>
           </article>
         `;
       }).join('');
@@ -4398,6 +4476,7 @@
     document.addEventListener('click', (event) => {
       const statusCycleButton = event.target.closest('[data-status-cycle]');
       const postButton = event.target.closest('[data-open-post]');
+      const statusCard = event.target.closest('.status-mini-link');
       const entryButton = event.target.closest('[data-open-entry]');
       const viewButton = event.target.closest('[data-view], [data-view-link]');
       const clickedInsideMobileNav = event.target.closest('.mobile-nav');
@@ -4412,6 +4491,9 @@
       }
 
       if (statusCycleButton) {
+        event.preventDefault();
+        event.stopPropagation();
+
         const panelKey = statusCycleButton.getAttribute('data-status-cycle');
         const type = statusCycleButton.getAttribute('data-status-type');
         const direction = Number(statusCycleButton.getAttribute('data-direction') || 0);
@@ -4427,6 +4509,14 @@
       if (postButton) {
         openPost(postButton.getAttribute('data-open-post'));
         return;
+      }
+
+      if (statusCard && !event.target.closest('[data-status-cycle]')) {
+        const slug = statusCard.getAttribute('data-open-entry');
+        if (slug) {
+          openEntry(slug);
+          return;
+        }
       }
 
       if (entryButton) {
@@ -4526,6 +4616,19 @@
 
     spotifyRestartBtn?.addEventListener('click', () => {
       spotifyRestart();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const clickableCard = event.target.closest('.status-mini-link');
+      if (!clickableCard) return;
+
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        const slug = clickableCard.getAttribute('data-open-entry');
+        if (slug) {
+          openEntry(slug);
+        }
+      }
     });
 
     function restoreLastLocation() {
