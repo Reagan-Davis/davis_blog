@@ -1152,6 +1152,7 @@
 
       .side-stack {
         align-content: stretch;
+        min-width: 0;
       }
 
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1527,6 +1528,326 @@
         50%, 100% { opacity: 0; }
       }
 
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: 1.25rem;
+        align-items: stretch;
+        min-height: 0;
+      }
+
+      .hero-card,
+      .side-stack,
+      .home-status-panel,
+      .panel {
+        min-width: 0;
+      }
+
+      .hero-quote-card {
+        justify-content: flex-start;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .hero-quote-block {
+        margin-top: 1rem;
+        padding: 1rem 1rem 0.95rem;
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        max-width: 58ch;
+        min-height: 182px; /* reserves space so typing does not shift layout */
+        display: grid;
+        align-content: start;
+      }
+
+      .hero-quote-block blockquote {
+        margin: 0;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: var(--ink);
+        min-height: 5.2em; /* reserves room for a few lines of quote text */
+      }
+
+      .hero-quote-meta {
+        display: grid;
+        gap: 0.15rem;
+        margin-top: 0.75rem;
+        min-height: 2.9rem; /* reserves space for speaker/source lines */
+      }
+
+      .hero-quote-block .quote-character {
+        margin-top: 0;
+        font-style: italic;
+        color: var(--soft);
+        font-size: 0.9rem;
+      }
+
+      .hero-quote-block .quote-source {
+        margin-top: 0;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .status-mini-card {
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
+        padding: 0.7rem;
+        display: grid;
+        gap: 0.45rem;
+        min-height: 170px;
+        align-content: start;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .status-mini-main {
+        min-width: 0;
+      }
+
+      .status-mini-actions {
+        margin-top: auto;
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 0.25rem;
+      }
+
+      .status-mini-open {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--accent);
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.38rem 0.55rem;
+        cursor: pointer;
+        min-height: 32px;
+      }
+
+      .status-mini-open:hover {
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 6%, transparent);
+      }
+
+      .heroQuoteTyping::after,
+      .heroMetaTyping::after {
+        content: "";
+        display: inline-block;
+        width: 1px;
+        height: 0.95em;
+        margin-left: 0.12em;
+        vertical-align: -0.08em;
+        background: currentColor;
+        animation: heroCaretBlink 0.85s steps(1) infinite;
+      }
+
+      .status-mini-card {
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
+        padding: 0.7rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-height: 0;
+        height: auto;
+        overflow: hidden;
+      }
+
+      .status-mini-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.35rem;
+      }
+
+      .status-mini-type {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.62rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--soft);
+        line-height: 1.1;
+      }
+
+      .status-mini-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        flex: 0 0 auto;
+      }
+
+      .status-mini-arrow {
+        width: 20px;
+        height: 20px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink);
+        cursor: pointer;
+        padding: 0;
+        font-size: 0.75rem;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+
+      .status-mini-arrow:hover {
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 6%, transparent);
+      }
+
+      .status-mini-main {
+        min-width: 0;
+      }
+
+      .status-mini-title {
+        font-size: 0.8rem;
+        line-height: 1.15;
+        margin: 0;
+      }
+
+      .status-mini-meta {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.68rem;
+        color: var(--soft);
+        line-height: 1.15;
+        margin-top: 0.15rem;
+      }
+
+      .status-mini-blurb {
+        color: var(--muted);
+        font-size: 0.72rem;
+        line-height: 1.22;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+      }
+
+      .status-mini-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.2rem;
+      }
+
+      .status-mini-open {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--accent);
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.66rem;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0.32rem 0.48rem;
+        cursor: pointer;
+        min-height: 0;
+        height: 24px;
+        white-space: nowrap;
+      }
+
+      .status-mini-open:hover {
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 6%, transparent);
+      }
+
+      .header-media-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        position: relative;
+      }
+
+      .spotify-shell {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .spotify-toggle {
+        font-size: 17px;
+      }
+
+      .spotify-popup {
+        position: absolute;
+        top: calc(100% + 0.7rem);
+        right: 0;
+        width: min(360px, calc(100vw - 2rem));
+        padding: 0.8rem;
+        background: var(--paper-strong);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        z-index: 80;
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .spotify-popup[hidden] {
+        display: none !important;
+      }
+
+      .spotify-popup-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .spotify-popup-title,
+      .spotify-note,
+      .spotify-mini-btn,
+      .spotify-open-link {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+
+      .spotify-popup-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--soft);
+      }
+
+      .spotify-open-link {
+        font-size: 0.8rem;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .spotify-controls-row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        flex-wrap: wrap;
+      }
+
+      .spotify-mini-btn {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink);
+        cursor: pointer;
+        min-height: 32px;
+        padding: 0.42rem 0.65rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .spotify-mini-btn:hover {
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 6%, transparent);
+      }
+
+      .spotify-embed-frame {
+        width: 100%;
+        min-height: 152px;
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
+      }
+
+      .spotify-note {
+        font-size: 0.78rem;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+
   </style>
 </head>
 <body>
@@ -1570,9 +1891,48 @@
           </div>
         </div>
 
-        <button id="themeToggle" aria-label="Toggle dark mode" class="theme-toggle" type="button">
-          <span id="themeIcon" aria-hidden="true">☾</span>
-        </button>
+        <div class="header-media-controls">
+          <div class="spotify-shell">
+            <button
+              id="spotifyToggle"
+              aria-label="Open Spotify player"
+              aria-expanded="false"
+              aria-controls="spotifyPopup"
+              class="theme-toggle spotify-toggle"
+              type="button"
+            >
+              <span aria-hidden="true">♫</span>
+            </button>
+
+            <div id="spotifyPopup" class="spotify-popup" hidden>
+              <div class="spotify-popup-head">
+                <div class="spotify-popup-title">Playlist</div>
+                <a
+                  id="spotifyOpenLink"
+                  class="spotify-open-link"
+                  href="https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open
+                </a>
+              </div>
+
+              <div class="spotify-controls-row">
+                <button id="spotifyPlayPauseBtn" class="spotify-mini-btn" type="button">Play</button>
+                <button id="spotifyRestartBtn" class="spotify-mini-btn" type="button">Restart</button>
+              </div>
+
+              <div id="spotifyEmbedFrame" class="spotify-embed-frame" aria-label="Spotify playlist player"></div>
+
+              <div class="spotify-note" id="spotifyStatusText">Ready.</div>
+            </div>
+          </div>
+
+          <button id="themeToggle" aria-label="Toggle dark mode" class="theme-toggle" type="button">
+            <span id="themeIcon" aria-hidden="true">☾</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -1588,9 +1948,9 @@
 
               <div>
                 <div class="hero-actions">
-                  <button class="btn primary" type="button" data-view="writingView">Read latest writing</button>
+                  <button class="btn primary" type="button" data-view="writingView">Read Latest Writing</button>
                   <button class="btn" type="button" data-view="aboutView">About this Site</button>
-                  <button class="btn" type="button" data-view="recommendationsView">Open vault</button>
+                  <button class="btn" type="button" data-view="recommendationsView">Open Vault</button>
                 </div> <br>
               </div>
 
@@ -1598,8 +1958,10 @@
 
               <div class="hero-quote-block">
                 <blockquote id="heroQuoteText">“Loading quote...”</blockquote>
-                <div class="quote-character" id="heroQuoteCharacter"></div>
-                <div class="quote-source" id="heroQuoteSource"></div>
+                <div class="hero-quote-meta">
+                  <div class="quote-character" id="heroQuoteCharacter"></div>
+                  <div class="quote-source" id="heroQuoteSource"></div>
+                </div>
               </div>
             </div>
           </article>
@@ -1624,7 +1986,7 @@
         <div class="container view-scroll">
           <div class="section-header">
             <div>
-              <h2 style="font-size:2rem;">Collected Musings</h2>
+              <h2 style="font-size:2rem;">Collected Writings</h2>
               <p>Longer reflections and essays sit up front rather than off to the side. The writing is part of the site’s center of gravity.</p>
             </div>
           </div>
@@ -1638,8 +2000,8 @@
         <div class="container view-scroll">
           <div class="section-header">
             <div>
-              <h2 style="font-size:2rem;">Top Quotes</h2>
-              <p>Passages worth keeping close, whether tied to entries below or preserved on their own.</p>
+              <h2 style="font-size:2rem;">Favorite Quotes</h2>
+              <p>A random selection of favorite quotes</p>
             </div>
           </div>
           <div class="essay-grid" id="quotesGrid"></div>
@@ -1653,7 +2015,7 @@
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Vault</h2>
-              <p>I don't like giving numeric scores to things.</p>
+              <p>Critics suck. Numeric scores suck.</p>
             </div>
           </div>
 
@@ -1912,6 +2274,8 @@
       </div>
     </div>
   </footer>
+
+  <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 
   <script>
     const items = [
@@ -2499,6 +2863,13 @@
     const heroQuoteCharacter = document.getElementById('heroQuoteCharacter');
     const heroQuoteSource = document.getElementById('heroQuoteSource');
     const finishedGrid = document.getElementById('finishedGrid');
+    const spotifyToggle = document.getElementById('spotifyToggle');
+    const spotifyPopup = document.getElementById('spotifyPopup');
+    const spotifyPlayPauseBtn = document.getElementById('spotifyPlayPauseBtn');
+    const spotifyRestartBtn = document.getElementById('spotifyRestartBtn');
+    const spotifyEmbedFrame = document.getElementById('spotifyEmbedFrame');
+    const spotifyStatusText = document.getElementById('spotifyStatusText');
+    const spotifyOpenLink = document.getElementById('spotifyOpenLink');
         
     const currentTypes = ["Literature", "Movies", "TV", "Music", "Video Games"];
     const currentIndices = Object.fromEntries(currentTypes.map(type => [type, 0]));
@@ -2517,6 +2888,21 @@
       entryView
     };
 
+    const SPOTIFY_CONFIG = {
+      playlistUri: 'spotify:playlist:37i9dQZF1DX0XUsuxWHRQd',
+      playlistUrl: 'https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd',
+      embedWidth: '100%',
+      embedHeight: 152,
+      theme: 'dark'
+    };
+
+    const spotifyState = {
+      controller: null,
+      ready: false,
+      isPaused: true,
+      popupOpen: false
+    };
+
     const navLinks = Array.from(document.querySelectorAll('[data-view-link]'));
 
     const STORAGE_KEYS = {
@@ -2528,7 +2914,7 @@
 
     const COMMENTS_CONFIG = {
       provider: 'utterances',
-      repo: 'Reagan-Davis/davis_blog',
+      repo: 'Reagan-Davis/davis_blog_comments',
       issueTermPrefix: 'rr-recommends',
       themeLight: 'github-light',
       themeDark: 'github-dark'
@@ -2778,6 +3164,10 @@
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
+    }
+
+    function getItemByTitle(title) {
+      return items.find(item => item.title === title) || null;
     }
 
     function applyZoomResponsiveStyles({
@@ -3156,6 +3546,101 @@
       return quotes[Math.floor(Math.random() * quotes.length)];
     }
 
+    function setSpotifyPopupState(isOpen) {
+      spotifyState.popupOpen = isOpen;
+      spotifyPopup.hidden = !isOpen;
+      spotifyToggle.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    function updateSpotifyUi() {
+      spotifyPlayPauseBtn.textContent = spotifyState.isPaused ? 'Play' : 'Pause';
+    }
+
+    function setSpotifyStatus(message) {
+      if (spotifyStatusText) {
+        spotifyStatusText.textContent = message;
+      }
+    }
+
+    function toggleSpotifyPopup() {
+      setSpotifyPopupState(!spotifyState.popupOpen);
+    }
+
+    window.onSpotifyIframeApiReady = (IFrameAPI) => {
+      if (!spotifyEmbedFrame) return;
+
+      const options = {
+        uri: SPOTIFY_CONFIG.playlistUri,
+        width: SPOTIFY_CONFIG.embedWidth,
+        height: SPOTIFY_CONFIG.embedHeight,
+        theme: document.body.classList.contains('theme-dark') ? 'dark' : undefined
+      };
+
+      IFrameAPI.createController(spotifyEmbedFrame, options, (EmbedController) => {
+        spotifyState.controller = EmbedController;
+        spotifyState.ready = true;
+        spotifyState.isPaused = true;
+
+        setSpotifyStatus('Spotify player ready.');
+        updateSpotifyUi();
+
+        EmbedController.addListener('ready', () => {
+          spotifyState.ready = true;
+          setSpotifyStatus('Spotify player ready.');
+        });
+
+        EmbedController.addListener('playback_started', (e) => {
+          spotifyState.isPaused = false;
+          updateSpotifyUi();
+          if (e?.data?.playingURI) {
+            setSpotifyStatus(`Playing: ${e.data.playingURI}`);
+          } else {
+            setSpotifyStatus('Playback started.');
+          }
+        });
+
+        EmbedController.addListener('playback_update', (e) => {
+          if (typeof e?.data?.isPaused === 'boolean') {
+            spotifyState.isPaused = e.data.isPaused;
+            updateSpotifyUi();
+          }
+        });
+      });
+    };
+
+    function spotifyTogglePlayPause() {
+      if (!spotifyState.controller) {
+        setSpotifyStatus('Spotify player is still loading.');
+        return;
+      }
+
+      spotifyState.controller.togglePlay();
+    }
+
+    function spotifyRestart() {
+      if (!spotifyState.controller) {
+        setSpotifyStatus('Spotify player is still loading.');
+        return;
+      }
+
+      spotifyState.controller.restart();
+    }
+
+    function refreshSpotifyTheme() {
+      if (!spotifyEmbedFrame) return;
+
+      spotifyEmbedFrame.innerHTML = '';
+      spotifyState.controller = null;
+      spotifyState.ready = false;
+      spotifyState.isPaused = true;
+      updateSpotifyUi();
+      setSpotifyStatus('Reloading Spotify player for theme…');
+
+      if (typeof window.onSpotifyIframeApiReady === 'function' && window.SpotifyIFrameAPI) {
+        window.onSpotifyIframeApiReady(window.SpotifyIFrameAPI);
+      }
+    }
+
     function typeText(element, text, {
       speed = 24,
       startDelay = 120,
@@ -3193,48 +3678,81 @@
       const animationId = heroQuoteAnimationId;
 
       const fullQuote = `“${featured.text}”`;
+      const linkedItem = getItemByTitle(featured.title);
 
-      const attributionParts = [];
-
-      if (featured.character) {
-        attributionParts.push(`— ${featured.character}`);
-      }
-
-      attributionParts.push(featured.title);
-
-      if (featured.year) {
-        attributionParts.push(`(${formatYear(featured.year)})`);
-      }
-
-      const attributionText = attributionParts.join(', ');
+      heroQuoteText.classList.remove('heroQuoteTyping');
+      heroQuoteCharacter.classList.remove('heroMetaTyping');
+      heroQuoteSource.classList.remove('heroMetaTyping');
 
       heroQuoteCharacter.textContent = '';
       heroQuoteSource.textContent = '';
 
+      const speakerText = featured.character || '';
+      const sourceBits = [featured.title];
+
+      if (featured.source) {
+        sourceBits.push(featured.source);
+      }
+
+      if (linkedItem?.creator) {
+        sourceBits.push(linkedItem.creator);
+      }
+
+      const sourceText = sourceBits.join(', ');
+
       if (!animate) {
         heroQuoteText.textContent = fullQuote;
-        heroQuoteSource.textContent = attributionText;
+        heroQuoteCharacter.textContent = speakerText;
+        heroQuoteSource.textContent = sourceText;
         return;
       }
+
+      heroQuoteText.classList.add('heroQuoteTyping');
 
       typeText(heroQuoteText, fullQuote, {
         speed: 18,
         startDelay: 80,
         animationId,
-
         onComplete: () => {
-
           if (animationId !== heroQuoteAnimationId) return;
 
+          heroQuoteText.classList.remove('heroQuoteTyping');
+
           setTimeout(() => {
+            if (speakerText) {
+              heroQuoteCharacter.classList.add('heroMetaTyping');
 
-            typeText(heroQuoteSource, attributionText, {
-              speed: 14,
-              animationId
-            });
+              typeText(heroQuoteCharacter, speakerText, {
+                speed: 14,
+                startDelay: 0,
+                animationId,
+                onComplete: () => {
+                  heroQuoteCharacter.classList.remove('heroMetaTyping');
+                  heroQuoteSource.classList.add('heroMetaTyping');
 
-          }, 250); // pause before attribution
+                  typeText(heroQuoteSource, sourceText, {
+                    speed: 12,
+                    startDelay: 60,
+                    animationId,
+                    onComplete: () => {
+                      heroQuoteSource.classList.remove('heroMetaTyping');
+                    }
+                  });
+                }
+              });
+            } else {
+              heroQuoteSource.classList.add('heroMetaTyping');
 
+              typeText(heroQuoteSource, sourceText, {
+                speed: 12,
+                startDelay: 0,
+                animationId,
+                onComplete: () => {
+                  heroQuoteSource.classList.remove('heroMetaTyping');
+                }
+              });
+            }
+          }, 220);
         }
       });
     }
@@ -3676,7 +4194,7 @@
 
         if (!matches.length) {
           return `
-            <article class="status-mini-card ${panelKey === 'current' ? 'status-mini-card-portrait' : ''}">
+            <article class="status-mini-card">
               <div class="status-mini-head">
                 <div class="status-mini-type">${escapeHtml(type)}</div>
               </div>
@@ -3689,7 +4207,7 @@
         const item = matches[index];
 
         return `
-          <article class="status-mini-card ${panelKey === 'current' ? 'status-mini-card-portrait' : ''}">
+          <article class="status-mini-card">
             <div class="status-mini-head">
               <div class="status-mini-type">${escapeHtml(type)}</div>
               <div class="status-mini-controls">
@@ -3718,6 +4236,17 @@
             </div>
 
             <div class="status-mini-blurb">${escapeHtml((item.blurb || '').slice(0, 88))}${item.blurb && item.blurb.length > 88 ? '…' : ''}</div>
+
+            <div class="status-mini-actions">
+              <button
+                class="status-mini-open"
+                type="button"
+                data-open-entry="${escapeHtml(item.slug)}"
+                aria-label="Open ${escapeHtml(item.title)} in vault"
+              >
+                Vault →
+              </button>
+            </div>
           </article>
         `;
       }).join('');
@@ -3749,9 +4278,14 @@
       const entryButton = event.target.closest('[data-open-entry]');
       const viewButton = event.target.closest('[data-view], [data-view-link]');
       const clickedInsideMobileNav = event.target.closest('.mobile-nav');
+      const clickedInsideSpotify = event.target.closest('.spotify-shell');
 
       if (!clickedInsideMobileNav && !mobileNavMenu.hidden) {
         closeMobileMenu();
+      }
+
+      if (!clickedInsideSpotify && spotifyState.popupOpen) {
+        setSpotifyPopupState(false);
       }
 
       if (statusCycleButton) {
@@ -3792,6 +4326,7 @@
       const isDark = document.body.classList.contains('theme-dark');
       setTheme(isDark ? 'light' : 'dark');
       refreshCurrentCommentsTheme();
+      refreshSpotifyTheme();
       if (!languageView.hidden) renderLanguageMap();
       if (!travelView.hidden) renderTravelMap();
     });
@@ -3847,6 +4382,19 @@
 
     vaultControlsToggle.addEventListener('click', () => {
       toggleCollapse(vaultControlsToggle, vaultControlsBody);
+    });
+
+    spotifyToggle?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleSpotifyPopup();
+    });
+
+    spotifyPlayPauseBtn?.addEventListener('click', () => {
+      spotifyTogglePlayPause();
+    });
+
+    spotifyRestartBtn?.addEventListener('click', () => {
+      spotifyRestart();
     });
 
     function restoreLastLocation() {
