@@ -958,6 +958,10 @@
         grid-template-columns: 1fr;
       }
 
+      .side-stack {
+        align-content: stretch;
+      }
+
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
       .recommendation-scroll {
@@ -1013,7 +1017,263 @@
       .city-label {
         font-size: 11px;
       }
+
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
     }
+
+      .vault-toolbar {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 0.8rem;
+        align-items: end;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.2rem;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0.28rem 0.55rem;
+        border: 1px solid var(--line);
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.74rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: color-mix(in srgb, var(--paper-strong) 84%, transparent);
+      }
+
+      .badge.status-completed {
+        border-color: color-mix(in srgb, var(--rank-5) 42%, var(--line));
+        color: var(--rank-5);
+      }
+
+      .badge.status-in-progress {
+        border-color: color-mix(in srgb, var(--rank-3) 42%, var(--line));
+        color: var(--rank-3);
+      }
+
+      .badge.status-todo {
+        border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+        color: var(--accent);
+      }
+
+      .badge.status-wishlist {
+        border-color: color-mix(in srgb, var(--accent-3) 42%, var(--line));
+        color: var(--accent-3);
+      }
+
+      .badge.owned-yes {
+        color: var(--accent);
+        border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+      }
+
+      .badge.owned-no {
+        color: var(--soft);
+      }
+
+      #vaultChart {
+        width: 100%;
+        min-height: 420px;
+      }
+
+      #vaultChart svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .chart-axis text,
+      .chart-label,
+      .chart-value {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        fill: var(--muted);
+        font-size: 12px;
+      }
+
+      .chart-title {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        fill: var(--ink);
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 960px) {
+        .vault-toolbar {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .vault-toolbar {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .collapsible-panel {
+        padding-top: 1rem;
+      }
+
+      .collapse-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        background: transparent;
+        border: 0;
+        color: var(--ink);
+        padding: 0;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .collapse-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .collapse-toggle .stat-label {
+        margin-bottom: 0;
+      }
+
+      .collapse-arrow {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 1rem;
+        color: var(--soft);
+        transition: transform 0.18s ease;
+      }
+
+      .collapse-toggle[aria-expanded="true"] .collapse-arrow {
+        transform: rotate(90deg);
+      }
+
+      .collapse-body {
+        margin-top: 0.9rem;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1.08fr 0.92fr;
+        align-items: center;
+      }
+
+      .side-stack {
+        align-content: center;
+      }
+
+      .hero-quote-card {
+        justify-content: center;
+      }
+
+      .hero-quote-block {
+        margin-top: 1.2rem;
+        padding: 1rem 1.05rem;
+        border-left: 2px solid color-mix(in srgb, var(--accent) 34%, transparent);
+        background: color-mix(in srgb, var(--accent) 4%, transparent);
+      }
+
+      .hero-quote-block blockquote {
+        margin: 0;
+        font-size: clamp(1.08rem, 1.8vw, 1.38rem);
+        line-height: 1.55;
+        color: var(--ink);
+      }
+
+      .home-status-panel {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.7rem;
+      }
+
+      .status-mini-card {
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
+        padding: 0.72rem;
+        display: grid;
+        gap: 0.55rem;
+        min-height: 118px;
+      }
+
+      .status-mini-card-portrait {
+        min-height: 170px;
+        align-content: start;
+      }
+
+      .status-mini-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+      }
+
+      .status-mini-type {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.74rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--soft);
+      }
+
+      .status-mini-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .status-mini-arrow {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink);
+        cursor: pointer;
+        padding: 0;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+
+      .status-mini-arrow:hover {
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 6%, transparent);
+      }
+
+      .status-mini-title {
+        font-size: 0.95rem;
+        line-height: 1.2;
+      }
+
+      .status-mini-meta {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.8rem;
+        color: var(--soft);
+      }
+
+      .status-mini-blurb {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .status-mini-empty {
+        color: var(--muted);
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.86rem;
+      }
   </style>
 </head>
 <body>
@@ -1034,7 +1294,7 @@
           <a href="#home" data-view-link="homeView" class="active">Home</a>
           <a href="#writing" data-view-link="writingView">Writing</a>
           <a href="#quotes" data-view-link="quotesView">Quotes</a>
-          <a href="#recommendations" data-view-link="recommendationsView">Recommendations</a>
+          <a href="#vault" data-view-link="recommendationsView">Vault</a>
           <a href="#language" data-view-link="languageView">Language</a>
           <a href="#travel" data-view-link="travelView">Travel</a>
           <a href="#rankings" data-view-link="rankingsView">Rankings</a>
@@ -1049,7 +1309,7 @@
             <a href="#home" data-view-link="homeView" class="active">Home</a>
             <a href="#writing" data-view-link="writingView">Writing</a>
             <a href="#quotes" data-view-link="quotesView">Quotes</a>
-            <a href="#recommendations" data-view-link="recommendationsView">Recommendations</a>
+            <a href="#vault" data-view-link="recommendationsView">Vault</a>
             <a href="#language" data-view-link="languageView">Language</a>
             <a href="#travel" data-view-link="travelView">Travel</a>
             <a href="#rankings" data-view-link="rankingsView">Rankings</a>
@@ -1068,34 +1328,36 @@
     <div id="homeView" class="view">
       <section class="hero">
         <div class="container hero-grid">
-          <article class="hero-card" aria-labelledby="hero-heading">
+          <article class="hero-card hero-quote-card" aria-labelledby="hero-heading">
             <div>
               <div class="eyebrow">Personal archive · curated, opinionated, searchable</div>
               <h1 id="hero-heading">A home for recommendations, writing, maps, and remembered lines.</h1>
-              <p>
-                Literature, film, music, television, video games, essays, language interests, travel interests, brief notes, and quotations gathered under one roof and organized around taste, memory, and conviction.
-              </p>
+
+              <div class="hero-quote-block">
+                <blockquote id="heroQuoteText">“Loading quote...”</blockquote>
+                <div class="quote-character" id="heroQuoteCharacter"></div>
+                <div class="quote-source" id="heroQuoteSource"></div>
+              </div>
             </div>
+
             <div>
               <div class="hero-actions">
                 <button class="btn primary" type="button" data-view="writingView">Read latest writing</button>
                 <button class="btn" type="button" data-view="aboutView">About this Site</button>
-                <button class="btn" type="button" data-view="recommendationsView">Browse recommendations</button>
+                <button class="btn" type="button" data-view="recommendationsView">Open vault</button>
               </div>
             </div>
           </article>
 
           <aside class="side-stack" aria-label="Featured items">
-            <section class="quote-card">
-              <h2 style="font-size:1.12rem; margin-bottom:0.8rem;">Featured quote</h2>
-              <blockquote id="featuredQuoteText">“Loading quote...”</blockquote>
-              <div class="quote-character" id="featuredQuoteCharacter"></div>
-              <div class="quote-source" id="featuredQuoteSource"></div>
+            <section class="panel home-status-panel">
+              <h2 style="font-size:1.12rem; margin-bottom:0.8rem;">Finished</h2>
+              <div id="finishedGrid" class="status-grid status-grid-finished" aria-live="polite"></div>
             </section>
 
             <section class="panel">
-              <h2 style="font-size:1.12rem; margin-bottom:0.7rem;">Current focus</h2>
-              <p class="muted">A place for strong preferences, favorite passages, long-form thought, maps of interests, and the things worth returning to more than once.</p>
+              <h2 style="font-size:1.12rem; margin-bottom:0.8rem;">Current</h2>
+              <div id="currentGrid" class="status-grid status-grid-current" aria-live="polite"></div>
             </section>
           </aside>
         </div>
@@ -1135,36 +1397,114 @@
         <div class="container recommendations-layout">
           <div class="section-header">
             <div>
-              <h2 style="font-size:2rem;">Recommendations</h2>
+              <h2 style="font-size:2rem;">Vault</h2>
               <p>Literature, films, television, music, video games, and whatever else deserves a place here, with room for notes, quotations, and fuller entries.</p>
             </div>
           </div>
 
-          <section class="search-panel" aria-labelledby="search-heading">
-            <div class="stat-label" id="search-heading">Search & sort</div>
-            <div class="search-controls">
-              <label>
-                <span>Search by title, creator, tag, keyword, or quote</span>
-                <input id="searchInput" type="search" placeholder="Search literature, directors, albums, themes, quotes..." autocomplete="off" />
-              </label>
-              <label>
-                <span>Order entries</span>
-                <select id="sortSelect">
-                  <option value="score-desc">Highest tier first</option>
-                  <option value="score-asc">Lowest tier first</option>
-                  <option value="year-desc">Newest first</option>
-                  <option value="year-asc">Oldest first</option>
-                  <option value="title-asc">Title A–Z</option>
-                </select>
-              </label>
-            </div>
-          </section>
+      <section class="search-panel collapsible-panel" aria-labelledby="search-heading">
+        <button
+          class="collapse-toggle"
+          type="button"
+          id="searchToggle"
+          aria-expanded="false"
+          aria-controls="searchPanelBody"
+        >
+          <span class="collapse-title">
+            <span class="stat-label" id="search-heading">Search & sort</span>
+          </span>
+          <span class="collapse-arrow" aria-hidden="true">▸</span>
+        </button>
+
+        <div id="searchPanelBody" class="collapse-body" hidden>
+          <div class="search-controls">
+            <label>
+              <span>Search by title, creator, tag, keyword, or quote</span>
+              <input id="searchInput" type="search" placeholder="Search literature, directors, albums, themes, quotes..." autocomplete="off" />
+            </label>
+            <label>
+              <span>Order entries</span>
+              <select id="sortSelect">
+                <option value="score-desc">Highest tier first</option>
+                <option value="score-asc">Lowest tier first</option>
+                <option value="year-desc">Newest first</option>
+                <option value="year-asc">Oldest first</option>
+                <option value="title-asc">Title A–Z</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="search-panel collapsible-panel" aria-labelledby="vault-controls-heading">
+        <button
+          class="collapse-toggle"
+          type="button"
+          id="vaultControlsToggle"
+          aria-expanded="false"
+          aria-controls="vaultControlsBody"
+        >
+          <span class="collapse-title">
+            <span class="stat-label" id="vault-controls-heading">Vault controls</span>
+          </span>
+          <span class="collapse-arrow" aria-hidden="true">▸</span>
+        </button>
+
+        <div id="vaultControlsBody" class="collapse-body" hidden>
+          <div class="vault-toolbar">
+            <label>
+              <span>Status</span>
+              <select id="statusSelect">
+                <option value="all">All statuses</option>
+                <option value="completed">Completed</option>
+                <option value="in-progress">In progress</option>
+                <option value="todo">To-do</option>
+                <option value="wishlist">Wishlist</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Ownership</span>
+              <select id="ownedSelect">
+                <option value="all">Owned & unowned</option>
+                <option value="owned">Owned only</option>
+                <option value="not-owned">Not owned</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Vault view</span>
+              <select id="vaultViewSelect">
+                <option value="cards">Cards</option>
+                <option value="charts">Charts</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Chart metric</span>
+              <select id="chartModeSelect">
+                <option value="decade">Average rating by decade</option>
+                <option value="rank">Count by rating tier</option>
+                <option value="status">Count by status</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </section>
 
           <div class="filters" id="filters" role="tablist" aria-label="Recommendation categories"></div>
 
-          <div class="recommendation-scroll">
+          <div class="recommendation-scroll" id="vaultCardsWrap">
             <div class="grid" id="recommendationGrid" aria-live="polite"></div>
           </div>
+
+          <div id="vaultChartsWrap" hidden>
+            <div class="card" style="padding:1rem;">
+              <div class="stat-label">Vault charts</div>
+              <div id="vaultChart"></div>
+            </div>
+          </div>
+
         </div>
       </section>
     </div>
@@ -1261,9 +1601,10 @@
               One of those things I neglected the most was establishing the systems I need to hold myself accountable for how I spend my time.<br><br>
               With that growing sensation of every year progressing faster, certain aspects of how I spend my free time have become non-negotiable. I read for an hour a day. I learn languages for an hour a day. I realize that if I do not do these things and many others, I will never reach all of my goals in what little time a lifetime truly is.<br><br>
               I contemplated for a long time over what the best way to go about this would be.<br><br>
-              I am only checking social media for around 10 minutes a day, and anything there runs the risk of dragging me back into that dreaded, short-form content addiction. On a personal account, something like this would be subverting what the account was initially intended for. On a new account, it would invariably end up being about follows, likes, and views. YouTube would be much the same.<br><br>
-              Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves and seeking that validation. We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
-              Ultimately, this place serves many purposes for me: an archive of past interests, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable. A website where I can change things whenever and however I want seemed to fit best.
+              I am only checking social media for around 10 minutes a day, and anything there runs the risk of dragging me back into that dreaded, short-form content addiction. On a personal account, something like this would be subverting what the account was initially intended for. On a new account, it would invariably end up being about follows, likes, and views. YouTube would be much the same. A website where I can change things whenever and however I want is what I settled on.<br><br>
+              Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves and seeking that external validation. We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
+              Ultimately, this place serves many purposes for me: an archive of past interests, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable.<br><br>
+              Maybe, just maybe, you will leave here ___?
             </p>
             <div class="comment-meta"></div>
           </div>
@@ -1291,7 +1632,7 @@
       <section class="section">
         <div class="container detail-grid">
           <article class="detail-card">
-            <button class="back-link" type="button" data-view="recommendationsView">← Back to recommendations</button>
+            <button class="back-link" type="button" data-view="recommendationsView">← Back to vault</button>
             <div id="entryDetail"></div>
           </article>
           <aside class="detail-card">
@@ -1323,6 +1664,8 @@
         year: 1880,
         creator: "Fyodor Dostoevsky",
         creatorRole: "writer",
+        status: "in-progress",
+        owned: true,
         blurb: "A novel of faith, doubt, patricide, freedom, and moral responsibility that actually earns its reputation.",
         description: "A vast, alive, morally dangerous novel. It is not merely profound in topic; it is dramatically intelligent at every level, from voice to argument to structure. This is the kind of recommendation that belongs here because it rewards return and conflict rather than passive admiration.",
         tags: ["russian", "philosophy", "novel", "essential"],
@@ -1342,6 +1685,8 @@
         year: 1979,
         creator: "Andrei Tarkovsky",
         creatorRole: "director",
+        status: "completed",
+        owned: true,
         blurb: "Not just slow cinema. A haunted pilgrimage through desire, exhaustion, and the failure of certainty.",
         description: "A film I would rather return to than merely praise. The point is not pace or prestige. It is that strange spiritual pressure it exerts after the fact.",
         tags: ["film", "russian", "philosophical", "atmosphere"],
@@ -1360,6 +1705,8 @@
         year: 1959,
         creator: "Miles Davis",
         creatorRole: "artist",
+        status: "completed",
+        owned: true,
         blurb: "The obvious answer for a reason. Spacious, elegant, and still one of the cleanest gateways into jazz.",
         description: "Canonical, yes, but not deadened by canon. It still breathes. I would recommend it to someone new to jazz and to someone who has heard it fifty times.",
         tags: ["jazz", "album", "classic"],
@@ -1376,6 +1723,8 @@
         year: 2007,
         creator: "Matthew Weiner",
         creatorRole: "tv",
+        status: "in-progress",
+        owned: true,
         blurb: "A show about image, reinvention, loneliness, class aspiration, and the stories people tell to survive.",
         description: "Television that actually understands symbol and texture instead of merely using them as premium-cable decoration.",
         tags: ["television", "character-driven", "period"],
@@ -1392,6 +1741,8 @@
         year: 1808,
         creator: "Johann Wolfgang von Goethe",
         creatorRole: "writer",
+        status: "completed",
+        owned: true,
         blurb: "Restlessness, ambition, transcendence, ruin. One of the central texts for understanding the modern self.",
         description: "Not merely a classic to respect, but a work to wrestle with. It belongs near the center of any serious literary archive because it keeps opening into new meanings.",
         tags: ["german", "drama", "poetry", "essential"],
@@ -1410,6 +1761,8 @@
         year: 2019,
         creator: "Terrence Malick",
         creatorRole: "director",
+        status: "in-progress",
+        owned: false,
         blurb: "Quiet conviction against a world demanding submission. Beautiful without becoming decorative mush.",
         description: "A recommendation based less on fashion than on moral and aesthetic force.",
         tags: ["film", "spiritual", "historical"],
@@ -1426,6 +1779,8 @@
         year: 65,
         creator: "Seneca",
         creatorRole: "writer",
+        status: "completed",
+        owned: true,
         blurb: "Practical moral seriousness without losing style, bite, or breadth of thought.",
         description: "One of the easiest ways into ancient ethical seriousness without sacrificing literary texture.",
         tags: ["stoicism", "letters", "latin"],
@@ -1442,6 +1797,8 @@
         year: 2007,
         creator: "Radiohead",
         creatorRole: "artist",
+        status: "in-progress",
+        owned: true,
         blurb: "Warm, anxious, intimate, and one of the band’s most immediately human records.",
         description: "A record that keeps its strangeness while staying emotionally legible.",
         tags: ["alternative", "album", "modern"],
@@ -1458,6 +1815,8 @@
         year: 2019,
         creator: "Mobius Digital",
         creatorRole: "artist",
+        status: "in-progress",
+        owned: true,
         blurb: "A game about wonder, recursion, curiosity, and cosmic melancholy that trusts the player to learn by seeing.",
         description: "One of the strongest arguments for games as a distinct artistic form. It rewards attention rather than checklist completion and unfolds through discovery rather than exposition dumps.",
         tags: ["game", "exploration", "mystery"],
@@ -1594,6 +1953,26 @@
     const icon = document.getElementById('themeIcon');
     const menuToggle = document.getElementById('menuToggle');
     const mobileNavMenu = document.getElementById('mobileNavMenu');
+    const statusSelect = document.getElementById('statusSelect');
+    const ownedSelect = document.getElementById('ownedSelect');
+    const vaultViewSelect = document.getElementById('vaultViewSelect');
+    const chartModeSelect = document.getElementById('chartModeSelect');
+    const vaultCardsWrap = document.getElementById('vaultCardsWrap');
+    const vaultChartsWrap = document.getElementById('vaultChartsWrap');
+    const vaultChart = document.getElementById('vaultChart');
+    const searchToggle = document.getElementById('searchToggle');
+    const searchPanelBody = document.getElementById('searchPanelBody');
+    const vaultControlsToggle = document.getElementById('vaultControlsToggle');
+    const vaultControlsBody = document.getElementById('vaultControlsBody');
+    const currentGrid = document.getElementById('currentGrid');
+    const heroQuoteText = document.getElementById('heroQuoteText');
+    const heroQuoteCharacter = document.getElementById('heroQuoteCharacter');
+    const heroQuoteSource = document.getElementById('heroQuoteSource');
+    const finishedGrid = document.getElementById('finishedGrid');
+        
+    const currentTypes = ["Literature", "Movies", "TV", "Music", "Video Games"];
+    const currentIndices = Object.fromEntries(currentTypes.map(type => [type, 0]));
+    const finishedIndices = Object.fromEntries(currentTypes.map(type => [type, 0]));
 
     const allViews = {
       homeView,
@@ -1613,6 +1992,11 @@
     let activeFilter = 'All';
     let searchTerm = '';
     let sortMode = 'score-desc';
+
+    let activeStatus = 'all';
+    let ownedMode = 'all';
+    let vaultViewMode = 'cards';
+    let chartMode = 'decade';
 
     function escapeHtml(value) {
       return String(value)
@@ -1640,6 +2024,25 @@
         1: 'Red recommendation tier'
       };
       return labels[rank] || labels[1];
+    }
+
+    function getStatusLabel(status) {
+      const labels = {
+        completed: 'Completed',
+        'in-progress': 'In Progress',
+        todo: 'To-Do',
+        wishlist: 'Wishlist'
+      };
+      return labels[status] || 'Unknown';
+    }
+
+    function getOwnedLabel(owned) {
+      return owned ? 'Owned' : 'Not Owned';
+    }
+
+    function getDecadeLabel(year) {
+      const decade = Math.floor(year / 10) * 10;
+      return `${decade}s`;
     }
 
     function formatQuoteCredit(quote) {
@@ -1850,13 +2253,26 @@
     function getVisibleItems() {
       const filtered = items.filter(item => {
         const filterPass = activeFilter === 'All' || item.type === activeFilter;
+
+        const statusPass = activeStatus === 'all' || item.status === activeStatus;
+
+        const ownedPass =
+          ownedMode === 'all' ||
+          (ownedMode === 'owned' && item.owned === true) ||
+          (ownedMode === 'not-owned' && item.owned === false);
+
         const relatedQuotes = getQuotesForTitle(item.title);
-        const quoteText = relatedQuotes.map(q => [q.text, q.source, q.character].filter(Boolean).join(' ')).join(' ');
+        const quoteText = relatedQuotes
+          .map(q => [q.text, q.source, q.character].filter(Boolean).join(' '))
+          .join(' ');
+
         const haystack = [
           item.title,
           item.creator,
           item.type,
           item.subtype || '',
+          item.status || '',
+          item.owned ? 'owned' : 'not owned',
           item.blurb,
           item.description,
           quoteText,
@@ -1865,7 +2281,8 @@
         ].join(' ').toLowerCase();
 
         const searchPass = haystack.includes(searchTerm);
-        return filterPass && searchPass;
+
+        return filterPass && statusPass && ownedPass && searchPass;
       });
 
       filtered.sort((a, b) => {
@@ -1898,6 +2315,7 @@
           activeFilter = filter;
           renderFilters();
           renderItems();
+          if (vaultViewMode === 'charts') renderVaultChart();
         });
         filterContainer.appendChild(btn);
       });
@@ -1917,17 +2335,25 @@
       return quotes[Math.floor(Math.random() * quotes.length)];
     }
 
-    function renderFeaturedQuote() {
+    function renderHeroQuote() {
       const featured = getRandomQuote();
-      const textEl = document.getElementById('featuredQuoteText');
-      const sourceEl = document.getElementById('featuredQuoteSource');
-      const characterEl = document.getElementById('featuredQuoteCharacter');
+      if (!featured || !heroQuoteText || !heroQuoteSource || !heroQuoteCharacter) return;
 
-      if (!featured || !textEl || !sourceEl || !characterEl) return;
+      heroQuoteText.textContent = `“${featured.text}”`;
+      heroQuoteCharacter.textContent = featured.character ? featured.character : '';
+      heroQuoteSource.innerHTML = `${escapeHtml(featured.title)}${featured.source ? `, <em>${escapeHtml(featured.source)}</em>` : ''}`;
+    }
 
-      textEl.textContent = `“${featured.text}”`;
-      characterEl.textContent = featured.character ? featured.character : '';
-      sourceEl.innerHTML = `${escapeHtml(featured.title)}${featured.source ? `, <em>${escapeHtml(featured.source)}</em>` : ''}`;
+    function getFinishedItemsForType(type) {
+      return items.filter(item => item.type === type && item.status === 'completed');
+    }
+
+    function cycleFinishedItem(type, direction) {
+      const matches = getFinishedItemsForType(type);
+      if (!matches.length) return;
+
+      finishedIndices[type] = (finishedIndices[type] + direction + matches.length) % matches.length;
+      renderFinishedPanel();
     }
 
     function renderQuotes() {
@@ -1979,6 +2405,10 @@
                 <div class="title-wrap">
                   <h3>${escapeHtml(item.title)}</h3>
                   <div class="creator-line">${escapeHtml(item.creator)}</div>
+                  <div class="meta-row">
+                    <span class="badge status-${escapeHtml(item.status || 'todo')}">${escapeHtml(getStatusLabel(item.status))}</span>
+                    <span class="badge ${item.owned ? 'owned-yes' : 'owned-no'}">${escapeHtml(getOwnedLabel(item.owned))}</span>
+                  </div>
                 </div>
                 <div class="score ${getScoreClass(rank)}" aria-label="${getRankLabel(rank)}"></div>
               </div>
@@ -1998,6 +2428,118 @@
           </article>
         `;
       }).join('');
+    }
+
+    function renderVaultChart() {
+      if (!vaultChart) return;
+
+      const visible = getVisibleItems();
+      vaultChart.innerHTML = '';
+
+      if (!visible.length) {
+        vaultChart.innerHTML = '<div class="empty-state">No entries available for this chart.</div>';
+        return;
+      }
+
+      let data = [];
+      let title = '';
+
+      if (chartMode === 'decade') {
+        const grouped = d3.rollups(
+          visible,
+          values => d3.mean(values, d => d.rank),
+          d => getDecadeLabel(d.year)
+        ).sort((a, b) => {
+          const aYear = parseInt(a[0], 10);
+          const bYear = parseInt(b[0], 10);
+          return aYear - bYear;
+        });
+
+        data = grouped.map(([label, value]) => ({ label, value: +value.toFixed(2) }));
+        title = 'Average rating by decade';
+      } else if (chartMode === 'rank') {
+        const grouped = d3.rollups(
+          visible,
+          values => values.length,
+          d => `Tier ${d.rank}`
+        ).sort((a, b) => a[0].localeCompare(b[0]));
+
+        data = grouped.map(([label, value]) => ({ label, value }));
+        title = 'Count by rating tier';
+      } else if (chartMode === 'status') {
+        const order = ['completed', 'in-progress', 'todo', 'wishlist'];
+        const groupedMap = new Map(
+          d3.rollups(visible, values => values.length, d => d.status)
+        );
+
+        data = order
+          .filter(status => groupedMap.has(status))
+          .map(status => ({
+            label: getStatusLabel(status),
+            value: groupedMap.get(status)
+          }));
+
+        title = 'Count by status';
+      }
+
+      const width = Math.max(720, vaultChart.clientWidth || 720);
+      const height = 420;
+      const margin = { top: 42, right: 20, bottom: 70, left: 54 };
+
+      const svg = d3.select(vaultChart)
+        .append('svg')
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .attr('role', 'img')
+        .attr('aria-label', title);
+
+      svg.append('text')
+        .attr('class', 'chart-title')
+        .attr('x', margin.left)
+        .attr('y', 24)
+        .text(title);
+
+      const x = d3.scaleBand()
+        .domain(data.map(d => d.label))
+        .range([margin.left, width - margin.right])
+        .padding(0.18);
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.value) || 1])
+        .nice()
+        .range([height - margin.bottom, margin.top + 8]);
+
+      svg.append('g')
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .attr('class', 'chart-axis')
+        .call(d3.axisBottom(x))
+        .selectAll('text')
+        .attr('transform', 'rotate(-30)')
+        .style('text-anchor', 'end');
+
+      svg.append('g')
+        .attr('transform', `translate(${margin.left},0)`)
+        .attr('class', 'chart-axis')
+        .call(d3.axisLeft(y).ticks(6));
+
+      svg.append('g')
+        .selectAll('rect')
+        .data(data)
+        .join('rect')
+        .attr('x', d => x(d.label))
+        .attr('y', d => y(d.value))
+        .attr('width', x.bandwidth())
+        .attr('height', d => y(0) - y(d.value))
+        .attr('fill', 'var(--accent)');
+
+      svg.append('g')
+        .selectAll('text')
+        .data(data)
+        .join('text')
+        .attr('class', 'chart-value')
+        .attr('x', d => x(d.label) + x.bandwidth() / 2)
+        .attr('y', d => y(d.value) - 8)
+        .attr('text-anchor', 'middle')
+        .text(d => Number.isInteger(d.value) ? d.value : d.value.toFixed(2));
     }
 
     function buildCreatorRankings() {
@@ -2035,6 +2577,16 @@
         artist: toSortedArray(grouped.artist),
         tv: toSortedArray(grouped.tv)
       };
+    }
+
+    function updateVaultView() {
+      const showCharts = vaultViewMode === 'charts';
+      vaultCardsWrap.hidden = showCharts;
+      vaultChartsWrap.hidden = !showCharts;
+
+      if (showCharts) {
+        renderVaultChart();
+      }
     }
 
     function renderRankingList(element, entries, noun) {
@@ -2106,9 +2658,14 @@
       const primaryQuote = getPrimaryQuoteForTitle(item.title);
 
       entryDetail.innerHTML = `
-        <div class="detail-meta">${escapeHtml(item.type)} · ${escapeHtml(item.year)}</div>
+        <div class="detail-meta">${escapeHtml(item.type)} · ${escapeHtml(item.year)} · ${escapeHtml(item.subtype || '')}</div>
         <h2>${escapeHtml(item.title)}</h2>
         <div class="creator-line" style="margin-bottom:0.9rem;">${escapeHtml(item.creator)}</div>
+        <div class="meta-row" style="margin-bottom:1rem;">
+          <span class="badge status-${escapeHtml(item.status || 'todo')}">${escapeHtml(getStatusLabel(item.status))}</span>
+          <span class="badge ${item.owned ? 'owned-yes' : 'owned-no'}">${escapeHtml(getOwnedLabel(item.owned))}</span>
+          <span class="badge">Tier ${item.rank}</span>
+        </div>
         <div class="detail-body">
           <p>${escapeHtml(item.description)}</p>
           ${primaryQuote ? `
@@ -2121,7 +2678,7 @@
         </div>
         <div class="card-footer" style="margin-top:1rem;">
           <span class="comment-meta">${item.commentCount} comments</span>
-          <span class="tag">Tier ${item.rank}</span>
+          <span class="tag">${escapeHtml(item.tags.join(' · '))}</span>
         </div>
       `;
 
@@ -2136,7 +2693,115 @@
       localStorage.setItem('theme', mode);
     }
 
+    function setCollapseState(button, body, isExpanded) {
+      button.setAttribute('aria-expanded', String(isExpanded));
+      body.hidden = !isExpanded;
+    }
+
+    function toggleCollapse(button, body) {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      setCollapseState(button, body, !expanded);
+    }
+
+    function getItemsByStatus(status) {
+      return items.filter(item => item.status === status);
+    }
+
+    function getCurrentItemsForType(type) {
+      return items.filter(item => item.type === type && item.status === 'in-progress');
+    }
+
+    function cycleCurrentItem(type, direction) {
+      const matches = getCurrentItemsForType(type);
+      if (!matches.length) return;
+
+      currentIndices[type] = (currentIndices[type] + direction + matches.length) % matches.length;
+      renderCurrentPanel();
+    }
+
+    function renderStatusPanelGrid({
+      gridElement,
+      getItemsForType,
+      indices,
+      panelKey,
+      emptyText
+    }) {
+      if (!gridElement) return;
+
+      gridElement.innerHTML = currentTypes.map(type => {
+        const matches = getItemsForType(type);
+
+        if (!matches.length) {
+          return `
+            <article class="status-mini-card ${panelKey === 'current' ? 'status-mini-card-portrait' : ''}">
+              <div class="status-mini-head">
+                <div class="status-mini-type">${escapeHtml(type)}</div>
+              </div>
+              <div class="status-mini-empty">${escapeHtml(emptyText)}</div>
+            </article>
+          `;
+        }
+
+        const index = ((indices[type] || 0) % matches.length + matches.length) % matches.length;
+        const item = matches[index];
+
+        return `
+          <article class="status-mini-card ${panelKey === 'current' ? 'status-mini-card-portrait' : ''}">
+            <div class="status-mini-head">
+              <div class="status-mini-type">${escapeHtml(type)}</div>
+              <div class="status-mini-controls">
+                <button
+                  class="status-mini-arrow"
+                  type="button"
+                  data-status-cycle="${panelKey}"
+                  data-status-type="${escapeHtml(type)}"
+                  data-direction="-1"
+                  aria-label="Previous ${panelKey} ${escapeHtml(type)} item"
+                >‹</button>
+                <button
+                  class="status-mini-arrow"
+                  type="button"
+                  data-status-cycle="${panelKey}"
+                  data-status-type="${escapeHtml(type)}"
+                  data-direction="1"
+                  aria-label="Next ${panelKey} ${escapeHtml(type)} item"
+                >›</button>
+              </div>
+            </div>
+
+            <div class="status-mini-main">
+              <h3 class="status-mini-title">${escapeHtml(item.title)}</h3>
+              <div class="status-mini-meta">${escapeHtml(item.creator)} · ${escapeHtml(item.subtype || item.type)}</div>
+            </div>
+
+            <div class="status-mini-blurb">${escapeHtml(item.blurb)}</div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderCurrentPanel() {
+      renderStatusPanelGrid({
+        gridElement: currentGrid,
+        getItemsForType: getCurrentItemsForType,
+        indices: currentIndices,
+        panelKey: 'current',
+        emptyText: 'Nothing currently in progress.'
+      });
+    }
+
+    function renderFinishedPanel() {
+      renderStatusPanelGrid({
+        gridElement: finishedGrid,
+        getItemsForType: getFinishedItemsForType,
+        indices: finishedIndices,
+        panelKey: 'finished',
+        emptyText: 'Nothing marked finished yet.'
+      });
+    }
+
     document.addEventListener('click', (event) => {
+      const statusCycleButton = event.target.closest('[data-status-cycle]');
       const postButton = event.target.closest('[data-open-post]');
       const entryButton = event.target.closest('[data-open-entry]');
       const viewButton = event.target.closest('[data-view], [data-view-link]');
@@ -2144,6 +2809,19 @@
 
       if (!clickedInsideMobileNav && !mobileNavMenu.hidden) {
         closeMobileMenu();
+      }
+
+      if (statusCycleButton) {
+        const panelKey = statusCycleButton.getAttribute('data-status-cycle');
+        const type = statusCycleButton.getAttribute('data-status-type');
+        const direction = Number(statusCycleButton.getAttribute('data-direction') || 0);
+
+        if (panelKey === 'current') {
+          cycleCurrentItem(type, direction);
+        } else if (panelKey === 'finished') {
+          cycleFinishedItem(type, direction);
+        }
+        return;
       }
 
       if (postButton) {
@@ -2184,17 +2862,49 @@
     searchInput.addEventListener('input', (event) => {
       searchTerm = event.target.value.trim().toLowerCase();
       renderItems();
+      if (vaultViewMode === 'charts') renderVaultChart();
     });
 
     sortSelect.addEventListener('change', (event) => {
       sortMode = event.target.value;
       renderItems();
+      if (vaultViewMode === 'charts') renderVaultChart();
     });
 
     window.addEventListener('resize', () => {
       if (!languageView.hidden) renderLanguageMap();
       if (!travelView.hidden) renderTravelMap();
       if (window.innerWidth > 1080) closeMobileMenu();
+    });
+
+    statusSelect.addEventListener('change', (event) => {
+      activeStatus = event.target.value;
+      renderItems();
+      if (vaultViewMode === 'charts') renderVaultChart();
+    });
+
+    ownedSelect.addEventListener('change', (event) => {
+      ownedMode = event.target.value;
+      renderItems();
+      if (vaultViewMode === 'charts') renderVaultChart();
+    });
+
+    vaultViewSelect.addEventListener('change', (event) => {
+      vaultViewMode = event.target.value;
+      updateVaultView();
+    });
+
+    chartModeSelect.addEventListener('change', (event) => {
+      chartMode = event.target.value;
+      if (vaultViewMode === 'charts') renderVaultChart();
+    });
+
+    searchToggle.addEventListener('click', () => {
+      toggleCollapse(searchToggle, searchPanelBody);
+    });
+
+    vaultControlsToggle.addEventListener('click', () => {
+      toggleCollapse(vaultControlsToggle, vaultControlsBody);
     });
 
     function runTests() {
@@ -2210,15 +2920,23 @@
       console.assert(getPrimaryQuoteForTitle('Faust') && getPrimaryQuoteForTitle('Faust').text.includes('Two souls'), 'Primary quote lookup failed');
       console.assert(quotes.every(q => Object.prototype.hasOwnProperty.call(q, 'character')), 'Quotes should include character field');
       console.assert(travelCities.length === 5, 'Travel city list should contain five cities');
+      console.assert(items.every(item => Object.prototype.hasOwnProperty.call(item, 'status')), 'Each item should have a status');
+      console.assert(items.every(item => Object.prototype.hasOwnProperty.call(item, 'owned')), 'Each item should have an owned field');
+      console.assert(getStatusLabel('completed') === 'Completed', 'Status label failed');
+      console.assert(getOwnedLabel(true) === 'Owned', 'Owned label failed');
+      console.assert(currentTypes.length === 5, 'Current types list should contain five categories');
     }
 
     runTests();
     renderFilters();
     renderPosts();
     renderQuotes();
-    renderFeaturedQuote();
+    renderHeroQuote();
     renderItems();
     renderRankings();
+    renderCurrentPanel();
+    renderFinishedPanel();
+    updateVaultView();
     showView('homeView');
   </script>
 </body>
