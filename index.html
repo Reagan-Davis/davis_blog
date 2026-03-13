@@ -410,10 +410,11 @@
     }
 
     h1 {
-      margin-top: 0.9rem;
-      font-size: clamp(2.2rem, 4vw, 4rem);
-      max-width: 12ch;
-      letter-spacing: -0.03em;
+      margin-top: 0.7rem;
+      font-size: clamp(2.4rem, 3.2vw, 3.6rem);
+      max-width: 9ch;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
     }
 
     .hero p,
@@ -430,20 +431,20 @@
 
     .hero-actions {
       display: flex;
-      gap: 0.8rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
-      margin-top: 1.15rem;
-      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      margin-top: 1.25rem;
+      padding-top: 0.1rem;
     }
 
     .btn {
       border: 1px solid var(--line-strong);
       background: transparent;
       color: var(--ink);
-      padding: 0.82rem 1rem;
+      padding: 0.78rem 0.95rem;
       font-weight: 700;
       cursor: pointer;
-      min-height: 44px;
+      min-height: 42px;
       transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
       display: inline-flex;
@@ -1338,15 +1339,22 @@
       }
 
       .hero-grid {
-        grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.78fr);
-        gap: 0.85rem;
-        align-items: center;
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(420px, 0.9fr);
+        gap: 1.25rem;
+        align-items: stretch;
       }
 
       .side-stack {
         display: grid;
-        gap: 0.75rem;
-        align-content: center;
+        gap: 0.9rem;
+        align-content: stretch;
+      }
+
+      .home-status-panel h2,
+      .side-stack section h2 {
+        margin-bottom: 0.55rem !important;
+        font-size: 1.02rem !important;
       }
 
       .hero-quote-card {
@@ -1354,16 +1362,17 @@
       }
 
       .hero-quote-block {
-        margin-top: 0.8rem;
-        padding: 0.8rem 0.9rem;
-        border-left: 2px solid color-mix(in srgb, var(--accent) 34%, transparent);
-        background: color-mix(in srgb, var(--accent) 4%, transparent);
+        margin-top: 1rem;
+        padding: 0.95rem 1rem;
+        border-left: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+        background: color-mix(in srgb, var(--paper-strong) 88%, transparent);
+        max-width: 58ch;
       }
 
       .hero-quote-block blockquote {
         margin: 0;
-        font-size: clamp(0.98rem, 1.35vw, 1.15rem);
-        line-height: 1.42;
+        font-size: 1.05rem;
+        line-height: 1.45;
         color: var(--ink);
       }
 
@@ -1380,24 +1389,31 @@
 
       .status-grid {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 0.45rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.6rem;
+      }
+
+      @media (max-width: 1200px) {
+        .status-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 680px) {
+        .status-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       .status-mini-card {
         border: 1px solid var(--line);
         background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
-        padding: 0.5rem;
+        padding: 0.7rem;
         display: grid;
-        gap: 0.35rem;
-        min-height: 0;
-        aspect-ratio: 3 / 4;
+        gap: 0.45rem;
+        min-height: 150px;
         align-content: start;
         overflow: hidden;
-      }
-
-      .status-mini-card-portrait {
-        aspect-ratio: 3 / 4;
       }
 
       .status-mini-head {
@@ -1473,10 +1489,6 @@
         font-size: 1rem !important;
       }
 
-      .status-grid-current .status-mini-card,
-      .status-grid-finished .status-mini-card {
-        max-height: 180px;
-      }
   </style>
 </head>
 <body>
@@ -1500,7 +1512,7 @@
           <a href="#vault" data-view-link="recommendationsView">Vault</a>
           <a href="#language" data-view-link="languageView">Language</a>
           <a href="#travel" data-view-link="travelView">Travel</a>
-          <a href="#rankings" data-view-link="rankingsView">Rankings</a>
+          <!-- <a href="#rankings" data-view-link="rankingsView">Rankings</a> -->
           <a href="#about" data-view-link="aboutView">About</a>
         </nav>
 
@@ -1536,18 +1548,18 @@
               <div class="eyebrow">Personal archive · curated, opinionated, searchable</div>
               <h1 id="hero-heading">A home for recommendations, writing, maps, and remembered lines.</h1>
 
+              <div>
+                <div class="hero-actions">
+                  <button class="btn primary" type="button" data-view="writingView">Read latest writing</button>
+                  <button class="btn" type="button" data-view="aboutView">About this Site</button>
+                  <button class="btn" type="button" data-view="recommendationsView">Open vault</button>
+                </div>
+              </div>
+
               <div class="hero-quote-block">
                 <blockquote id="heroQuoteText">“Loading quote...”</blockquote>
                 <div class="quote-character" id="heroQuoteCharacter"></div>
                 <div class="quote-source" id="heroQuoteSource"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="hero-actions">
-                <button class="btn primary" type="button" data-view="writingView">Read latest writing</button>
-                <button class="btn" type="button" data-view="aboutView">About this Site</button>
-                <button class="btn" type="button" data-view="recommendationsView">Open vault</button>
               </div>
             </div>
           </article>
