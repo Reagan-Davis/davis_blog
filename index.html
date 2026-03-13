@@ -65,7 +65,12 @@
     body {
       height: 100%;
       margin: 0;
-      overflow: hidden;
+    }
+
+    body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     html {
@@ -333,14 +338,16 @@
       position: relative;
     }
 
-    .view {
-      height: 100%;
+    main {
+      min-height: 0;
       overflow: hidden;
-      padding: 0;
+      position: relative;
     }
 
-    .view[hidden] {
-      display: none !important;
+    .view {
+      height: 100%;
+      min-height: 0;
+      padding: 0;
     }
 
     .hero {
@@ -513,8 +520,8 @@
 
     .section {
       height: 100%;
+      min-height: 0;
       padding: 0.85rem 0;
-      overflow: hidden;
     }
 
     .section-header {
@@ -981,6 +988,30 @@
 
       .map-shell {
         border-radius: 10px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      #recommendationsView,
+      #recommendationsView .section,
+      #recommendationsView .container.recommendations-layout {
+        height: auto;
+        min-height: 0;
+      }
+
+      #recommendationsView .recommendations-layout {
+        display: block;
+      }
+
+      #recommendationsView .recommendation-scroll {
+        overflow: visible;
+        max-height: none;
+        padding-right: 0;
+      }
+
+      #vaultChartsWrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
     }
 
