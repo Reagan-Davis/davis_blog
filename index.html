@@ -61,18 +61,21 @@
 
     * { box-sizing: border-box; }
 
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
     html {
-      min-height: 100%;
       scroll-behavior: smooth;
-      overflow-x: hidden;
-      overflow-y: auto;
     }
 
     body {
-      min-height: 100%;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
       font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.15)),
@@ -111,6 +114,66 @@
     .container {
       width: min(calc(100% - 2rem), var(--max));
       margin: 0 auto;
+    }
+
+    main > .view > .section,
+    main > .view > .hero {
+      height: 100%;
+    }
+
+    .hero .container,
+    .section .container {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .map-grid,
+    .detail-grid,
+    .essay-grid,
+    .stats-grid,
+    .side-stack {
+      min-height: 0;
+    }
+
+    .view-scroll {
+      height: 100%;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 0.2rem;
+    }
+
+    .map-grid {
+      height: 100%;
+    }
+
+    .map-card {
+      min-height: 0;
+      grid-template-rows: 1fr auto;
+    }
+
+    .map-shell {
+      width: 100%;
+      min-height: 0;
+      height: 100%;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--paper-strong) 90%, transparent), color-mix(in srgb, var(--paper) 70%, transparent));
+      overflow: hidden;
+      position: relative;
+    }
+
+    .detail-grid {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .detail-card {
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .side-stack {
+      height: 100%;
     }
 
     .topbar {
@@ -276,13 +339,15 @@
     }
 
     main {
-      flex: 1 1 auto;
       min-height: 0;
+      overflow: hidden;
       position: relative;
     }
 
     .view {
-      padding: 0 0 var(--view-padding-bottom);
+      height: 100%;
+      overflow: hidden;
+      padding: 0;
     }
 
     .view[hidden] {
@@ -290,10 +355,11 @@
     }
 
     .hero {
-      padding: 1.25rem 0 0.75rem;
-      min-height: calc(100vh - var(--topbar-height) - var(--footer-height) - 1.5rem);
+      height: 100%;
+      padding: 0.85rem 0;
+      overflow: hidden;
       display: flex;
-      align-items: center;
+      align-items: stretch;
     }
 
     .hero-grid {
@@ -301,6 +367,8 @@
       grid-template-columns: 1.35fr 0.95fr;
       gap: 1.25rem;
       align-items: stretch;
+      height: 100%;
+      min-height: 0;
     }
 
     .hero-card,
@@ -332,12 +400,8 @@
     .search-panel::before,
     .detail-card::before,
     .map-card::before {
-      content: "";
-      display: block;
-      width: 68px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      margin-bottom: 1rem;
+      display: none;
+      content: none;
     }
 
     .eyebrow {
@@ -459,7 +523,9 @@
     }
 
     .section {
-      padding: 1rem 0 1.8rem;
+      height: 100%;
+      padding: 0.85rem 0;
+      overflow: hidden;
     }
 
     .section-header {
@@ -513,6 +579,7 @@
     .recommendations-layout {
       display: flex;
       flex-direction: column;
+      height: 100%;
       min-height: 0;
     }
 
@@ -524,7 +591,7 @@
 
     .recommendation-scroll {
       min-height: 0;
-      max-height: calc(100vh - var(--topbar-height) - var(--footer-height) - 270px);
+      flex: 1 1 auto;
       overflow-y: auto;
       padding-right: 0.2rem;
     }
@@ -932,10 +999,11 @@
     }
 
     footer {
-      margin-top: 1.25rem;
-      padding: 0 0 1rem;
+      margin-top: 0;
+      padding: 0 0 0.75rem;
       color: var(--muted);
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      overflow: hidden;
     }
 
     .footer-card {
@@ -950,9 +1018,6 @@
 
     @media (max-width: 1100px) {
       .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .recommendation-scroll {
-        max-height: calc(100vh - var(--topbar-height) - var(--footer-height) - 285px);
-      }
     }
 
     @media (max-width: 1080px) {
@@ -979,10 +1044,6 @@
       }
 
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-      .recommendation-scroll {
-        max-height: calc(100vh - var(--topbar-height) - var(--footer-height) - 335px);
-      }
 
       .map-shell {
         min-height: 420px;
@@ -1019,10 +1080,6 @@
 
       .hero { padding-top: 2rem; }
       h1 { max-width: none; }
-
-      .recommendation-scroll {
-        max-height: calc(100vh - var(--topbar-height) - var(--footer-height) - 365px);
-      }
 
       .map-shell {
         min-height: 360px;
@@ -1434,7 +1491,7 @@
 
     <div id="writingView" class="view" hidden>
       <section class="section">
-        <div class="container">
+        <div class="container view-scroll">
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Collected Musings</h2>
@@ -1448,7 +1505,7 @@
 
     <div id="quotesView" class="view" hidden>
       <section class="section">
-        <div class="container">
+        <div class="container view-scroll">
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Top Quotes</h2>
@@ -1580,18 +1637,20 @@
     <div id="languageView" class="view" hidden>
       <section class="section">
         <div class="container map-grid">
-          <article class="map-card">
-            <div class="map-title-row">
-              <div>
-                <h2 style="font-size:2rem;">Language</h2>
-                <p class="muted" style="margin:0.35rem 0 0;">A Robinson projection demo with Germany and Russia highlighted from Natural Earth country polygons.</p>
-              </div>
-              <div class="map-legend" aria-label="Language map legend">
-                <span class="legend-chip"><span class="legend-swatch" style="background: color-mix(in srgb, var(--accent-3) 62%, var(--accent));"></span>Germany</span>
-                <span class="legend-chip"><span class="legend-swatch" style="background: color-mix(in srgb, var(--accent) 82%, #769989);"></span>Russia</span>
-                <span class="legend-chip"><span class="legend-swatch" style="background: color-mix(in srgb, var(--paper-strong) 96%, #d8cfbf);"></span>Other land</span>
-              </div>
+          <div class="section-header">
+            <div>
+              <h2 style="font-size:2rem;">Language</h2>
+              <p>A Robinson projection demo with Germany and Russia highlighted from Natural Earth country polygons.</p>
             </div>
+          </div>
+
+          <div class="map-legend map-legend-outside" aria-label="Language map legend">
+            <span class="legend-chip"><span class="legend-swatch legend-swatch-germany"></span>Germany</span>
+            <span class="legend-chip"><span class="legend-swatch legend-swatch-russia"></span>Russia</span>
+            <span class="legend-chip"><span class="legend-swatch legend-swatch-land"></span>Other land</span>
+          </div>
+
+          <article class="map-card">
             <div class="map-shell" id="languageMap">
               <div class="map-tooltip" id="languageTooltip"></div>
             </div>
@@ -1604,16 +1663,18 @@
     <div id="travelView" class="view" hidden>
       <section class="section">
         <div class="container map-grid">
-          <article class="map-card">
-            <div class="map-title-row">
-              <div>
-                <h2 style="font-size:2rem;">Travel</h2>
-                <p class="muted" style="margin:0.35rem 0 0;">A Robinson projection demo with city points for London, Paris, Edinburgh, New York, and Los Angeles.</p>
-              </div>
-              <div class="map-legend" aria-label="Travel map legend">
-                <span class="legend-chip"><span class="legend-swatch" style="background: color-mix(in srgb, var(--accent) 78%, #3e6a57);"></span>Travel points</span>
-              </div>
+          <div class="section-header">
+            <div>
+              <h2 style="font-size:2rem;">Travel</h2>
+              <p>A Robinson projection demo with city points for London, Paris, Edinburgh, New York, and Los Angeles.</p>
             </div>
+          </div>
+
+          <div class="map-legend map-legend-outside" aria-label="Travel map legend">
+            <span class="legend-chip"><span class="legend-swatch legend-swatch-travel"></span>Travel points</span>
+          </div>
+
+          <article class="map-card">
             <div class="map-shell" id="travelMap">
               <div class="map-tooltip" id="travelTooltip"></div>
             </div>
@@ -1625,7 +1686,7 @@
 
     <div id="rankingsView" class="view" hidden>
       <section class="section">
-        <div class="container">
+        <div class="container view-scroll">
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Highest rated creators</h2>
@@ -1660,7 +1721,7 @@
 
     <div id="aboutView" class="view" hidden>
       <section class="section">
-        <div class="container">
+        <div class="container view-scroll">
           <div class="card essay-card">
             <h2 style="font-size:1.6rem;">About</h2>
             <p class="muted">
@@ -3001,7 +3062,7 @@
     vaultControlsToggle.addEventListener('click', () => {
       toggleCollapse(vaultControlsToggle, vaultControlsBody);
     });
-    
+
     function restoreLastLocation() {
       const savedView = localStorage.getItem(STORAGE_KEYS.activeView);
       const savedPost = localStorage.getItem(STORAGE_KEYS.activePost);
