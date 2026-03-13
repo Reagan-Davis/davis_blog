@@ -301,7 +301,8 @@
       position: absolute;
       top: calc(100% + 0.7rem);
       right: 0;
-      width: min(300px, calc(100vw - 2rem));
+      width: 300px;
+      max-width: min(300px, calc(100vw - 1rem));
       background: var(--paper-strong);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
@@ -309,6 +310,15 @@
       display: grid;
       gap: 0.2rem;
       z-index: 60;
+    }
+
+    @media (max-width: 680px) {
+      .mobile-nav-menu {
+        right: 0;
+        left: auto;
+        width: min(300px, calc(100vw - 1rem));
+        max-width: calc(100vw - 1rem);
+      }
     }
 
     .mobile-nav-menu[hidden] {
@@ -1762,15 +1772,12 @@
         align-items: center;
       }
 
-      .spotify-toggle {
-        font-size: 17px;
-      }
-
       .spotify-popup {
         position: absolute;
         top: calc(100% + 0.7rem);
         right: 0;
-        width: min(360px, calc(100vw - 2rem));
+        width: 360px;
+        max-width: min(360px, calc(100vw - 1rem));
         padding: 0.8rem;
         background: var(--paper-strong);
         border: 1px solid var(--line);
@@ -1782,6 +1789,19 @@
 
       .spotify-popup[hidden] {
         display: none !important;
+      }
+
+      @media (max-width: 680px) {
+        .spotify-popup {
+          right: 0;
+          left: auto;
+          width: min(360px, calc(100vw - 1rem));
+          max-width: calc(100vw - 1rem);
+        }
+      }
+
+      .spotify-toggle {
+        font-size: 17px;
       }
 
       .spotify-popup-head {
@@ -1847,6 +1867,66 @@
         color: var(--muted);
         line-height: 1.35;
       }
+
+      @media (max-width: 960px) {
+      #homeView {
+        overflow-y: auto;
+      }
+
+      #homeView .hero {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        align-items: stretch;
+      }
+
+      #homeView .container.hero-grid {
+        height: auto;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        align-items: start;
+      }
+
+      #homeView .hero-card,
+      #homeView .side-stack,
+      #homeView .panel {
+        height: auto;
+        min-height: 0;
+      }
+
+      #homeView .side-stack {
+        overflow: visible;
+        align-content: start;
+      }
+    }
+
+    @media (max-width: 680px) {
+      #homeView {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      #homeView .hero {
+        padding: 0.85rem 0 1rem;
+      }
+
+      #homeView .container.hero-grid {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+      }
+
+      #homeView .hero-card {
+        padding: 1rem;
+      }
+
+      #homeView .side-stack {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+      }
+    }
 
   </style>
 </head>
