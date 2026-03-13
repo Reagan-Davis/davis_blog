@@ -19,7 +19,9 @@
   <header class="topbar">
     <div class="container topbar-inner">
       <a class="brand" href="#home" aria-label="R R Recommends home" data-view-link="homeView">
-        <div class="brand-mark" aria-hidden="true">R</div>
+        <div class="brand-mark globe-mark" aria-hidden="true">
+          <svg id="brandGlobe" viewBox="0 0 64 64" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
         <div>
           <div>Reagan Davis</div>
           <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Not a Portfolio</div>
@@ -109,7 +111,7 @@
           <article class="hero-card hero-quote-card" aria-labelledby="hero-heading">
             <div>
               <div class="eyebrow">Not a Portfolio</div>
-              <h1 id="hero-heading">A centralized hub for everything from ___ to ___.</h1>
+              <h1 id="hero-heading">But A Centralized Hub for Just About Everything.</h1>
 
               <div>
                 <div class="hero-actions">
@@ -3672,6 +3674,48 @@
       showView('homeView', { skipPersist: true });
     }
 
+    function renderBrandGlobe() {
+      const svg = d3.select('#brandGlobe');
+      if (svg.empty()) return;
+
+      const size = 64;
+      const projection = d3.geoOrthographic()
+        .scale(29)
+        .translate([size / 2, size / 2])
+        .clipAngle(90);
+
+      const path = d3.geoPath(projection);
+      const graticule = d3.geoGraticule().step([30, 30])();
+
+      svg.selectAll('*').remove();
+
+      svg.append('path')
+        .datum({ type: 'Sphere' })
+        .attr('class', 'globe-sphere')
+        .attr('d', path);
+
+      const grat = svg.append('path')
+        .datum(graticule)
+        .attr('class', 'globe-graticule')
+        .attr('d', path);
+
+      svg.append('path')
+        .datum({ type: 'Sphere' })
+        .attr('class', 'globe-outline')
+        .attr('d', path);
+
+      let rotation = 0;
+
+      d3.timer((elapsed) => {
+        rotation = (elapsed * 0.02) % 360;
+        projection.rotate([rotation, -12, 0]);
+
+        grat.attr('d', path);
+        svg.select('.globe-sphere').attr('d', path);
+        svg.select('.globe-outline').attr('d', path);
+      });
+    }
+
     function runTests() {
       console.assert(getRankValue(items[0]) === 5, 'Item rank 5 test failed');
       console.assert(getRankValue(items[2]) === 4, 'Item rank 4 test failed');
@@ -3704,6 +3748,7 @@
     renderPosts();
     renderQuotes();
     renderHeroQuote({ animate: true });
+    renderBrandGlobe();
     renderItems();
     renderRankings();
     renderCurrentPanel();
