@@ -587,6 +587,7 @@
     }
 
     .card {
+      position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -1042,6 +1043,27 @@
       font-weight: 700;
     }
 
+    .entry-status-dot {
+      position: absolute;
+      top: 0.7rem;
+      right: 0.7rem;
+
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+
+      background: var(--accent);
+      opacity: 0.9;
+
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--paper-strong) 80%, transparent);
+    }
+
+    .entry-status-dot.rank-5 { background: var(--rank-5); }
+    .entry-status-dot.rank-4 { background: var(--rank-4); }
+    .entry-status-dot.rank-3 { background: var(--rank-3); }
+    .entry-status-dot.rank-2 { background: var(--rank-2); }
+    .entry-status-dot.rank-1 { background: var(--rank-1); }
+
     @media (max-width: 680px) {
       .country-label {
         font-size: 10px;
@@ -1489,6 +1511,22 @@
         font-size: 1rem !important;
       }
 
+      .heroQuoteTyping::after {
+        content: "";
+        display: inline-block;
+        width: 1px;
+        height: 0.95em;
+        margin-left: 0.12em;
+        vertical-align: -0.08em;
+        background: currentColor;
+        animation: heroCaretBlink 0.85s steps(1) infinite;
+      }
+
+      @keyframes heroCaretBlink {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+      }
+
   </style>
 </head>
 <body>
@@ -1553,8 +1591,10 @@
                   <button class="btn primary" type="button" data-view="writingView">Read latest writing</button>
                   <button class="btn" type="button" data-view="aboutView">About this Site</button>
                   <button class="btn" type="button" data-view="recommendationsView">Open vault</button>
-                </div>
+                </div> <br>
               </div>
+
+              <div class="eyebrow">Random Quote</div>
 
               <div class="hero-quote-block">
                 <blockquote id="heroQuoteText">“Loading quote...”</blockquote>
@@ -2233,6 +2273,9 @@
     let vaultViewMode = 'cards';
     let chartMode = 'decade';
 
+    let heroQuoteTypingTimer = null;
+    let heroQuoteAnimationId = 0;
+
     function observeMapContainer(viewId, containerId, renderFn) {
       const container = document.getElementById(containerId);
       if (!container || mapState.resizeObservers[containerId]) return;
@@ -2287,6 +2330,16 @@
 
     function getOwnedLabel(owned) {
       return owned ? 'Owned' : 'Not Owned';
+    }
+
+    function formatYear(year) {
+      if (year == null) return '';
+
+      if (year < 0) {
+        return `${Math.abs(year)} BC`;
+      }
+
+      return `${year} AD`;
     }
 
     function getDecadeLabel(year) {
@@ -2740,6 +2793,11 @@
       }
 
       closeMobileMenu();
+
+      if (viewId === 'homeView') {
+        renderHeroQuote({ animate: true });
+      }
+
       ensureMapForView(viewId);
     }
 
@@ -2828,13 +2886,87 @@
       return quotes[Math.floor(Math.random() * quotes.length)];
     }
 
-    function renderHeroQuote() {
+    function typeText(element, text, {
+      speed = 24,
+      startDelay = 120,
+      onComplete = null,
+      animationId = 0
+    } = {}) {
+      if (!element) return;
+
+      clearTimeout(heroQuoteTypingTimer);
+      element.textContent = '';
+
+      let index = 0;
+
+      function step() {
+        if (animationId !== heroQuoteAnimationId) return;
+
+        index += 1;
+        element.textContent = text.slice(0, index);
+
+        if (index < text.length) {
+          heroQuoteTypingTimer = setTimeout(step, speed);
+        } else if (typeof onComplete === 'function') {
+          onComplete();
+        }
+      }
+
+      heroQuoteTypingTimer = setTimeout(step, startDelay);
+    }
+
+    function renderHeroQuote({ animate = true } = {}) {
       const featured = getRandomQuote();
       if (!featured || !heroQuoteText || !heroQuoteSource || !heroQuoteCharacter) return;
 
-      heroQuoteText.textContent = `“${featured.text}”`;
-      heroQuoteCharacter.textContent = featured.character ? featured.character : '';
-      heroQuoteSource.innerHTML = `${escapeHtml(featured.title)}${featured.source ? `, <em>${escapeHtml(featured.source)}</em>` : ''}`;
+      heroQuoteAnimationId += 1;
+      const animationId = heroQuoteAnimationId;
+
+      const fullQuote = `“${featured.text}”`;
+
+      const attributionParts = [];
+
+      if (featured.character) {
+        attributionParts.push(`— ${featured.character}`);
+      }
+
+      attributionParts.push(featured.title);
+
+      if (featured.year) {
+        attributionParts.push(`(${formatYear(featured.year)})`);
+      }
+
+      const attributionText = attributionParts.join(', ');
+
+      heroQuoteCharacter.textContent = '';
+      heroQuoteSource.textContent = '';
+
+      if (!animate) {
+        heroQuoteText.textContent = fullQuote;
+        heroQuoteSource.textContent = attributionText;
+        return;
+      }
+
+      typeText(heroQuoteText, fullQuote, {
+        speed: 18,
+        startDelay: 80,
+        animationId,
+
+        onComplete: () => {
+
+          if (animationId !== heroQuoteAnimationId) return;
+
+          setTimeout(() => {
+
+            typeText(heroQuoteSource, attributionText, {
+              speed: 14,
+              animationId
+            });
+
+          }, 250); // pause before attribution
+
+        }
+      });
     }
 
     function getFinishedItemsForType(type) {
@@ -2891,8 +3023,9 @@
 
         return `
           <article class="card">
+            <div class="entry-status-dot ${getScoreClass(rank)}" aria-label="${getRankLabel(rank)}"></div>
             <div class="card-body">
-              <div class="entry-meta">${escapeHtml(item.type)} · ${escapeHtml(item.year)}</div>
+              <div class="entry-meta">${escapeHtml(item.type)} · ${formatYear(item.year)}</div>
               ${item.subtype ? `<div class="subtype-line">${escapeHtml(item.subtype)}</div>` : ''}
               <div class="entry-header">
                 <div class="title-wrap">
@@ -2903,7 +3036,6 @@
                     <span class="badge ${item.owned ? 'owned-yes' : 'owned-no'}">${escapeHtml(getOwnedLabel(item.owned))}</span>
                   </div>
                 </div>
-                <div class="score ${getScoreClass(rank)}" aria-label="${getRankLabel(rank)}"></div>
               </div>
               <div class="muted">${escapeHtml(item.blurb)}</div>
               ${primaryQuote ? `
@@ -3503,7 +3635,7 @@
     renderFilters();
     renderPosts();
     renderQuotes();
-    renderHeroQuote();
+    renderHeroQuote({ animate: true });
     renderItems();
     renderRankings();
     renderCurrentPanel();
