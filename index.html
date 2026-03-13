@@ -314,10 +314,12 @@
 
     @media (max-width: 680px) {
       .mobile-nav-menu {
-        right: 0;
-        left: auto;
-        width: min(300px, calc(100vw - 1rem));
-        max-width: calc(100vw - 1rem);
+        position: fixed;
+        top: calc(var(--topbar-height) + 0.55rem);
+        left: 0.5rem;
+        right: 0.5rem;
+        width: auto;
+        max-width: none;
       }
     }
 
@@ -1769,10 +1771,12 @@
 
       @media (max-width: 680px) {
         .spotify-popup {
-          right: 0;
-          left: auto;
-          width: min(360px, calc(100vw - 1rem));
-          max-width: calc(100vw - 1rem);
+          position: fixed;
+          top: calc(var(--topbar-height) + 0.55rem);
+          left: 0.5rem;
+          right: 0.5rem;
+          width: auto;
+          max-width: none;
         }
       }
 
@@ -2150,7 +2154,7 @@
             </section>
 
             <section class="panel">
-              <h2 style="font-size:1.12rem; margin-bottom:0.8rem;">Current</h2>
+              <h2 style="font-size:1.12rem; margin-bottom:0.8rem;">In Progress | Up Next</h2>
               <div id="currentGrid" class="status-grid status-grid-current" aria-live="polite"></div>
             </section>
           </aside>
@@ -2401,7 +2405,7 @@
               I contemplated for a long time over what the best way to go about this would be.<br><br>
               I am only checking social media for around 10 minutes a day, and anything there runs the risk of dragging me back into that dreaded, short-form content addiction. On a personal account, something like this would be subverting what the account was initially intended for. On a new account, it would invariably end up being about follows, likes, and views. YouTube would be much the same. A website where I can change things whenever and however I want is what I settled on.<br><br>
               Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves and seeking that external validation. We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
-              Ultimately, this place serves many purposes for me: an archive of past interests, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable.<br><br>
+              Ultimately, this place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done.<br><br>
               Maybe, just maybe, you will leave here ___?
             </p>
             <div class="comment-meta"></div>
@@ -3197,8 +3201,8 @@
       menuToggle.setAttribute('aria-expanded', String(isHidden));
       menuToggle.setAttribute('aria-label', isHidden ? 'Close navigation menu' : 'Open navigation menu');
 
-      if (isHidden) {
-        requestAnimationFrame(() => keepPopupInViewport(mobileNavMenu));
+      if (nextState) {
+        requestAnimationFrame(() => keepPopupInViewport(spotifyPopup));
       }
     }
 
@@ -3828,7 +3832,7 @@
     }
 
     function typeText(element, text, {
-      speed = 24,
+      speed = 30,
       startDelay = 120,
       onComplete = null,
       animationId = 0
@@ -3896,8 +3900,8 @@
       heroQuoteText.classList.add('heroQuoteTyping');
 
       typeText(heroQuoteText, fullQuote, {
-        speed: 18,
-        startDelay: 80,
+        speed: 30,
+        startDelay: 320,
         animationId,
         onComplete: () => {
           if (animationId !== heroQuoteAnimationId) return;
@@ -3917,7 +3921,7 @@
                   heroQuoteSource.classList.add('heroMetaTyping');
 
                   typeText(heroQuoteSource, sourceText, {
-                    speed: 12,
+                    speed: 30,
                     startDelay: 60,
                     animationId,
                     onComplete: () => {
@@ -3930,7 +3934,7 @@
               heroQuoteSource.classList.add('heroMetaTyping');
 
               typeText(heroQuoteSource, sourceText, {
-                speed: 12,
+                speed: 24,
                 startDelay: 0,
                 animationId,
                 onComplete: () => {
@@ -4185,26 +4189,6 @@
 
       if (showCharts) {
         renderVaultChart();
-      }
-    }
-
-    function keepPopupInViewport(popupEl, preferredMargin = 8) {
-      if (!popupEl || popupEl.hidden) return;
-
-      popupEl.style.left = '';
-      popupEl.style.right = '0';
-
-      const rect = popupEl.getBoundingClientRect();
-      const overflowRight = rect.right - window.innerWidth;
-      const overflowLeft = preferredMargin - rect.left;
-
-      if (overflowRight > 0) {
-        popupEl.style.right = `${overflowRight + preferredMargin}px`;
-      }
-
-      if (overflowLeft > 0) {
-        popupEl.style.right = 'auto';
-        popupEl.style.left = '0';
       }
     }
 
@@ -4565,14 +4549,6 @@
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 1080) closeMobileMenu();
-
-      if (!mobileNavMenu.hidden) {
-        keepPopupInViewport(mobileNavMenu);
-      }
-
-      if (spotifyState.popupOpen) {
-        keepPopupInViewport(spotifyPopup);
-      }
     });
 
     statusSelect.addEventListener('change', (event) => {
