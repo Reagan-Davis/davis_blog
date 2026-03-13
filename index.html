@@ -750,6 +750,31 @@
       letter-spacing: 0.06em;
     }
 
+    .post-date-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 0.45rem;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--soft);
+    }
+
+    .post-date-line .date-main {
+      color: var(--soft);
+    }
+
+    .post-date-line .date-original {
+      color: var(--muted);
+    }
+
+    .post-date-line .date-separator {
+      color: var(--line-strong);
+    }
+
     .comment-label,
     .stat-label {
       font-size: 0.8rem;
@@ -2029,6 +2054,225 @@
       cursor: pointer;
     }
 
+    @media (max-width: 680px) {
+      :root {
+        --view-padding-bottom: 1rem;
+      }
+
+      .container {
+        width: min(calc(100% - 1rem), var(--max));
+      }
+
+      #writingView .view-scroll,
+      #quotesView .view-scroll,
+      #recommendationsView .recommendations-layout,
+      #postView .detail-grid,
+      #entryView .detail-grid,
+      #aboutView .view-scroll {
+        padding-right: 0;
+      }
+
+      #writingView .essay-grid,
+      #quotesView .essay-grid,
+      #recommendationsView .grid,
+      #postView .detail-grid,
+      #entryView .detail-grid {
+        gap: 0.8rem;
+      }
+
+      .card,
+      .essay-card,
+      .quote-card,
+      .detail-card,
+      .search-panel,
+      .panel,
+      .stat-card,
+      .map-card,
+      .hero-card {
+        background: var(--paper-strong);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: 1px solid var(--line-strong);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+        border-radius: 14px;
+      }
+
+      body.theme-dark .card,
+      body.theme-dark .essay-card,
+      body.theme-dark .quote-card,
+      body.theme-dark .detail-card,
+      body.theme-dark .search-panel,
+      body.theme-dark .panel,
+      body.theme-dark .stat-card,
+      body.theme-dark .map-card,
+      body.theme-dark .hero-card {
+        background: rgba(18, 19, 21, 0.98);
+      }
+
+      #writingView .card,
+      #quotesView .quote-card,
+      #recommendationsView .card,
+      #postView .detail-card,
+      #entryView .detail-card {
+        overflow: hidden;
+      }
+
+      .card-body,
+      .essay-card,
+      .quote-card,
+      .detail-card,
+      .search-panel {
+        padding: 0.95rem;
+      }
+
+      .entry-meta,
+      .subtype-line,
+      .creator-line,
+      .comment-meta,
+      .detail-meta,
+      .tag,
+      .post-date-line {
+        font-size: 0.76rem;
+        letter-spacing: 0.05em;
+      }
+
+      .card h3,
+      .essay-card h3 {
+        font-size: 1rem;
+        line-height: 1.2;
+      }
+
+      .muted,
+      .card-body .muted,
+      .essay-card p,
+      .status-mini-blurb {
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+
+      .inline-quote {
+        padding: 0.7rem;
+        margin-top: 0.2rem;
+        border-left-width: 3px;
+        border-radius: 8px;
+      }
+
+      .inline-quote blockquote,
+      .inline-quote div:first-child {
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.45rem;
+        padding-top: 0.55rem;
+      }
+
+      .footer-link,
+      .back-link {
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .entry-status-dot {
+        top: 0.8rem;
+        right: 0.8rem;
+        width: 18px;
+        height: 18px;
+      }
+
+      #recommendationsView .recommendation-scroll {
+        padding-right: 0;
+        padding-bottom: 1rem;
+      }
+
+      #recommendationsView .section-header,
+      #writingView .section-header,
+      #quotesView .section-header {
+        margin-bottom: 0.8rem;
+      }
+
+      #recommendationsView .section-header h2,
+      #writingView .section-header h2,
+      #quotesView .section-header h2 {
+        font-size: 1.65rem !important;
+      }
+
+      .vault-toolbar,
+      .search-controls {
+        grid-template-columns: 1fr !important;
+        gap: 0.7rem;
+      }
+
+      input,
+      select,
+      textarea,
+      .chip,
+      .btn {
+        min-height: 44px;
+      }
+
+      #postView .detail-grid,
+      #entryView .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #postView .detail-card h2,
+      #entryView .detail-card h2 {
+        font-size: 1.55rem;
+        line-height: 1.08;
+      }
+
+      #postComments,
+      #entryComments {
+        min-height: 180px;
+      }
+    }
+
+    @media (max-width: 960px) {
+      #writingView,
+      #quotesView,
+      #recommendationsView,
+      #postView,
+      #entryView,
+      #aboutView {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      #writingView .section,
+      #quotesView .section,
+      #recommendationsView .section,
+      #postView .section,
+      #entryView .section,
+      #aboutView .section {
+        height: auto;
+        min-height: 100%;
+        overflow: visible;
+      }
+
+      #writingView .container,
+      #quotesView .container,
+      #postView .container,
+      #entryView .container,
+      #aboutView .container {
+        height: auto;
+      }
+
+      #recommendationsView .recommendations-layout {
+        height: auto;
+        min-height: 0;
+      }
+
+      #recommendationsView .recommendation-scroll {
+        overflow: visible;
+        flex: 0 0 auto;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2040,7 +2284,7 @@
         <div class="brand-mark" aria-hidden="true">R</div>
         <div>
           <div>Reagan Davis</div>
-          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Epic Placeholder Text</div>
+          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Epic Placeholder</div>
         </div>
       </a>
 
@@ -2952,6 +3196,7 @@
       {
         slug: "why-lists-feel-personal",
         date: "March 12, 2026",
+        original_date: "Drafted March 3, 2026",
         title: "Why the best recommendation lists feel personal rather than authoritative",
         excerpt: "A short essay on curation, trust, and why people return to individuals with taste instead of faceless lists.",
         body: [
@@ -3196,14 +3441,10 @@
     }
 
     function toggleMobileMenu() {
-      const isHidden = mobileNavMenu.hidden;
-      mobileNavMenu.hidden = !isHidden;
-      menuToggle.setAttribute('aria-expanded', String(isHidden));
-      menuToggle.setAttribute('aria-label', isHidden ? 'Close navigation menu' : 'Open navigation menu');
-
-      if (nextState) {
-        requestAnimationFrame(() => keepPopupInViewport(spotifyPopup));
-      }
+      const nextState = mobileNavMenu.hidden;
+      mobileNavMenu.hidden = !nextState;
+      menuToggle.setAttribute('aria-expanded', String(nextState));
+      menuToggle.setAttribute('aria-label', nextState ? 'Close navigation menu' : 'Open navigation menu');
     }
 
     async function ensureMapsLoaded() {
@@ -3975,7 +4216,13 @@
     function renderPosts() {
       postGrid.innerHTML = posts.map(post => `
         <article class="card essay-card">
-          <div class="date">${escapeHtml(post.date)}</div>
+          <div class="post-date-line">
+            <span class="date-main">${escapeHtml(post.date)}</span>
+            ${post.original_date ? `
+              <span class="date-separator" aria-hidden="true">•</span>
+              <span class="date-original">${escapeHtml(post.original_date)}</span>
+            ` : ''}
+          </div>
           <h3>${escapeHtml(post.title)}</h3>
           <p class="muted">${escapeHtml(post.excerpt)}</p>
           <div class="comment-meta">GitHub discussion</div>
@@ -4281,7 +4528,13 @@
       if (!post) return;
 
       postDetail.innerHTML = `
-        <div class="detail-meta">Essay · ${escapeHtml(post.date)}</div>
+        <div class="post-date-line detail-meta" style="margin-bottom:0.6rem;">
+          <span class="date-main">${escapeHtml(post.date)}</span>
+          ${post.original_date ? `
+            <span class="date-separator" aria-hidden="true">•</span>
+            <span class="date-original">${escapeHtml(post.original_date)}</span>
+          ` : ''}
+        </div>
         <h2>${escapeHtml(post.title)}</h2>
         <div class="detail-body">
           ${post.body.map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join('')}
