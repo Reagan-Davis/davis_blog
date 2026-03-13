@@ -2484,6 +2484,58 @@
       stroke-width: 0.9;
     }
 
+    .travel-dual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      min-height: 0;
+      height: 100%;
+    }
+
+    @media (max-width: 960px) {
+      .travel-dual-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .legend-swatch-travel {
+      background: var(--accent-3);
+    }
+
+    .map-point-ring {
+      fill: none;
+      stroke: var(--accent-3);
+      stroke-width: 1.5;
+      vector-effect: non-scaling-stroke;
+      pointer-events: all;
+    }
+
+    .map-point {
+      fill: var(--accent-3);
+      stroke: color-mix(in srgb, var(--paper-strong) 88%, white);
+      stroke-width: 1.6;
+      vector-effect: non-scaling-stroke;
+      pointer-events: all;
+    }
+
+    .map-point-selected {
+      stroke: var(--map-selected-stroke);
+      stroke-width: 2.2 !important;
+    }
+
+    body.theme-dark .map-point-selected {
+      stroke: var(--map-selected-stroke-dark);
+    }
+
+    .map-region-selectable {
+      cursor: pointer;
+      transition: opacity 0.15s ease, stroke-width 0.15s ease;
+    }
+
+    .map-region-selectable:hover {
+      opacity: 0.94;
+    }
+
   </style>
 </head>
 <body>
@@ -2806,20 +2858,55 @@
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Travel</h2>
-              <p>A Robinson projection demo with city points for London, Paris, Edinburgh, New York, and Los Angeles.</p>
+              <p>Regional conic maps for the United States and Europe, with selectable places and locked popups.</p>
             </div>
           </div>
 
-          <div class="map-legend map-legend-outside" aria-label="Travel map legend">
-            <span class="legend-chip"><span class="legend-swatch legend-swatch-travel"></span>Travel points</span>
-          </div>
+          <div class="travel-dual-grid">
+            <article class="map-card">
+              <div class="map-shell" id="travelUsMap">
+                <button
+                  id="travelUsLegendToggle"
+                  class="map-legend-toggle"
+                  type="button"
+                  aria-label="Toggle United States travel legend"
+                  aria-expanded="false"
+                  aria-controls="travelUsLegend"
+                >
+                  <span class="legend-toggle-icon" aria-hidden="true">›</span>
+                </button>
 
-          <article class="map-card">
-            <div class="map-shell" id="travelMap">
-              <div class="map-tooltip" id="travelTooltip"></div>
-            </div>
-            <div class="map-caption">Robinson projection · Natural Earth country polygons · Selected city markers</div>
-          </article>
+                <div id="travelUsLegend" class="map-overlay-legend" aria-label="United States travel legend">
+                  <span class="legend-chip"><span class="legend-swatch legend-swatch-travel"></span>Visited / travel point</span>
+                </div>
+
+                <div class="map-tooltip" id="travelUsTooltip"></div>
+              </div>
+              <div class="map-caption">Conic projection · U.S. states · click or tap to pin place info</div>
+            </article>
+
+            <article class="map-card">
+              <div class="map-shell" id="travelEuropeMap">
+                <button
+                  id="travelEuropeLegendToggle"
+                  class="map-legend-toggle"
+                  type="button"
+                  aria-label="Toggle Europe travel legend"
+                  aria-expanded="false"
+                  aria-controls="travelEuropeLegend"
+                >
+                  <span class="legend-toggle-icon" aria-hidden="true">›</span>
+                </button>
+
+                <div id="travelEuropeLegend" class="map-overlay-legend" aria-label="Europe travel legend">
+                  <span class="legend-chip"><span class="legend-swatch legend-swatch-travel"></span>Visited / travel point</span>
+                </div>
+
+                <div class="map-tooltip" id="travelEuropeTooltip"></div>
+              </div>
+              <div class="map-caption">Conic projection · European countries · click or tap to pin place info</div>
+            </article>
+          </div>
         </div>
       </section>
     </div>
@@ -3452,12 +3539,13 @@
       }
     ];
 
-    const travelCities = [
-      { name: "London", lat: 51.5074, lon: -0.1278 },
-      { name: "Paris", lat: 48.8566, lon: 2.3522 },
-      { name: "Edinburgh", lat: 55.9533, lon: -3.1883 },
-      { name: "New York", lat: 40.7128, lon: -74.0060 },
-      { name: "Los Angeles", lat: 34.0522, lon: -118.2437 }
+    const travelPlaces = [
+      { name: "New York", lat: 40.7128, lon: -74.0060, region: "us", area: "New York" },
+      { name: "Los Angeles", lat: 34.0522, lon: -118.2437, region: "us", area: "California" },
+
+      { name: "London", lat: 51.5074, lon: -0.1278, region: "europe", area: "United Kingdom" },
+      { name: "Paris", lat: 48.8566, lon: 2.3522, region: "europe", area: "France" },
+      { name: "Edinburgh", lat: 55.9533, lon: -3.1883, region: "europe", area: "United Kingdom" }
     ];
 
     const LANGUAGE_CATEGORY_META = {
@@ -3511,12 +3599,31 @@
 
     const mapState = {
       worldGeoJson: null,
+      usStatesGeoJson: null,
+
       languageRendered: false,
       travelRendered: false,
+
       resizeObservers: {},
+
       languageLegendCollapsed: true,
+      travelUsLegendCollapsed: true,
+      travelEuropeLegendCollapsed: true,
+
       languageSelection: {
         countryName: null,
+        clientX: null,
+        clientY: null
+      },
+
+      travelUsSelection: {
+        key: null,
+        clientX: null,
+        clientY: null
+      },
+
+      travelEuropeSelection: {
+        key: null,
         clientX: null,
         clientY: null
       }
@@ -3725,16 +3832,211 @@
     }
 
     async function ensureMapsLoaded() {
-      if (mapState.worldGeoJson) return mapState.worldGeoJson;
-
-      const response = await fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson');
-      if (!response.ok) {
-        throw new Error(`Map load failed: ${response.status}`);
+      if (mapState.worldGeoJson && mapState.usStatesGeoJson) {
+        return {
+          world: mapState.worldGeoJson,
+          usStates: mapState.usStatesGeoJson
+        };
       }
 
-      const world = await response.json();
-      mapState.worldGeoJson = world;
-      return world;
+      const [worldResponse, usStatesResponse] = await Promise.all([
+        fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson'),
+        fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json')
+      ]);
+
+      if (!worldResponse.ok) {
+        throw new Error(`World map load failed: ${worldResponse.status}`);
+      }
+
+      if (!usStatesResponse.ok) {
+        throw new Error(`US states load failed: ${usStatesResponse.status}`);
+      }
+
+      mapState.worldGeoJson = await worldResponse.json();
+      mapState.usStatesGeoJson = await usStatesResponse.json();
+
+      return {
+        world: mapState.worldGeoJson,
+        usStates: mapState.usStatesGeoJson
+      };
+    }
+
+    function fitConicProjection(width, height, geojson, {
+      parallels = [30, 60],
+      rotate = [0, 0],
+      center = [0, 0],
+      padding = 24
+    } = {}) {
+      const projection = d3.geoConicConformal()
+        .parallels(parallels)
+        .rotate(rotate)
+        .center(center);
+
+      projection.fitExtent([[padding, padding], [width - padding, height - padding]], geojson);
+      return projection;
+    }
+
+    function getFeatureName(feature) {
+      return (
+        feature?.properties?.name ||
+        feature?.properties?.NAME ||
+        feature?.properties?.ADMIN ||
+        ''
+      );
+    }
+
+    function getTravelTooltipHtml(place) {
+      return `
+        <strong>${escapeHtml(place.name)}</strong><br>
+        <span style="color:var(--muted);">${escapeHtml(place.area || '')}</span>
+      `;
+    }
+
+    function syncTravelLegendUi(shellId, toggleId, collapsedState) {
+      const mapShell = document.getElementById(shellId);
+      const toggleBtn = document.getElementById(toggleId);
+
+      if (!mapShell || !toggleBtn) return;
+
+      const isMobile = window.innerWidth <= 680;
+      const collapsed = isMobile ? collapsedState.value : false;
+
+      mapShell.classList.toggle('legend-collapsed', collapsed);
+      toggleBtn.hidden = !isMobile;
+      toggleBtn.setAttribute('aria-expanded', String(!collapsed));
+    }
+
+    function setupLegendToggle(toggleId, collapsedState, syncFn) {
+      const toggleBtn = document.getElementById(toggleId);
+      if (!toggleBtn || toggleBtn.dataset.bound === 'true') return;
+
+      toggleBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        collapsedState.value = !collapsedState.value;
+        syncFn();
+      });
+
+      toggleBtn.dataset.bound = 'true';
+    }
+
+    function attachSelectablePointTooltip({
+      selection,
+      tooltipEl,
+      containerEl,
+      formatter,
+      getKey,
+      selectedState
+    }) {
+      function updateSelectionStyles() {
+        selection.classed('map-point-selected', d => getKey(d) === selectedState.key);
+      }
+
+      function clearSelection() {
+        selectedState.key = null;
+        selectedState.clientX = null;
+        selectedState.clientY = null;
+        updateSelectionStyles();
+        hideTooltip(tooltipEl);
+      }
+
+      function selectDatum(event, d) {
+        selectedState.key = getKey(d);
+        selectedState.clientX = event.clientX ?? null;
+        selectedState.clientY = event.clientY ?? null;
+
+        updateSelectionStyles();
+
+        showTooltip(tooltipEl, formatter(d), {
+          locked: true,
+          clientX: selectedState.clientX,
+          clientY: selectedState.clientY
+        });
+      }
+
+      selection
+        .on('mouseenter', function(event, d) {
+          if (selectedState.key) return;
+          showTooltip(tooltipEl, formatter(d), {
+            locked: false,
+            clientX: event.clientX,
+            clientY: event.clientY
+          });
+        })
+        .on('mousemove', function(event, d) {
+          if (selectedState.key) return;
+          showTooltip(tooltipEl, formatter(d), {
+            locked: false,
+            clientX: event.clientX,
+            clientY: event.clientY
+          });
+        })
+        .on('mouseleave', function() {
+          if (selectedState.key) return;
+          hideTooltip(tooltipEl);
+        })
+        .on('click', function(event, d) {
+          event.stopPropagation();
+
+          const key = getKey(d);
+          if (selectedState.key === key) {
+            clearSelection();
+            return;
+          }
+
+          selectDatum(event, d);
+        });
+
+      containerEl.addEventListener('click', (event) => {
+        const clickedPoint = event.target.closest('.map-point, .map-point-ring');
+        const clickedTooltip = event.target.closest('.map-tooltip');
+        const clickedLegend = event.target.closest('.map-overlay-legend');
+        const clickedLegendToggle = event.target.closest('.map-legend-toggle');
+
+        if (!clickedPoint && !clickedTooltip && !clickedLegend && !clickedLegendToggle) {
+          clearSelection();
+        }
+      });
+
+      updateSelectionStyles();
+    }
+
+    function restoreLockedTravelTooltip({
+      selection,
+      tooltipEl,
+      formatter,
+      selectedState,
+      getKey
+    }) {
+      if (!selectedState.key) return;
+
+      const selectedNode = selection
+        .filter(d => getKey(d) === selectedState.key)
+        .node();
+
+      if (!selectedNode) {
+        selectedState.key = null;
+        selectedState.clientX = null;
+        selectedState.clientY = null;
+        hideTooltip(tooltipEl);
+        return;
+      }
+
+      const datum = d3.select(selectedNode).datum();
+
+      let clientX = selectedState.clientX;
+      let clientY = selectedState.clientY;
+
+      if (clientX == null || clientY == null) {
+        const bounds = selectedNode.getBoundingClientRect();
+        clientX = bounds.left + bounds.width / 2;
+        clientY = bounds.top + bounds.height / 2;
+      }
+
+      showTooltip(tooltipEl, formatter(datum), {
+        locked: true,
+        clientX,
+        clientY
+      });
     }
 
     function getCountryName(feature) {
@@ -4117,7 +4419,7 @@
     }
 
     async function renderLanguageMap() {
-      const world = await ensureMapsLoaded();
+      const { world } = await ensureMapsLoaded();
       const { container, svg, width, height } = setupMapSvg('languageMap');
       const tooltipEl = document.getElementById('languageTooltip');
 
@@ -4244,92 +4546,118 @@
     }
 
     async function renderTravelMap() {
-      const world = await ensureMapsLoaded();
-      const { svg, width, height } = setupMapSvg('travelMap');
-      const tooltipEl = document.getElementById('travelTooltip');
+      const { world, usStates } = await ensureMapsLoaded();
 
-      const config = getMapConfig(width, height);
-      const projection = fitRobinsonProjection(width, height, world, config.padding);
-      const path = d3.geoPath(projection);
+      const usPlaces = travelPlaces.filter(place => place.region === 'us');
+      const europePlaces = travelPlaces.filter(place => place.region === 'europe');
 
-      const zoomLayer = svg.append('g').attr('class', 'zoom-layer');
+      const usContainerInfo = setupMapSvg('travelUsMap');
+      const europeContainerInfo = setupMapSvg('travelEuropeMap');
 
-      zoomLayer.append('path')
-        .datum({ type: 'Sphere' })
-        .attr('class', 'map-ocean')
-        .attr('d', path);
+      const usTooltipEl = document.getElementById('travelUsTooltip');
+      const europeTooltipEl = document.getElementById('travelEuropeTooltip');
 
-      const landLayer = zoomLayer.append('g').attr('class', 'land-layer');
-      const pointsLayer = zoomLayer.append('g').attr('class', 'points-layer');
-      const labelsLayer = zoomLayer.append('g').attr('class', 'labels-layer');
+      setupLegendToggle(
+        'travelUsLegendToggle',
+        {
+          get value() { return mapState.travelUsLegendCollapsed; },
+          set value(v) { mapState.travelUsLegendCollapsed = v; }
+        },
+        () => syncTravelLegendUi('travelUsMap', 'travelUsLegendToggle', {
+          get value() { return mapState.travelUsLegendCollapsed; }
+        })
+      );
 
-      landLayer
-        .selectAll('path')
-        .data(world.features)
-        .join('path')
-        .attr('d', path)
-        .attr('class', 'map-land');
+      setupLegendToggle(
+        'travelEuropeLegendToggle',
+        {
+          get value() { return mapState.travelEuropeLegendCollapsed; },
+          set value(v) { mapState.travelEuropeLegendCollapsed = v; }
+        },
+        () => syncTravelLegendUi('travelEuropeMap', 'travelEuropeLegendToggle', {
+          get value() { return mapState.travelEuropeLegendCollapsed; }
+        })
+      );
 
-      const rings = pointsLayer.selectAll('.map-point-ring')
-        .data(travelCities)
-        .join('circle')
-        .attr('class', 'map-point-ring')
-        .attr('cx', d => projection([d.lon, d.lat])[0])
-        .attr('cy', d => projection([d.lon, d.lat])[1])
-        .attr('r', config.ringRadius);
+      syncTravelLegendUi('travelUsMap', 'travelUsLegendToggle', {
+        get value() { return mapState.travelUsLegendCollapsed; }
+      });
 
-      const points = pointsLayer.selectAll('.map-point')
-        .data(travelCities)
-        .join('circle')
-        .attr('class', 'map-point')
-        .attr('cx', d => projection([d.lon, d.lat])[0])
-        .attr('cy', d => projection([d.lon, d.lat])[1])
-        .attr('r', config.pointRadius);
+      syncTravelLegendUi('travelEuropeMap', 'travelEuropeLegendToggle', {
+        get value() { return mapState.travelEuropeLegendCollapsed; }
+      });
 
-      attachTooltip(points, tooltipEl, d => escapeHtml(d.name));
-      attachTooltip(rings, tooltipEl, d => escapeHtml(d.name));
+      // ---------- US MAP ----------
+      {
+        const { container, svg, width, height } = usContainerInfo;
+        const config = getMapConfig(width, height);
 
-      let cityLabels = null;
-
-      if (config.showCityLabels) {
-        cityLabels = labelsLayer
-          .selectAll('text')
-          .data(travelCities)
-          .join('text')
-          .attr('class', 'city-label')
-          .each(function(d) {
-            const [x, y] = projection([d.lon, d.lat]);
-            d.__labelX = x + config.cityLabelDx;
-            d.__labelY = y + config.cityLabelDy;
-          })
-          .attr('text-anchor', 'start')
-          .attr('dy', '0.35em')
-          .text(d => d.name);
-
-        applyZoomResponsiveStyles({
-          transform: d3.zoomIdentity,
-          cityLabels,
-          points,
-          rings,
-          baseCityFont: width <= 680 ? 9 : 11,
-          baseCityStroke: 3,
-          basePointRadius: config.pointRadius,
-          baseRingRadius: config.ringRadius,
-          basePointStroke: 1.6,
-          baseRingStroke: 1.5
+        const usProjection = fitConicProjection(width, height, usStates, {
+          parallels: [29.5, 45.5],
+          center: [0, 38],
+          rotate: [96, 0],
+          padding: config.padding
         });
-      }
 
-      createZoomBehavior(svg, zoomLayer, width, height, {
-        minScale: 1,
-        maxScale: 10,
-        initialScale: width <= 680 ? 2 : 1,
-        onZoom: (transform) => {
+        const usPath = d3.geoPath(usProjection);
+        const zoomLayer = svg.append('g').attr('class', 'zoom-layer');
+
+        zoomLayer.append('rect')
+          .attr('class', 'map-ocean')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', width)
+          .attr('height', height);
+
+        const landLayer = zoomLayer.append('g').attr('class', 'land-layer');
+        const pointsLayer = zoomLayer.append('g').attr('class', 'points-layer');
+        const labelsLayer = zoomLayer.append('g').attr('class', 'labels-layer');
+
+        landLayer
+          .selectAll('path')
+          .data(usStates.features)
+          .join('path')
+          .attr('d', usPath)
+          .attr('class', 'map-land map-region-selectable');
+
+        const usRings = pointsLayer.selectAll('.map-point-ring')
+          .data(usPlaces)
+          .join('circle')
+          .attr('class', 'map-point-ring')
+          .attr('cx', d => usProjection([d.lon, d.lat])[0])
+          .attr('cy', d => usProjection([d.lon, d.lat])[1])
+          .attr('r', config.ringRadius);
+
+        const usPoints = pointsLayer.selectAll('.map-point')
+          .data(usPlaces)
+          .join('circle')
+          .attr('class', 'map-point')
+          .attr('cx', d => usProjection([d.lon, d.lat])[0])
+          .attr('cy', d => usProjection([d.lon, d.lat])[1])
+          .attr('r', config.pointRadius);
+
+        let usLabels = null;
+
+        if (config.showCityLabels) {
+          usLabels = labelsLayer
+            .selectAll('text')
+            .data(usPlaces)
+            .join('text')
+            .attr('class', 'city-label')
+            .each(function(d) {
+              const [x, y] = usProjection([d.lon, d.lat]);
+              d.__labelX = x + config.cityLabelDx;
+              d.__labelY = y + config.cityLabelDy;
+            })
+            .attr('text-anchor', 'start')
+            .attr('dy', '0.35em')
+            .text(d => d.name);
+
           applyZoomResponsiveStyles({
-            transform,
-            cityLabels,
-            points,
-            rings,
+            transform: d3.zoomIdentity,
+            cityLabels: usLabels,
+            points: usPoints,
+            rings: usRings,
             baseCityFont: width <= 680 ? 9 : 11,
             baseCityStroke: 3,
             basePointRadius: config.pointRadius,
@@ -4338,7 +4666,190 @@
             baseRingStroke: 1.5
           });
         }
-      });
+
+        attachSelectablePointTooltip({
+          selection: usPoints,
+          tooltipEl: usTooltipEl,
+          containerEl: container,
+          formatter: d => getTravelTooltipHtml(d),
+          getKey: d => d.name,
+          selectedState: mapState.travelUsSelection
+        });
+
+        attachSelectablePointTooltip({
+          selection: usRings,
+          tooltipEl: usTooltipEl,
+          containerEl: container,
+          formatter: d => getTravelTooltipHtml(d),
+          getKey: d => d.name,
+          selectedState: mapState.travelUsSelection
+        });
+
+        restoreLockedTravelTooltip({
+          selection: usPoints,
+          tooltipEl: usTooltipEl,
+          formatter: d => getTravelTooltipHtml(d),
+          selectedState: mapState.travelUsSelection,
+          getKey: d => d.name
+        });
+
+        createZoomBehavior(svg, zoomLayer, width, height, {
+          minScale: 1,
+          maxScale: 8,
+          initialScale: 1,
+          onZoom: (transform) => {
+            applyZoomResponsiveStyles({
+              transform,
+              cityLabels: usLabels,
+              points: usPoints,
+              rings: usRings,
+              baseCityFont: width <= 680 ? 9 : 11,
+              baseCityStroke: 3,
+              basePointRadius: config.pointRadius,
+              baseRingRadius: config.ringRadius,
+              basePointStroke: 1.6,
+              baseRingStroke: 1.5
+            });
+          }
+        });
+      }
+
+      // ---------- EUROPE MAP ----------
+      {
+        const { container, svg, width, height } = europeContainerInfo;
+        const config = getMapConfig(width, height);
+
+        const europeCountries = world.features.filter(feature => {
+          const [lon, lat] = d3.geoCentroid(feature);
+          return lon > -25 && lon < 45 && lat > 34 && lat < 72;
+        });
+
+        const europeGeoJson = {
+          type: 'FeatureCollection',
+          features: europeCountries
+        };
+
+        const europeProjection = fitConicProjection(width, height, europeGeoJson, {
+          parallels: [35, 65],
+          center: [10, 52],
+          rotate: [-10, 0],
+          padding: config.padding
+        });
+
+        const europePath = d3.geoPath(europeProjection);
+        const zoomLayer = svg.append('g').attr('class', 'zoom-layer');
+
+        zoomLayer.append('rect')
+          .attr('class', 'map-ocean')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', width)
+          .attr('height', height);
+
+        const landLayer = zoomLayer.append('g').attr('class', 'land-layer');
+        const pointsLayer = zoomLayer.append('g').attr('class', 'points-layer');
+        const labelsLayer = zoomLayer.append('g').attr('class', 'labels-layer');
+
+        landLayer
+          .selectAll('path')
+          .data(europeCountries)
+          .join('path')
+          .attr('d', europePath)
+          .attr('class', 'map-land map-region-selectable');
+
+        const europeRings = pointsLayer.selectAll('.map-point-ring')
+          .data(europePlaces)
+          .join('circle')
+          .attr('class', 'map-point-ring')
+          .attr('cx', d => europeProjection([d.lon, d.lat])[0])
+          .attr('cy', d => europeProjection([d.lon, d.lat])[1])
+          .attr('r', config.ringRadius);
+
+        const europePoints = pointsLayer.selectAll('.map-point')
+          .data(europePlaces)
+          .join('circle')
+          .attr('class', 'map-point')
+          .attr('cx', d => europeProjection([d.lon, d.lat])[0])
+          .attr('cy', d => europeProjection([d.lon, d.lat])[1])
+          .attr('r', config.pointRadius);
+
+        let europeLabels = null;
+
+        if (config.showCityLabels) {
+          europeLabels = labelsLayer
+            .selectAll('text')
+            .data(europePlaces)
+            .join('text')
+            .attr('class', 'city-label')
+            .each(function(d) {
+              const [x, y] = europeProjection([d.lon, d.lat]);
+              d.__labelX = x + config.cityLabelDx;
+              d.__labelY = y + config.cityLabelDy;
+            })
+            .attr('text-anchor', 'start')
+            .attr('dy', '0.35em')
+            .text(d => d.name);
+
+          applyZoomResponsiveStyles({
+            transform: d3.zoomIdentity,
+            cityLabels: europeLabels,
+            points: europePoints,
+            rings: europeRings,
+            baseCityFont: width <= 680 ? 9 : 11,
+            baseCityStroke: 3,
+            basePointRadius: config.pointRadius,
+            baseRingRadius: config.ringRadius,
+            basePointStroke: 1.6,
+            baseRingStroke: 1.5
+          });
+        }
+
+        attachSelectablePointTooltip({
+          selection: europePoints,
+          tooltipEl: europeTooltipEl,
+          containerEl: container,
+          formatter: d => getTravelTooltipHtml(d),
+          getKey: d => d.name,
+          selectedState: mapState.travelEuropeSelection
+        });
+
+        attachSelectablePointTooltip({
+          selection: europeRings,
+          tooltipEl: europeTooltipEl,
+          containerEl: container,
+          formatter: d => getTravelTooltipHtml(d),
+          getKey: d => d.name,
+          selectedState: mapState.travelEuropeSelection
+        });
+
+        restoreLockedTravelTooltip({
+          selection: europePoints,
+          tooltipEl: europeTooltipEl,
+          formatter: d => getTravelTooltipHtml(d),
+          selectedState: mapState.travelEuropeSelection,
+          getKey: d => d.name
+        });
+
+        createZoomBehavior(svg, zoomLayer, width, height, {
+          minScale: 1,
+          maxScale: 8,
+          initialScale: 1,
+          onZoom: (transform) => {
+            applyZoomResponsiveStyles({
+              transform,
+              cityLabels: europeLabels,
+              points: europePoints,
+              rings: europeRings,
+              baseCityFont: width <= 680 ? 9 : 11,
+              baseCityStroke: 3,
+              basePointRadius: config.pointRadius,
+              baseRingRadius: config.ringRadius,
+              basePointStroke: 1.6,
+              baseRingStroke: 1.5
+            });
+          }
+        });
+      }
 
       mapState.travelRendered = true;
     }
@@ -4348,15 +4859,31 @@
         if (viewId === 'languageView') {
           await renderLanguageMap();
         }
+
         if (viewId === 'travelView') {
           await renderTravelMap();
         }
       } catch (error) {
-        const targetId = viewId === 'languageView' ? 'languageMap' : 'travelMap';
-        const target = document.getElementById(targetId);
-        if (target) {
-          target.innerHTML = `<div style="padding:1rem;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:var(--muted);">Map could not be loaded. Check that your local host can reach the Natural Earth GeoJSON source.</div>`;
+        if (viewId === 'languageView') {
+          const target = document.getElementById('languageMap');
+          if (target) {
+            target.innerHTML = `<div style="padding:1rem;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:var(--muted);">Map could not be loaded. Check that your local host can reach the required GeoJSON sources.</div>`;
+          }
         }
+
+        if (viewId === 'travelView') {
+          const usTarget = document.getElementById('travelUsMap');
+          const europeTarget = document.getElementById('travelEuropeMap');
+
+          if (usTarget) {
+            usTarget.innerHTML = `<div style="padding:1rem;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:var(--muted);">Travel map could not be loaded.</div>`;
+          }
+
+          if (europeTarget) {
+            europeTarget.innerHTML = `<div style="padding:1rem;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:var(--muted);">Travel map could not be loaded.</div>`;
+          }
+        }
+
         console.error(error);
       }
     }
@@ -5360,11 +5887,19 @@
 
       if (window.innerWidth > 680) {
         mapState.languageLegendCollapsed = false;
-      } else if (mapState.languageLegendCollapsed == null) {
-        mapState.languageLegendCollapsed = true;
+        mapState.travelUsLegendCollapsed = false;
+        mapState.travelEuropeLegendCollapsed = false;
       }
 
       syncLanguageLegendUi();
+
+      syncTravelLegendUi('travelUsMap', 'travelUsLegendToggle', {
+        get value() { return mapState.travelUsLegendCollapsed; }
+      });
+
+      syncTravelLegendUi('travelEuropeMap', 'travelEuropeLegendToggle', {
+        get value() { return mapState.travelEuropeLegendCollapsed; }
+      });
     });
 
     statusSelect.addEventListener('change', (event) => {
@@ -5464,7 +5999,9 @@
       console.assert(filters.includes('Video Games'), 'Video Games filter missing');
       console.assert(getPrimaryQuoteForTitle('Faust') && getPrimaryQuoteForTitle('Faust').text.includes('Two souls'), 'Primary quote lookup failed');
       console.assert(quotes.every(q => Object.prototype.hasOwnProperty.call(q, 'character')), 'Quotes should include character field');
-      console.assert(travelCities.length === 5, 'Travel city list should contain five cities');
+      console.assert(travelPlaces.length === 5, 'Travel place list should contain five places');
+      console.assert(travelPlaces.filter(p => p.region === 'us').length >= 1, 'US travel places missing');
+      console.assert(travelPlaces.filter(p => p.region === 'europe').length >= 1, 'Europe travel places missing');
       console.assert(items.every(item => Object.prototype.hasOwnProperty.call(item, 'status')), 'Each item should have a status');
       console.assert(items.every(item => Object.prototype.hasOwnProperty.call(item, 'owned')), 'Each item should have an owned field');
       console.assert(getStatusLabel('completed') === 'Completed', 'Status label failed');
@@ -5473,7 +6010,8 @@
     }
 
     observeMapContainer('languageView', 'languageMap', renderLanguageMap);
-    observeMapContainer('travelView', 'travelMap', renderTravelMap);
+    observeMapContainer('travelView', 'travelUsMap', renderTravelMap);
+    observeMapContainer('travelView', 'travelEuropeMap', renderTravelMap);
 
     runTests();
     renderFilters();
