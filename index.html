@@ -33,7 +33,7 @@
       --rank-2: #c96f30;
       --rank-1: #a33c2e;
       --topbar-height: 73px;
-      --footer-height: 86px;
+      --footer-height: 0px;
       --view-padding-bottom: 1.75rem;
     }
 
@@ -62,15 +62,15 @@
     * { box-sizing: border-box; }
 
     html {
-      height: 100%;
+      min-height: 100%;
       scroll-behavior: smooth;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     body {
-      height: 100%;
+      min-height: 100%;
       margin: 0;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
       font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -260,15 +260,11 @@
     main {
       flex: 1 1 auto;
       min-height: 0;
-      overflow: hidden;
       position: relative;
     }
 
     .view {
-      height: 100%;
-      overflow-y: auto;
       padding: 0 0 var(--view-padding-bottom);
-      scrollbar-gutter: stable;
     }
 
     .view[hidden] {
@@ -276,7 +272,10 @@
     }
 
     .hero {
-      padding: 3rem 0 1.2rem;
+      padding: 1.25rem 0 0.75rem;
+      min-height: calc(100vh - var(--topbar-height) - var(--footer-height) - 1.5rem);
+      display: flex;
+      align-items: center;
     }
 
     .hero-grid {
@@ -300,8 +299,8 @@
     }
 
     .hero-card {
-      padding: 2rem;
-      min-height: 280px;
+      padding: 1.15rem 1.2rem;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -413,7 +412,7 @@
     .search-panel,
     .detail-card,
     .map-card {
-      padding: 1.15rem;
+      padding: 0.9rem;
     }
 
     .quote-card blockquote,
@@ -915,21 +914,20 @@
     }
 
     footer {
-      flex: 0 0 auto;
-      padding: 1rem 0;
+      margin-top: 1.25rem;
+      padding: 0 0 1rem;
       color: var(--muted);
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-      border-top: 1px solid var(--line);
-      background: color-mix(in srgb, var(--paper) 94%, transparent);
-      backdrop-filter: blur(10px);
     }
 
     .footer-card {
-      padding: 1rem 1.15rem;
+      padding: 0.75rem 0.9rem;
       display: flex;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--paper) 94%, transparent);
     }
 
     @media (max-width: 1100px) {
@@ -1020,6 +1018,17 @@
 
       .status-grid {
         grid-template-columns: 1fr;
+      }
+
+      footer {
+        margin-top: 0.8rem;
+        padding-bottom: 0.8rem;
+      }
+
+      .footer-card {
+        padding: 0.65rem 0.75rem;
+        gap: 0.45rem;
+        font-size: 0.82rem;
       }
     }
 
@@ -1162,11 +1171,14 @@
       }
 
       .hero-grid {
-        grid-template-columns: 1.08fr 0.92fr;
+        grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.78fr);
+        gap: 0.85rem;
         align-items: center;
       }
 
       .side-stack {
+        display: grid;
+        gap: 0.75rem;
         align-content: center;
       }
 
@@ -1175,68 +1187,78 @@
       }
 
       .hero-quote-block {
-        margin-top: 1.2rem;
-        padding: 1rem 1.05rem;
+        margin-top: 0.8rem;
+        padding: 0.8rem 0.9rem;
         border-left: 2px solid color-mix(in srgb, var(--accent) 34%, transparent);
         background: color-mix(in srgb, var(--accent) 4%, transparent);
       }
 
       .hero-quote-block blockquote {
         margin: 0;
-        font-size: clamp(1.08rem, 1.8vw, 1.38rem);
-        line-height: 1.55;
+        font-size: clamp(0.98rem, 1.35vw, 1.15rem);
+        line-height: 1.42;
         color: var(--ink);
+      }
+
+      .hero-card .quote-character,
+      .hero-card .quote-source {
+        margin-top: 0.25rem;
+        font-size: 0.8rem;
       }
 
       .home-status-panel {
         display: grid;
-        gap: 0.8rem;
+        gap: 0.55rem;
       }
 
       .status-grid {
         display: grid;
-        grid-template-columns: 1fr;
-        gap: 0.7rem;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.45rem;
       }
 
       .status-mini-card {
         border: 1px solid var(--line);
         background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
-        padding: 0.72rem;
+        padding: 0.5rem;
         display: grid;
-        gap: 0.55rem;
-        min-height: 118px;
+        gap: 0.35rem;
+        min-height: 0;
+        aspect-ratio: 3 / 4;
+        align-content: start;
+        overflow: hidden;
       }
 
       .status-mini-card-portrait {
-        min-height: 170px;
-        align-content: start;
+        aspect-ratio: 3 / 4;
       }
 
       .status-mini-head {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        gap: 0.6rem;
+        gap: 0.35rem;
       }
 
       .status-mini-type {
         font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        font-size: 0.74rem;
-        letter-spacing: 0.07em;
+        font-size: 0.62rem;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
         color: var(--soft);
+        line-height: 1.1;
       }
 
       .status-mini-controls {
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.2rem;
+        flex: 0 0 auto;
       }
 
       .status-mini-arrow {
-        width: 28px;
-        height: 28px;
+        width: 20px;
+        height: 20px;
         display: grid;
         place-items: center;
         border: 1px solid var(--line);
@@ -1244,6 +1266,7 @@
         color: var(--ink);
         cursor: pointer;
         padding: 0;
+        font-size: 0.75rem;
         font-family: Inter, ui-sans-serif, system-ui, sans-serif;
       }
 
@@ -1253,26 +1276,39 @@
       }
 
       .status-mini-title {
-        font-size: 0.95rem;
-        line-height: 1.2;
+        font-size: 0.8rem;
+        line-height: 1.15;
       }
 
       .status-mini-meta {
         font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        font-size: 0.8rem;
+        font-size: 0.68rem;
         color: var(--soft);
+        line-height: 1.15;
       }
 
       .status-mini-blurb {
         color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.45;
+        font-size: 0.72rem;
+        line-height: 1.22;
+        overflow: hidden;
       }
 
       .status-mini-empty {
         color: var(--muted);
         font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        font-size: 0.86rem;
+        font-size: 0.68rem;
+        line-height: 1.2;
+      }
+
+      .home-status-panel h2 {
+        margin-bottom: 0.35rem !important;
+        font-size: 1rem !important;
+      }
+
+      .status-grid-current .status-mini-card,
+      .status-grid-finished .status-mini-card {
+        max-height: 180px;
       }
   </style>
 </head>
@@ -1649,7 +1685,7 @@
     <div class="container">
       <div class="panel footer-card">
         <div>Copyright © 2026 Reagan Davis. All Rights Reserved.</div>
-        <div>Built for long-term collecting, writing, and revisiting.</div>
+        <div></div>
       </div>
     </div>
   </footer>
@@ -2774,7 +2810,7 @@
               <div class="status-mini-meta">${escapeHtml(item.creator)} · ${escapeHtml(item.subtype || item.type)}</div>
             </div>
 
-            <div class="status-mini-blurb">${escapeHtml(item.blurb)}</div>
+            <div class="status-mini-blurb">${escapeHtml((item.blurb || '').slice(0, 88))}${item.blurb && item.blurb.length > 88 ? '…' : ''}</div>
           </article>
         `;
       }).join('');
