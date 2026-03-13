@@ -1928,6 +1928,20 @@
       }
     }
 
+    @media (max-width: 960px) {
+      body {
+        overflow: hidden;
+      }
+
+      main {
+        overflow: hidden;
+      }
+
+      #homeView {
+        overflow-y: auto;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3099,6 +3113,10 @@
       mobileNavMenu.hidden = !isHidden;
       menuToggle.setAttribute('aria-expanded', String(isHidden));
       menuToggle.setAttribute('aria-label', isHidden ? 'Close navigation menu' : 'Open navigation menu');
+
+      if (isHidden) {
+        requestAnimationFrame(() => keepPopupInViewport(mobileNavMenu));
+      }
     }
 
     async function ensureMapsLoaded() {
@@ -3643,7 +3661,12 @@
     }
 
     function toggleSpotifyPopup() {
-      setSpotifyPopupState(!spotifyState.popupOpen);
+      const nextState = !spotifyState.popupOpen;
+      setSpotifyPopupState(nextState);
+
+      if (nextState) {
+        requestAnimationFrame(() => keepPopupInViewport(spotifyPopup));
+      }
     }
 
     window.onSpotifyIframeApiReady = (IFrameAPI) => {
@@ -4082,6 +4105,26 @@
       }
     }
 
+    function keepPopupInViewport(popupEl, preferredMargin = 8) {
+      if (!popupEl || popupEl.hidden) return;
+
+      popupEl.style.left = '';
+      popupEl.style.right = '0';
+
+      const rect = popupEl.getBoundingClientRect();
+      const overflowRight = rect.right - window.innerWidth;
+      const overflowLeft = preferredMargin - rect.left;
+
+      if (overflowRight > 0) {
+        popupEl.style.right = `${overflowRight + preferredMargin}px`;
+      }
+
+      if (overflowLeft > 0) {
+        popupEl.style.right = 'auto';
+        popupEl.style.left = '0';
+      }
+    }
+
     function renderRankingList(element, entries, noun) {
       if (!entries.length) {
         element.innerHTML = `<li><span class="muted">No ${noun} yet.</span></li>`;
@@ -4432,6 +4475,14 @@
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 1080) closeMobileMenu();
+
+      if (!mobileNavMenu.hidden) {
+        keepPopupInViewport(mobileNavMenu);
+      }
+
+      if (spotifyState.popupOpen) {
+        keepPopupInViewport(spotifyPopup);
+      }
     });
 
     statusSelect.addEventListener('change', (event) => {
