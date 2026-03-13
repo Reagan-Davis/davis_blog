@@ -151,17 +151,6 @@
       grid-template-rows: 1fr auto;
     }
 
-    .map-shell {
-      width: 100%;
-      min-height: 0;
-      height: 100%;
-      border: 1px solid var(--line);
-      background:
-        linear-gradient(180deg, color-mix(in srgb, var(--paper-strong) 90%, transparent), color-mix(in srgb, var(--paper) 70%, transparent));
-      overflow: hidden;
-      position: relative;
-    }
-
     .detail-grid {
       height: 100%;
       min-height: 0;
@@ -907,13 +896,19 @@
 
     .map-shell {
       width: 100%;
-      min-height: 500px;
-      height: clamp(500px, 68vh, 760px);
+      height: 100%;
+      min-height: 0;
       border: 1px solid var(--line);
       background:
-        linear-gradient(180deg, color-mix(in srgb, var(--paper-strong) 90%, transparent), color-mix(in srgb, var(--paper) 70%, transparent));
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--paper-strong) 90%, transparent),
+          color-mix(in srgb, var(--paper) 70%, transparent)
+        );
       overflow: hidden;
       position: relative;
+      border-radius: 12px;
+      touch-action: manipulation;
     }
 
     .map-shell svg {
@@ -937,6 +932,56 @@
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
       font-size: 0.82rem;
       color: var(--muted);
+    }
+
+    .map-grid {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 0.9rem;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .map-card {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      min-height: 0;
+    }
+
+    #languageView .section,
+    #travelView .section {
+      padding-bottom: 0.75rem;
+    }
+
+    .map-card {
+      min-height: 0;
+    }
+
+    @media (min-width: 961px) {
+      .map-card {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .map-card {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .map-grid {
+        grid-template-rows: auto auto minmax(320px, 1fr);
+      }
+
+      .map-card {
+        min-height: 320px;
+      }
+
+      .map-shell {
+        border-radius: 10px;
+      }
     }
 
     .legend-chip {
@@ -973,13 +1018,32 @@
     .country-label,
     .city-label {
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-      font-size: 12px;
       fill: var(--ink);
       pointer-events: none;
+      paint-order: stroke;
+      stroke: color-mix(in srgb, var(--paper-strong) 92%, white);
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+
+    .country-label {
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .city-label {
+      font-size: 11px;
       font-weight: 700;
+    }
+
+    @media (max-width: 680px) {
+      .country-label {
+        font-size: 10px;
+      }
+
+      .city-label {
+        font-size: 9px;
+      }
     }
 
     .map-ocean {
@@ -1061,11 +1125,6 @@
       }
 
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-      .map-shell {
-        min-height: 420px;
-        height: clamp(420px, 62vh, 640px);
-      }
     }
 
     @media (max-width: 680px) {
@@ -1097,11 +1156,6 @@
 
       .hero { padding-top: 2rem; }
       h1 { max-width: none; }
-
-      .map-shell {
-        min-height: 360px;
-        height: 52vh;
-      }
 
       .country-label,
       .city-label {
@@ -1540,7 +1594,7 @@
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Vault</h2>
-              <p>Literature, films, television, music, video games, and whatever else deserves a place here, with room for notes, quotations, and fuller entries.</p>
+              <p>I don't like giving numeric scores to things.</p>
             </div>
           </div>
 
@@ -2068,7 +2122,8 @@
     const mapState = {
       worldGeoJson: null,
       languageRendered: false,
-      travelRendered: false
+      travelRendered: false,
+      resizeObservers: {}
     };
 
     const filters = ["All", "Literature", "Movies", "TV", "Music", "Video Games"];
@@ -2158,6 +2213,20 @@
     let ownedMode = 'all';
     let vaultViewMode = 'cards';
     let chartMode = 'decade';
+
+    function observeMapContainer(viewId, containerId, renderFn) {
+      const container = document.getElementById(containerId);
+      if (!container || mapState.resizeObservers[containerId]) return;
+
+      const observer = new ResizeObserver(() => {
+        if (!allViews[viewId].hidden) {
+          renderFn();
+        }
+      });
+
+      observer.observe(container);
+      mapState.resizeObservers[containerId] = observer;
+    }
 
     function escapeHtml(value) {
       return String(value)
@@ -2264,17 +2333,71 @@
     }
 
     function attachTooltip(selection, tooltipEl, formatter) {
+      const show = (event, d) => {
+        tooltipEl.innerHTML = formatter(d);
+        tooltipEl.style.opacity = '1';
+
+        const bounds = tooltipEl.parentElement.getBoundingClientRect();
+        const x = event.clientX ?? (event.touches && event.touches[0]?.clientX) ?? bounds.left + bounds.width / 2;
+        const y = event.clientY ?? (event.touches && event.touches[0]?.clientY) ?? bounds.top + bounds.height / 2;
+
+        tooltipEl.style.left = `${x - bounds.left}px`;
+        tooltipEl.style.top = `${y - bounds.top}px`;
+      };
+
+      const hide = () => {
+        tooltipEl.style.opacity = '0';
+      };
+
       selection
-        .on('mousemove', (event, d) => {
-          tooltipEl.innerHTML = formatter(d);
-          tooltipEl.style.opacity = '1';
-          const bounds = tooltipEl.parentElement.getBoundingClientRect();
-          tooltipEl.style.left = `${event.clientX - bounds.left}px`;
-          tooltipEl.style.top = `${event.clientY - bounds.top}px`;
+        .on('mousemove', show)
+        .on('mouseenter', show)
+        .on('mouseleave', hide)
+        .on('touchstart', (event, d) => {
+          event.preventDefault();
+          show(event, d);
         })
-        .on('mouseleave', () => {
-          tooltipEl.style.opacity = '0';
-        });
+        .on('touchend', hide);
+    }
+
+    function getMapViewportMode(width) {
+      if (width <= 680) return 'mobile';
+      if (width <= 960) return 'tablet';
+      return 'desktop';
+    }
+
+    function getMapConfig(width, height) {
+      const mode = getMapViewportMode(width);
+
+      return {
+        mode,
+        padding:
+          mode === 'mobile' ? 14 :
+          mode === 'tablet' ? 18 :
+          26,
+
+        showCountryLabels: mode !== 'mobile',
+        showCityLabels: mode !== 'mobile',
+
+        pointRadius:
+          mode === 'mobile' ? 3.4 :
+          mode === 'tablet' ? 3.8 :
+          4.3,
+
+        ringRadius:
+          mode === 'mobile' ? 5.4 :
+          mode === 'tablet' ? 6.2 :
+          7,
+
+        countryLabelOffsetY: 0,
+        cityLabelDx:
+          mode === 'mobile' ? 6 :
+          8,
+
+        cityLabelDy:
+          mode === 'mobile' ? -6 :
+          -8
+      };
     }
 
     async function renderLanguageMap() {
@@ -2282,7 +2405,8 @@
       const { svg, width, height } = setupMapSvg('languageMap');
       const tooltipEl = document.getElementById('languageTooltip');
 
-      const projection = fitRobinsonProjection(width, height, world, 26);
+      const config = getMapConfig(width, height);
+      const projection = fitRobinsonProjection(width, height, world, config.padding);
       const path = d3.geoPath(projection);
 
       svg.append('rect')
@@ -2306,18 +2430,20 @@
 
       attachTooltip(countries, tooltipEl, (d) => escapeHtml(getCountryName(d)));
 
-      const labelCountries = world.features.filter(f => LANGUAGE_HIGHLIGHTS.has(getCountryName(f)));
+      if (config.showCountryLabels) {
+        const labelCountries = world.features.filter(f => LANGUAGE_HIGHLIGHTS.has(getCountryName(f)));
 
-      svg.append('g')
-        .selectAll('text')
-        .data(labelCountries)
-        .join('text')
-        .attr('class', 'country-label')
-        .attr('x', d => path.centroid(d)[0])
-        .attr('y', d => path.centroid(d)[1])
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .text(d => getCountryName(d));
+        svg.append('g')
+          .selectAll('text')
+          .data(labelCountries)
+          .join('text')
+          .attr('class', 'country-label')
+          .attr('x', d => path.centroid(d)[0])
+          .attr('y', d => path.centroid(d)[1] + config.countryLabelOffsetY)
+          .attr('text-anchor', 'middle')
+          .attr('dy', '0.35em')
+          .text(d => getCountryName(d));
+      }
 
       mapState.languageRendered = true;
     }
@@ -2327,7 +2453,8 @@
       const { svg, width, height } = setupMapSvg('travelMap');
       const tooltipEl = document.getElementById('travelTooltip');
 
-      const projection = fitRobinsonProjection(width, height, world, 26);
+      const config = getMapConfig(width, height);
+      const projection = fitRobinsonProjection(width, height, world, config.padding);
       const path = d3.geoPath(projection);
 
       svg.append('rect')
@@ -2352,7 +2479,7 @@
         .attr('class', 'map-point-ring')
         .attr('cx', d => projection([d.lon, d.lat])[0])
         .attr('cy', d => projection([d.lon, d.lat])[1])
-        .attr('r', 7);
+        .attr('r', config.ringRadius);
 
       const points = pointsGroup.selectAll('.map-point')
         .data(travelCities)
@@ -2360,19 +2487,21 @@
         .attr('class', 'map-point')
         .attr('cx', d => projection([d.lon, d.lat])[0])
         .attr('cy', d => projection([d.lon, d.lat])[1])
-        .attr('r', 4.3);
+        .attr('r', config.pointRadius);
 
       attachTooltip(points, tooltipEl, (d) => escapeHtml(d.name));
       attachTooltip(rings, tooltipEl, (d) => escapeHtml(d.name));
 
-      svg.append('g')
-        .selectAll('text')
-        .data(travelCities)
-        .join('text')
-        .attr('class', 'city-label')
-        .attr('x', d => projection([d.lon, d.lat])[0] + 8)
-        .attr('y', d => projection([d.lon, d.lat])[1] - 8)
-        .text(d => d.name);
+      if (config.showCityLabels) {
+        svg.append('g')
+          .selectAll('text')
+          .data(travelCities)
+          .join('text')
+          .attr('class', 'city-label')
+          .attr('x', d => projection([d.lon, d.lat])[0] + config.cityLabelDx)
+          .attr('y', d => projection([d.lon, d.lat])[1] + config.cityLabelDy)
+          .text(d => d.name);
+      }
 
       mapState.travelRendered = true;
     }
@@ -2400,9 +2529,6 @@
 
       Object.entries(allViews).forEach(([id, el]) => {
         el.hidden = id !== viewId;
-        if (id === viewId) {
-          window.scrollTo({ top: 0, behavior: 'auto' });
-        }
       });
 
       navLinks.forEach(link => {
@@ -3096,8 +3222,6 @@
     });
 
     window.addEventListener('resize', () => {
-      if (!languageView.hidden) renderLanguageMap();
-      if (!travelView.hidden) renderTravelMap();
       if (window.innerWidth > 1080) closeMobileMenu();
     });
 
@@ -3179,6 +3303,9 @@
       console.assert(getOwnedLabel(true) === 'Owned', 'Owned label failed');
       console.assert(currentTypes.length === 5, 'Current types list should contain five categories');
     }
+
+    observeMapContainer('languageView', 'languageMap', renderLanguageMap);
+    observeMapContainer('travelView', 'travelMap', renderTravelMap);
 
     runTests();
     renderFilters();
