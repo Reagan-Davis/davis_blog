@@ -2636,6 +2636,48 @@
       background: var(--paper);
     }
 
+    .section-heading--quotes {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .shuffle-button {
+      appearance: none;
+      border: 1px solid var(--line, rgba(255,255,255,0.12));
+      background: var(--paper, rgba(255,255,255,0.06));
+      color: var(--ink, #e9e1d4);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .shuffle-button:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .shuffle-button:active {
+      transform: translateY(1px);
+    }
+
+    @media (max-width: 640px) {
+      .section-heading--quotes {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .shuffle-button {
+        padding: 7px 12px;
+        font-size: 0.85rem;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2790,6 +2832,7 @@
             <div>
               <h2 style="font-size:2rem;">Favorite Quotes</h2>
               <p>A random selection of favorite quotes</p>
+              <button id="shuffleQuotesButton" class="shuffle-button" type="button">Shuffle</button>
             </div>
           </div>
           <div class="essay-grid" id="quotesGrid"></div>
@@ -3662,6 +3705,12 @@
       }
     ];
 
+    const QUOTES_PAGE_LIMIT = 8;
+
+    function getRandomizedQuotes(limit = QUOTES_PAGE_LIMIT) {
+      return shuffleArray(quotes).slice(0, limit);
+    }
+
     const posts = [
       {
         slug: "why-lists-feel-personal",
@@ -4050,6 +4099,15 @@
         <strong>${escapeHtml(place.name)}</strong><br>
         <span style="color:var(--muted);">${escapeHtml(place.area || '')}</span>
       `;
+    }
+
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
     }
 
     function syncTravelLegendUi(shellId, toggleId, collapsedState) {
