@@ -69,7 +69,6 @@
       min-height: 100%;
       margin: 0;
       overflow-x: hidden;
-      overflow-y: auto;
     }
 
     html {
@@ -78,6 +77,8 @@
 
     body {
       min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
       font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.15)),
@@ -351,7 +352,7 @@
     main {
       position: relative;
       min-height: 0;
-      overflow: visible;
+      overflow: hidden;
     }
 
     .view {
@@ -1323,6 +1324,11 @@
         text-transform: uppercase;
         color: var(--muted);
         background: color-mix(in srgb, var(--paper-strong) 84%, transparent);
+      }
+
+      .badge.status-revisiting {
+        border-color: color-mix(in srgb, var(--rank-5) 42%, var(--line));
+        color: var(--rank-5);
       }
 
       .badge.status-completed {
@@ -3253,106 +3259,50 @@
     }
 
     .startup-gate-depth-back{
-      fill:rgba(0,0,0,.42);
-      transition:
-        transform 2000ms cubic-bezier(.22,.8,.2,1),
-        opacity 2000ms cubic-bezier(.22,.8,.2,1),
-        fill 2000ms cubic-bezier(.22,.8,.2,1);
-      transform-origin:320px 225px;
+      fill: rgba(0,0,0,.42);
+      transition: opacity 800ms ease, fill 800ms ease;
     }
 
     .startup-gate-mist{
-      fill:rgba(205,215,225,.07);
-      transition:
-        transform 2000ms cubic-bezier(.22,.8,.2,1),
-        opacity 2000ms cubic-bezier(.22,.8,.2,1);
-      transform-origin:320px 330px;
+      fill: rgba(205,215,225,.07);
+      transition: opacity 800ms ease;
+    }
+
+    .startup-gate-leaf,
+    .startup-gate-center-bar,
+    .startup-gate-lock{
+      opacity: 1;
+      transform: none !important;
+      filter: none !important;
     }
 
     .startup-gate-leaf{
-      transition:
-        transform 2000ms cubic-bezier(.22,.8,.2,1),
-        opacity 1500ms ease,
-        filter 2000ms cubic-bezier(.22,.8,.2,1);
-      will-change:transform, opacity, filter;
-    }
-
-    .startup-gate-leaf-left{
-      transform-origin:128px 250px;
-    }
-
-    .startup-gate-leaf-right{
-      transform-origin:512px 250px;
+      transition: opacity 800ms ease;
     }
 
     .startup-gate-center-bar{
-      transition:
-        opacity 500ms ease,
-        transform 900ms cubic-bezier(.22,.8,.2,1);
-      transform-origin:340px 250px;
+      transition: opacity 800ms ease;
     }
 
     .startup-gate-lock{
-      transition:
-        transform 700ms cubic-bezier(.22,.8,.2,1),
-        opacity 550ms ease;
-      transform-origin:320px 250px;
+      transition: opacity 800ms ease;
     }
 
-    .startup-modal__panel.is-opening .startup-gate-leaf-left{
-      transform:
-        translateX(-26px)
-        scaleX(.34)
-        skewY(-7deg);
-      filter:brightness(.72);
-    }
-
-    .startup-modal__panel.is-opening .startup-gate-leaf-right{
-      transform:
-        translateX(26px)
-        scaleX(.34)
-        skewY(7deg);
-      filter:brightness(.72);
-    }
-
-    .startup-modal__panel.is-opening .startup-gate-center-bar{
-      opacity:0;
-      transform:scaleY(.94);
-    }
-
+    .startup-modal__panel.is-opening .startup-gate-leaf,
+    .startup-modal__panel.is-opening .startup-gate-center-bar,
     .startup-modal__panel.is-opening .startup-gate-lock{
-      opacity:0;
-      transform:translate(0px, 18px) scale(.82);
+      opacity: 0;
+      transform: none !important;
+      filter: none !important;
     }
 
     .startup-modal__panel.is-opening .startup-gate-depth-back{
-      fill:rgba(0,0,0,.18);
-      transform:scale(1.02);
+      fill: rgba(0,0,0,.26);
+      opacity: 1;
     }
 
     .startup-modal__panel.is-opening .startup-gate-mist{
-      opacity:.24;
-      transform:scale(1.12);
-    }
-
-    @media (max-width:680px){
-      .startup-gate-svg{
-        max-height:220px;
-      }
-
-      .startup-modal__panel.is-opening .startup-gate-leaf-left{
-        transform:
-          translateX(-18px)
-          scaleX(.42)
-          skewY(-6deg);
-      }
-
-      .startup-modal__panel.is-opening .startup-gate-leaf-right{
-        transform:
-          translateX(18px)
-          scaleX(.42)
-          skewY(6deg);
-      }
+      opacity: .16;
     }
 
     .startup-gate-scene {
@@ -3389,30 +3339,6 @@
         transform 1100ms cubic-bezier(.22,.8,.2,1);
     }
 
-    .startup-modal__panel.is-opening .startup-wall-left {
-      transform: translateX(-8px) skewY(-1.5deg);
-      filter: saturate(.84) brightness(.84);
-    }
-
-    .startup-modal__panel.is-opening .startup-wall-right {
-      transform: translateX(8px) skewY(1.5deg);
-      filter: saturate(.84) brightness(.84);
-    }
-
-    .startup-modal__panel.is-opening .startup-wall-top {
-      transform: translateY(-4px) scaleY(1.01);
-      filter: saturate(.9) brightness(.98);
-    }
-
-    .startup-modal__panel.is-opening .startup-floor-plane {
-      opacity: 1;
-      transform: translateY(4px) scaleY(1.03);
-    }
-
-    .startup-modal__panel.is-opening .startup-stone-joints line {
-      opacity: .78;
-    }
-
     .startup-arch-voussoirs path {
       fill: none;
       stroke: rgba(48, 40, 34, 0.42);
@@ -3435,20 +3361,38 @@
         filter 1100ms cubic-bezier(.22,.8,.2,1);
     }
 
-    .startup-modal__panel.is-opening .startup-arch-outer {
-      filter: brightness(.94);
+    .startup-wall-face,
+    .startup-floor-plane,
+    .startup-stone-joints line,
+    .startup-arch-outer,
+    .startup-arch-mid,
+    .startup-arch-inner-lip,
+    .startup-arch-inner-highlight {
+      transform: none !important;
+      filter: none !important;
     }
 
-    .startup-modal__panel.is-opening .startup-arch-mid {
-      filter: brightness(.92);
-    }
-
-    .startup-modal__panel.is-opening .startup-arch-inner-lip {
-      filter: brightness(.82);
-    }
-
-    .startup-modal__panel.is-opening .startup-arch-inner-highlight {
-      opacity: .24;
+    .startup-modal__panel.is-opening .startup-wall-left,
+    .startup-modal__panel.is-opening .startup-wall-right,
+    .startup-modal__panel.is-opening .startup-wall-top,
+    .startup-modal__panel.is-opening .startup-floor-plane,
+    .startup-modal__panel.is-opening .startup-stone-joints line,
+    .startup-modal__panel.is-opening .startup-arch-outer,
+    .startup-modal__panel.is-opening .startup-arch-mid,
+    .startup-modal__panel.is-opening .startup-arch-inner-lip,
+    .startup-modal__panel.is-opening .startup-arch-inner-highlight,
+    .startup-modal__panel.is-opened .startup-wall-left,
+    .startup-modal__panel.is-opened .startup-wall-right,
+    .startup-modal__panel.is-opened .startup-wall-top,
+    .startup-modal__panel.is-opened .startup-floor-plane,
+    .startup-modal__panel.is-opened .startup-stone-joints line,
+    .startup-modal__panel.is-opened .startup-arch-outer,
+    .startup-modal__panel.is-opened .startup-arch-mid,
+    .startup-modal__panel.is-opened .startup-arch-inner-lip,
+    .startup-modal__panel.is-opened .startup-arch-inner-highlight {
+      transform: none !important;
+      filter: none !important;
+      opacity: 1 !important;
     }
 
     .startup-inventory-ui{
@@ -3909,41 +3853,12 @@
       }
     }
 
-    .startup-gate-leaf{
-      transform-box: fill-box;
-      transform-style: preserve-3d;
-      transition:
-        transform 1100ms cubic-bezier(.22,.7,.16,1),
-        opacity 300ms ease;
-      will-change: transform;
-    }
-
-    .startup-gate-leaf-left{
-      transform-origin: 128px 255px;
-      transform: perspective(900px) rotateY(0deg) skewY(0deg);
-    }
-
-    .startup-gate-leaf-right{
-      transform-origin: 512px 255px;
-      transform: perspective(900px) rotateY(0deg) skewY(0deg);
-    }
-
-    #startupModalStep2.is-opening .startup-gate-leaf-left,
-    #startupModalStep2.is-opened .startup-gate-leaf-left{
-      transform: perspective(900px) rotateY(72deg) skewY(-2deg);
-    }
-
-    #startupModalStep2.is-opening .startup-gate-leaf-right,
-    #startupModalStep2.is-opened .startup-gate-leaf-right{
-      transform: perspective(900px) rotateY(-72deg) skewY(2deg);
-    }
-
-    #startupModalStep2.is-opening .startup-gate-center-bar,
-    #startupModalStep2.is-opening .startup-gate-lock,
+    #startupModalStep2.is-opened .startup-gate-leaf,
     #startupModalStep2.is-opened .startup-gate-center-bar,
     #startupModalStep2.is-opened .startup-gate-lock{
       opacity: 0;
-      pointer-events: none;
+      transform: none !important;
+      filter: none !important;
     }
 
     .startup-item{
