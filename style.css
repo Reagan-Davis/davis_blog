@@ -2604,17 +2604,6 @@
       transform: translateY(1px);
     }
 
-    @media (max-width: 640px) {
-      .startup-modal {
-        padding: 16px;
-      }
-
-      .startup-modal__panel {
-        padding: 20px 18px 18px;
-        border-radius: 16px;
-      }
-    }
-
     .startup-modal {
     position: fixed;
     inset: 0;
@@ -2712,18 +2701,18 @@
     }
 
     @media (max-width: 640px) {
-    .startup-modal {
-        padding: 16px;
-    }
+      .startup-modal {
+          padding: 16px;
+      }
 
-    .startup-modal__panel {
-        padding: 20px 18px 18px;
-        border-radius: 16px;
-    }
+      .startup-modal__panel {
+          padding: 20px 18px 18px;
+          border-radius: 16px;
+      }
 
-    .startup-modal__actions {
-        flex-direction: column;
-    }
+      .startup-modal__actions:not(.startup-modal__actions--dungeon) {
+          flex-direction: column;
+      }
     }
 
     .exit-button {
@@ -3680,13 +3669,6 @@
       text-align:center;
     }
 
-    .startup-modal__actions--dungeon{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:1.15rem;
-    }
-
     .startup-bag-button{
       appearance:none;
       border:1px solid var(--line-strong);
@@ -3713,6 +3695,7 @@
       align-items:center;
       justify-content:center;
       margin-right:.25rem;
+      flex: 0 0 auto;
     }
 
     .startup-bag-svg{
@@ -4072,6 +4055,11 @@
     .startup-modal__actions--dungeon{
       position: relative;
       z-index: 10;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 0.9rem;
+      width: 100%;
     }
 
     @media (max-width: 680px){
@@ -4145,6 +4133,8 @@
       position: relative;
       display: inline-flex;
       align-items: center;
+      justify-self: start;
+      flex: 0 0 auto;
     }
 
     .startup-inventory-slot--key {
