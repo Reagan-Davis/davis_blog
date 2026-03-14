@@ -4495,3 +4495,15 @@
         height: 220px;
       }
     }
+
+    .section-divider {
+      height: 2px;
+      width: 100%;
+      margin: 0rem 0 1.6rem;
+      background: linear-gradient(
+        to right,
+        transparent,
+        var(--line-strong),
+        transparent
+      );
+    }
