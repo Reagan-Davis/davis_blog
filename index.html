@@ -538,7 +538,7 @@
       aria-modal="true"
       aria-labelledby="startupDungeonTitle"
     >
-      <p class="startup-modal__eyebrow">Dungeon Entrance</p>
+      <p class="startup-modal__eyebrow">Dungeon Entryway</p>
 
       <h2 id="startupDungeonTitle" class="startup-modal__title">
         <em>You enter the dungeon.</em>
@@ -812,9 +812,9 @@
         </svg>
       </div>
 
-      <p class="startup-modal__text">
+      <p class="startup-modal__text" id="startupDungeonText">
         You are standing in a narrow stone corridor.<br>
-        A rusted gate lies before you. It appears locked.<br><br>
+        A rusted gate lies before you. It appears locked.
       </p>
 
       <div class="startup-inventory-popover" id="startupInventoryPanel" hidden>
@@ -838,7 +838,7 @@
               type="button"
               class="startup-item startup-item-key"
               id="startupKeyItem"
-              draggable="true"
+              draggable="false"
               aria-label="Rusted key"
               title="Rusted Key"
             >
@@ -946,14 +946,17 @@
 
       const bagButton = document.getElementById("startupBagButton");
       const inventoryPanel = document.getElementById("startupInventoryPanel");
-      const inventoryClose = document.getElementById("startupInventoryClose");
       const inventoryNote = document.getElementById("startupInventoryNote");
       const keyItem = document.getElementById("startupKeyItem");
       const gateDropzone = document.getElementById("startupGateDropzone");
+      const inventoryCloseBtn = document.getElementById("startupInventoryClose");
+
+      const dungeonText = document.getElementById("startupDungeonText");
 
       if (
         !modal || !step1 || !step2 || !continueBtn || !proceedBtn ||
-        !bagButton || !inventoryPanel || !inventoryNote || !keyItem || !gateDropzone
+        !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
+        !gateDropzone || !dungeonText || !inventoryCloseBtn
       ) return;
 
       const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
@@ -998,6 +1001,11 @@
           proceedBtn.disabled = false;
           proceedBtn.textContent = "Proceed";
           inventoryNote.textContent = "The gate stands open.";
+          dungeonText.innerHTML = `
+            You are standing in a narrow stone corridor.<br>
+            The rusted gate hangs open now.<br>
+            The passage beyond is dark.
+          `;
         }, 1100);
       }
 
@@ -1007,10 +1015,7 @@
         gateUnlocked = true;
         gateDropzone.dataset.locked = "false";
         gateDropzone.classList.remove("is-drop-ready", "is-drag-over");
-
-        keyItem.classList.remove("dragging");
-        keyItem.setAttribute("draggable", "false");
-        keyItem.classList.add("startup-item-used");
+        gateDropzone.setAttribute("aria-label", "Open gate");
 
         inventoryNote.textContent = "The key turns in the lock.";
         proceedBtn.textContent = "Opening...";
@@ -1029,62 +1034,118 @@
         setInventoryOpen(!isExpanded);
       });
 
-      inventoryClose?.addEventListener("click", () => {
+      inventoryCloseBtn?.addEventListener("click", () => {
         setInventoryOpen(false);
       });
 
-      keyItem.addEventListener("dragstart", (event) => {
-        if (gateUnlocked || keyItem.classList.contains("startup-item-used")) {
+      function pointInsideRect(x, y, rect) {
+        return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+      }
+
+      function makeDragGhost() {
+        const ghost = document.createElement("div");
+        ghost.className = "startup-drag-ghost";
+        ghost.innerHTML = `<span class="startup-key-icon" aria-hidden="true">🗝</span>`;
+        document.body.appendChild(ghost);
+        return ghost;
+      }
+
+      function setGhostPosition(ghost, x, y) {
+        ghost.style.left = `${x}px`;
+        ghost.style.top = `${y}px`;
+      }
+
+      function removeGhost(ghost) {
+        if (ghost && ghost.parentNode) {
+          ghost.parentNode.removeChild(ghost);
+        }
+      }
+
+      function markGateTouchState(over) {
+        gateDropzone.classList.add("is-touch-drop-ready");
+        gateDropzone.classList.toggle("is-touch-drop-over", !!over);
+      }
+
+      function clearGateTouchState() {
+        gateDropzone.classList.remove("is-touch-drop-ready", "is-touch-drop-over");
+      }
+
+      function consumeKeyItem() {
+        keyItem.classList.add("is-hidden");
+        keyItem.disabled = true;
+        keyItem.setAttribute("aria-hidden", "true");
+        keyItem.tabIndex = -1;
+      }
+
+      function attachPointerKeyDrag() {
+        let pointerId = null;
+        let ghost = null;
+        let dragging = false;
+
+        keyItem.addEventListener("pointerdown", (event) => {
+          if (gateUnlocked) return;
+
+          pointerId = event.pointerId;
+          dragging = true;
+
+          keyItem.setPointerCapture(pointerId);
+          ghost = makeDragGhost();
+          setGhostPosition(ghost, event.clientX, event.clientY);
+
+          keyItem.classList.add("dragging");
+          markGateTouchState(false);
+          inventoryNote.textContent = "Drag the key onto the gate.";
+
           event.preventDefault();
-          return;
+        });
+
+        keyItem.addEventListener("pointermove", (event) => {
+          if (!dragging || event.pointerId !== pointerId || !ghost) return;
+
+          setGhostPosition(ghost, event.clientX, event.clientY);
+
+          const gateRect = gateDropzone.getBoundingClientRect();
+          const overGate = pointInsideRect(event.clientX, event.clientY, gateRect);
+
+          markGateTouchState(overGate);
+          event.preventDefault();
+        });
+
+        function endPointerDrag(event) {
+          if (!dragging || event.pointerId !== pointerId) return;
+
+          const gateRect = gateDropzone.getBoundingClientRect();
+          const droppedOnGate = pointInsideRect(event.clientX, event.clientY, gateRect);
+
+          keyItem.classList.remove("dragging");
+          removeGhost(ghost);
+          ghost = null;
+
+          if (droppedOnGate && !gateUnlocked) {
+            consumeKeyItem();
+            clearGateTouchState();
+            unlockGate();
+          } else {
+            clearGateTouchState();
+            if (!gateUnlocked) {
+              inventoryNote.textContent = "";
+            }
+          }
+
+          try {
+            keyItem.releasePointerCapture(pointerId);
+          } catch (_) {}
+
+          dragging = false;
+          pointerId = null;
+          event.preventDefault();
         }
 
-        event.dataTransfer.setData("text/plain", "rusted-key");
-        event.dataTransfer.effectAllowed = "move";
-        keyItem.classList.add("dragging");
-        gateDropzone.classList.add("is-drop-ready");
-        inventoryNote.textContent = "Drag the key onto the gate.";
-      });
+        keyItem.addEventListener("pointerup", endPointerDrag);
+        keyItem.addEventListener("pointercancel", endPointerDrag);
+      }
 
-      keyItem.addEventListener("dragend", () => {
-        keyItem.classList.remove("dragging");
-        gateDropzone.classList.remove("is-drop-ready", "is-drag-over");
-
-        if (!gateUnlocked) {
-          inventoryNote.textContent = "";
-        }
-      });
-
-      gateDropzone.addEventListener("dragenter", (event) => {
-        if (gateUnlocked) return;
-        event.preventDefault();
-        gateDropzone.classList.add("is-drag-over");
-      });
-
-      gateDropzone.addEventListener("dragover", (event) => {
-        if (gateUnlocked) return;
-        event.preventDefault();
-        event.dataTransfer.dropEffect = "move";
-        gateDropzone.classList.add("is-drag-over");
-      });
-
-      gateDropzone.addEventListener("dragleave", (event) => {
-        if (event.target === gateDropzone) {
-          gateDropzone.classList.remove("is-drag-over");
-        }
-      });
-
-      gateDropzone.addEventListener("drop", (event) => {
-        if (gateUnlocked) return;
-        event.preventDefault();
-
-        const itemId = event.dataTransfer.getData("text/plain");
-        gateDropzone.classList.remove("is-drag-over");
-
-        if (itemId === "rusted-key") {
-          unlockGate();
-        }
-      });
+      attachPointerKeyDrag();
 
       proceedBtn.addEventListener("click", () => {
         if (!gateUnlocked) {
