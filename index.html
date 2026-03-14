@@ -4033,7 +4033,18 @@
       lineVertexCount: 0,
       pointVertexCount: 0,
       resizeObserver: null,
-      animationFrame: null
+      animationFrame: null,
+
+      zoom: 1,
+      offsetX: 0,
+      offsetY: 0,
+
+      isDragging: false,
+      dragPointerId: null,
+      dragStartX: 0,
+      dragStartY: 0,
+      dragStartOffsetX: 0,
+      dragStartOffsetY: 0
     };
 
     function initHistoricalAtlasViewport() {
@@ -4046,6 +4057,7 @@
         setupHistoricalAtlasWebGL(canvas);
       }
 
+      bindHistoricalAtlasInteractions();
       renderHistoricalAtlasViewport();
 
       if (!historicalAtlasViewportState.resizeObserver) {
@@ -4267,16 +4279,36 @@
         const coords = feature.coordinates || [];
         for (let i = 0; i < coords.length; i++) {
           const projected = projection(coords[i]);
-          if (!projected) continue;
+          if (!projected || !Number.isFinite(projected[0]) || !Number.isFinite(projected[1])) continue;
 
-          const clip = pixelToClip(projected[0], projected[1], width, height);
+          const [viewX, viewY] = applyViewportTransform(
+            projected[0],
+            projected[1],
+            width,
+            height,
+            historicalAtlasViewportState.zoom,
+            historicalAtlasViewportState.offsetX,
+            historicalAtlasViewportState.offsetY
+          );
+
+          const clip = pixelToClip(viewX, viewY, width, height);
           pointVertices.push(clip[0], clip[1]);
 
           if (i < coords.length - 1) {
             const nextProjected = projection(coords[i + 1]);
-            if (!nextProjected) continue;
+            if (!nextProjected || !Number.isFinite(nextProjected[0]) || !Number.isFinite(nextProjected[1])) continue;
 
-            const nextClip = pixelToClip(nextProjected[0], nextProjected[1], width, height);
+            const [nextViewX, nextViewY] = applyViewportTransform(
+              nextProjected[0],
+              nextProjected[1],
+              width,
+              height,
+              historicalAtlasViewportState.zoom,
+              historicalAtlasViewportState.offsetX,
+              historicalAtlasViewportState.offsetY
+            );
+
+            const nextClip = pixelToClip(nextViewX, nextViewY, width, height);
 
             lineVertices.push(
               clip[0], clip[1],
@@ -4311,6 +4343,96 @@
       gl.uniform4f(historicalAtlasViewportState.uColor, 0.26, 0.62, 0.50, 0.95);
       gl.uniform1f(historicalAtlasViewportState.uPointSize, Math.max(2.0, 2.5 * dpr));
       gl.drawArrays(gl.POINTS, 0, historicalAtlasViewportState.pointVertexCount);
+    }
+
+    function bindHistoricalAtlasInteractions() {
+      const canvas = document.getElementById('historicalAtlasCanvas');
+      if (!canvas || canvas.dataset.bound === 'true') return;
+
+      canvas.dataset.bound = 'true';
+
+      canvas.addEventListener('wheel', (event) => {
+        event.preventDefault();
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        const state = historicalAtlasViewportState;
+        const oldZoom = state.zoom;
+
+        const zoomFactor = event.deltaY < 0 ? 1.12 : 0.89;
+        const newZoom = Math.max(1, Math.min(18, oldZoom * zoomFactor));
+
+        if (newZoom === oldZoom) return;
+
+        const width = rect.width;
+        const height = rect.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        // Keep the mouse position anchored while zooming
+        state.offsetX = mouseX - centerX - ((mouseX - centerX - state.offsetX) * (newZoom / oldZoom));
+        state.offsetY = mouseY - centerY - ((mouseY - centerY - state.offsetY) * (newZoom / oldZoom));
+
+        state.zoom = newZoom;
+        renderHistoricalAtlasViewport();
+      }, { passive: false });
+
+      canvas.addEventListener('pointerdown', (event) => {
+        const state = historicalAtlasViewportState;
+
+        state.isDragging = true;
+        state.dragPointerId = event.pointerId;
+        state.dragStartX = event.clientX;
+        state.dragStartY = event.clientY;
+        state.dragStartOffsetX = state.offsetX;
+        state.dragStartOffsetY = state.offsetY;
+
+        canvas.setPointerCapture(event.pointerId);
+        canvas.style.cursor = 'grabbing';
+      });
+
+      canvas.addEventListener('pointermove', (event) => {
+        const state = historicalAtlasViewportState;
+        if (!state.isDragging || event.pointerId !== state.dragPointerId) return;
+
+        const dx = event.clientX - state.dragStartX;
+        const dy = event.clientY - state.dragStartY;
+
+        state.offsetX = state.dragStartOffsetX + dx;
+        state.offsetY = state.dragStartOffsetY + dy;
+
+        renderHistoricalAtlasViewport();
+      });
+
+      function endDrag(event) {
+        const state = historicalAtlasViewportState;
+        if (event.pointerId !== state.dragPointerId) return;
+
+        state.isDragging = false;
+        state.dragPointerId = null;
+        canvas.style.cursor = 'grab';
+
+        try {
+          canvas.releasePointerCapture(event.pointerId);
+        } catch (_) {}
+      }
+
+      canvas.addEventListener('pointerup', endDrag);
+      canvas.addEventListener('pointercancel', endDrag);
+
+      canvas.style.cursor = 'grab';
+    }
+
+    function applyViewportTransform(x, y, width, height, zoom, offsetX, offsetY) {
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      return [
+        (x - centerX) * zoom + centerX + offsetX,
+        (y - centerY) * zoom + centerY + offsetY
+      ];
     }
 
     function pixelToClip(x, y, width, height) {
