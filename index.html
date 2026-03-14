@@ -81,7 +81,7 @@
 
             <div id="spotifyPopup" class="spotify-popup" hidden>
               <div class="spotify-popup-head">
-                <div class="spotify-popup-title">Playlist</div>
+                <div class="spotify-popup-title">Random Songs on Rotation</div>
                 <a
                   id="spotifyOpenLink"
                   class="spotify-open-link"
@@ -459,7 +459,7 @@
             <h2 style="font-size:1.6rem;">About</h2>
             <p class="muted">
               Metrics. Metrics are everything. At least that is what I've been telling myself lately.<br><br>
-              At the start of 2026 I set out to do a great many things outside of my comfort zone. Some worked out pretty well. Others not so much. But the year is far from over.<br><br>
+              At the start of 2026 I set out to do a great many things outside of my comfort zone. Some worked out pretty well. Others not so much. But the year is far from over, and time waits for no man.<br><br>
               One of those things I neglected the most was establishing the systems I need to hold myself accountable for how I spend my time.<br><br>
               With that growing sensation of every year progressing faster, certain aspects of how I spend my free time have become non-negotiable. I read for an hour a day. I learn languages for an hour a day. I realize that if I do not do these things and many others, I will never reach all of my goals in what little time a lifetime truly is.<br><br>
               I contemplated for a long time over what the best way to go about this would be.<br><br>
@@ -521,7 +521,7 @@
       <p class="startup-modal__eyebrow">Note</p>
 
       <h2 id="startupModalTitle" class="startup-modal__title">
-        The site is a continuous work in progress.<br><br>
+        This site is a continuous work in progress.<br><br>
         The why behind its existence can be found on the about page.<br><br>
         It is full of placeholder text. It is designed for monitors but should be <em>mostly</em> functional on mobile.<br><br>
         There are multiple hundreds of things yet to be entered here.<br><br>
@@ -823,7 +823,7 @@
 
       <p class="startup-modal__text" id="startupDungeonText">
         You are standing in a narrow stone corridor.<br>
-        A rusted gate lies before you. It appears locked.
+        A rusted gate lies before you.
       </p>
 
       <div class="startup-inventory-popover" id="startupInventoryPanel" hidden>
@@ -982,15 +982,29 @@
       const gateDropzone = document.getElementById("startupGateDropzone");
       const inventoryCloseBtn = document.getElementById("startupInventoryClose");
 
+      const dungeonTitle = document.getElementById("startupDungeonTitle");
       const dungeonText = document.getElementById("startupDungeonText");
 
       const bagHelp = document.getElementById("startupBagHelp");
       const keyHelp = document.getElementById("startupKeyHelp");
 
+      const DUNGEON_ENTRY_TITLE = "<em>You enter the dungeon.</em>";
+
+      const DUNGEON_LOCKED_TEXT = `
+        You are standing in a narrow stone corridor.<br>
+        A rusted gate lies before you.
+      `;
+
+      const DUNGEON_OPEN_TEXT = `
+        You are standing in a narrow stone corridor.<br>
+        The rusted gate hangs open now.<br>
+        The passage beyond is dark.
+      `;
+
       if (
         !modal || !step1 || !step2 || !continueBtn || !proceedBtn ||
         !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
-        !gateDropzone || !dungeonText || !inventoryCloseBtn ||
+        !gateDropzone || !dungeonTitle || !dungeonText || !inventoryCloseBtn ||
         !bagHelp || !keyHelp
       ) return;
 
@@ -1015,6 +1029,20 @@
         step2.classList.toggle("is-active", stepNumber === 2);
 
         if (stepNumber === 2) {
+          dungeonTitle.innerHTML = "";
+          dungeonText.innerHTML = "";
+
+          typePopupText(dungeonTitle, DUNGEON_ENTRY_TITLE, {
+            speed: 30,
+            startDelay: 120,
+            onComplete: () => {
+              typePopupText(dungeonText, DUNGEON_LOCKED_TEXT, {
+                speed: 24,
+                startDelay: 180
+              });
+            }
+          });
+
           scheduleBagHint();
         } else {
           hideAllTutorialHints();
@@ -1101,11 +1129,11 @@
           proceedBtn.disabled = false;
           proceedBtn.textContent = "Proceed";
           inventoryNote.textContent = "";
-          dungeonText.innerHTML = `
-            You are standing in a narrow stone corridor.<br>
-            The rusted gate hangs open now.<br>
-            The passage beyond is dark.
-          `;
+
+          typePopupText(dungeonText, DUNGEON_OPEN_TEXT, {
+            speed: 24,
+            startDelay: 80
+          });
         }, 1100);
       }
 
@@ -2084,6 +2112,44 @@
 
     let heroQuoteTypingTimer = null;
     let heroQuoteAnimationId = 0;
+
+    let popupTypingTimer = null;
+    let popupTypingRunId = 0;
+
+    function typePopupText(element, html, {
+      speed = 26,
+      startDelay = 120,
+      onComplete = null
+    } = {}) {
+      if (!element) return;
+
+      popupTypingRunId += 1;
+      const runId = popupTypingRunId;
+
+      clearTimeout(popupTypingTimer);
+      element.innerHTML = "";
+      element.classList.add("popupTyping");
+
+      let index = 0;
+
+      function step() {
+        if (runId !== popupTypingRunId) return;
+
+        index += 1;
+        element.innerHTML = html.slice(0, index);
+
+        if (index < html.length) {
+          popupTypingTimer = setTimeout(step, speed);
+        } else {
+          element.classList.remove("popupTyping");
+          if (typeof onComplete === "function") {
+            onComplete();
+          }
+        }
+      }
+
+      popupTypingTimer = setTimeout(step, startDelay);
+    }
 
     function observeMapContainer(viewId, containerId, renderFn) {
       const container = document.getElementById(containerId);

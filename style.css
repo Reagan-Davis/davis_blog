@@ -4386,3 +4386,45 @@
     #themeToggle {
       display: none !important;
     }
+
+    .popupTyping::after {
+      content: "";
+      display: inline-block;
+      width: 1px;
+      height: 0.95em;
+      margin-left: 0.12em;
+      vertical-align: -0.08em;
+      background: currentColor;
+      animation: heroCaretBlink 0.85s steps(1) infinite;
+    }
+
+    @media (max-width: 680px) {
+
+      .startup-help-popup--bag {
+        left: 0;
+        right: auto;
+        bottom: calc(100% + 10px);
+
+        transform: translate(0, 8px);
+
+        width: min(240px, calc(100vw - 2rem));
+        max-width: min(240px, calc(100vw - 2rem));
+      }
+
+      .startup-help-popup--bag.is-visible {
+        transform: translate(0, 0);
+      }
+
+    }
+
+    @media (max-width: 680px) {
+
+      .startup-help-popup--bag::after {
+        left: 16px;
+        right: auto;
+        bottom: -7px;
+
+        transform: rotate(225deg);
+      }
+
+    }
