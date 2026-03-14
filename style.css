@@ -1445,7 +1445,7 @@
       .side-stack {
         display: grid;
         gap: 0.9rem;
-        align-content: stretch;
+        align-content: start;
       }
 
       .home-status-panel h2,
@@ -1481,13 +1481,15 @@
 
       .home-status-panel {
         display: grid;
-        gap: 0.55rem;
+        gap: 0.15rem;
       }
 
       .status-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.6rem;
+        align-items: stretch;
+        align-content: start;
       }
 
       @media (max-width: 1200px) {
@@ -1988,11 +1990,11 @@
       border: 1px solid var(--line);
       background: color-mix(in srgb, var(--paper-strong) 92%, transparent);
       padding: 0.65rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.28rem;
-      min-height: 0;
-      height: auto;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 0.3rem;
+      min-height: 128px;
+      height: 128px;
       overflow: hidden;
     }
 
@@ -2013,6 +2015,7 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 0.3rem;
+      min-height: 20px;
     }
 
     .status-mini-type {
@@ -2054,12 +2057,20 @@
 
     .status-mini-main {
       min-width: 0;
+      display: grid;
+      gap: 0.12rem;
+      align-content: start;
     }
 
     .status-mini-title {
       font-size: 0.74rem;
       line-height: 1.05;
       margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 2.1em;
     }
 
     .status-mini-meta {
@@ -2068,6 +2079,11 @@
       color: var(--soft);
       line-height: 1.08;
       margin-top: 0.1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 2.1em;
     }
 
     .status-mini-blurb {
@@ -2076,8 +2092,9 @@
       line-height: 1.16;
       overflow: hidden;
       display: -webkit-box;
-      -webkit-line-clamp: 4;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
+      align-self: end;
     }
 
     .status-mini-empty {
