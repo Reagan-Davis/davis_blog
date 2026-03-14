@@ -545,7 +545,134 @@
       </h2>
 
       <div class="startup-gate-wrap" aria-hidden="true">
-        <svg class="startup-gate-svg" viewBox="0 0 640 420">
+        <svg class="startup-gate-svg startup-gate-scene" viewBox="0 0 640 420">
+
+          <defs>
+            <linearGradient id="startupStoneFront" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#8c8478"/>
+              <stop offset="100%" stop-color="#5f584f"/>
+            </linearGradient>
+
+            <linearGradient id="startupStoneSideLeft" x1="1" x2="0" y1="0" y2="0">
+              <stop offset="0%" stop-color="#5f584f"/>
+              <stop offset="100%" stop-color="#3f3a34"/>
+            </linearGradient>
+
+            <linearGradient id="startupStoneSideRight" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#5f584f"/>
+              <stop offset="100%" stop-color="#3f3a34"/>
+            </linearGradient>
+
+            <linearGradient id="startupStoneTop" x1="0" x2="0" y1="1" y2="0">
+              <stop offset="0%" stop-color="#655e55"/>
+              <stop offset="100%" stop-color="#8d8579"/>
+            </linearGradient>
+
+            <linearGradient id="startupFloorPlane" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="rgba(110,104,96,0.22)"/>
+              <stop offset="100%" stop-color="rgba(38,34,31,0.08)"/>
+            </linearGradient>
+          </defs>
+
+          <!-- left wall face -->
+          <polygon
+            class="startup-wall-face startup-wall-left"
+            points="90,370 90,150 28,118 28,392"
+            fill="url(#startupStoneSideLeft)"
+          />
+
+          <!-- right wall face -->
+          <polygon
+            class="startup-wall-face startup-wall-right"
+            points="550,150 550,370 612,392 612,118"
+            fill="url(#startupStoneSideRight)"
+          />
+
+          <!-- ceiling face -->
+          <polygon
+            class="startup-wall-face startup-wall-top"
+            points="90,150 200,42 440,42 550,150 612,118 486,12 154,12 28,118"
+            fill="url(#startupStoneTop)"
+          />
+
+          <!-- floor plane -->
+          <polygon
+            class="startup-floor-plane"
+            points="90,370 550,370 612,392 28,392"
+            fill="url(#startupFloorPlane)"
+          />
+
+          <!-- side block seams -->
+          <g class="startup-stone-joints" aria-hidden="true">
+            <!-- LEFT WALL: horizontal rows -->
+            <line x1="28" y1="168" x2="90" y2="184"/>
+            <line x1="28" y1="222" x2="90" y2="232"/>
+            <line x1="28" y1="278" x2="90" y2="286"/>
+            <line x1="28" y1="336" x2="90" y2="340"/>
+
+            <!-- LEFT WALL: row 1 verticals -->
+            <line x1="47" y1="126" x2="47" y2="178"/>
+            <line x1="71" y1="138" x2="71" y2="180"/>
+
+            <!-- LEFT WALL: row 2 verticals offset -->
+            <line x1="38" y1="184" x2="38" y2="228"/>
+            <line x1="61" y1="190" x2="61" y2="230"/>
+            <line x1="82" y1="196" x2="82" y2="232"/>
+
+            <!-- LEFT WALL: row 3 verticals -->
+            <line x1="48" y1="232" x2="48" y2="282"/>
+            <line x1="73" y1="238" x2="73" y2="284"/>
+
+            <!-- LEFT WALL: row 4 verticals offset -->
+            <line x1="37" y1="286" x2="37" y2="338"/>
+            <line x1="60" y1="290" x2="60" y2="340"/>
+            <line x1="82" y1="294" x2="82" y2="342"/>
+
+            <!-- RIGHT WALL: horizontal rows -->
+            <line x1="550" y1="184" x2="612" y2="168"/>
+            <line x1="550" y1="232" x2="612" y2="222"/>
+            <line x1="550" y1="286" x2="612" y2="278"/>
+            <line x1="550" y1="340" x2="612" y2="336"/>
+
+            <!-- RIGHT WALL: row 1 verticals -->
+            <line x1="593" y1="126" x2="593" y2="178"/>
+            <line x1="569" y1="138" x2="569" y2="180"/>
+
+            <!-- RIGHT WALL: row 2 verticals offset -->
+            <line x1="602" y1="184" x2="602" y2="228"/>
+            <line x1="579" y1="190" x2="579" y2="230"/>
+            <line x1="558" y1="196" x2="558" y2="232"/>
+
+            <!-- RIGHT WALL: row 3 verticals -->
+            <line x1="592" y1="232" x2="592" y2="282"/>
+            <line x1="567" y1="238" x2="567" y2="284"/>
+
+            <!-- RIGHT WALL: row 4 verticals offset -->
+            <line x1="603" y1="286" x2="603" y2="338"/>
+            <line x1="580" y1="290" x2="580" y2="340"/>
+            <line x1="558" y1="294" x2="558" y2="342"/>
+
+            <!-- TOP/CEILING JOINTS -->
+            <line x1="90" y1="150" x2="28" y2="118"/>
+            <line x1="550" y1="150" x2="612" y2="118"/>
+            <line x1="154" y1="12" x2="200" y2="42"/>
+            <line x1="486" y1="12" x2="440" y2="42"/>
+
+            <!-- ceiling rows -->
+            <line x1="170" y1="28" x2="470" y2="28"/>
+            <line x1="124" y1="78" x2="516" y2="78"/>
+
+            <!-- ceiling vertical offsets row 1 -->
+            <line x1="232" y1="18" x2="232" y2="42"/>
+            <line x1="322" y1="14" x2="322" y2="42"/>
+            <line x1="410" y1="18" x2="410" y2="42"/>
+
+            <!-- ceiling vertical offsets row 2 -->
+            <line x1="180" y1="58" x2="180" y2="82"/>
+            <line x1="270" y1="58" x2="270" y2="82"/>
+            <line x1="365" y1="58" x2="365" y2="82"/>
+            <line x1="455" y1="58" x2="455" y2="82"/>
+          </g>
 
           <!-- background opening -->
           <g class="startup-gate-depth">
@@ -553,12 +680,55 @@
             <ellipse cx="320" cy="330" rx="130" ry="24" class="startup-gate-mist"></ellipse>
           </g>
 
-          <!-- stone arch -->
+          <!-- outer arch mass -->
           <path
+            class="startup-arch-outer"
             d="M90 370 L90 150 Q90 42 200 42 L440 42 Q550 42 550 150 L550 370"
             fill="none"
-            stroke="rgba(145,130,112,0.5)"
-            stroke-width="26"
+            stroke="url(#startupStoneFront)"
+            stroke-width="42"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- mid arch face -->
+          <path
+            class="startup-arch-mid"
+            d="M90 370 L90 150 Q90 42 200 42 L440 42 Q550 42 550 150 L550 370"
+            fill="none"
+            stroke="#72695f"
+            stroke-width="28"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- inner arch lip -->
+          <path
+            class="startup-arch-inner-lip"
+            d="M120 360 L120 155 Q120 70 200 70 L440 70 Q520 70 520 155 L520 360"
+            fill="none"
+            stroke="#3e3934"
+            stroke-width="18"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <g class="startup-arch-voussoirs" aria-hidden="true">
+            <path d="M152 128 Q170 82 214 58" />
+            <path d="M196 96 Q220 62 262 48" />
+            <path d="M248 76 Q282 52 320 46" />
+            <path d="M392 48 Q430 58 444 76" />
+            <path d="M378 48 Q420 62 444 96" />
+            <path d="M426 58 Q470 82 488 128" />
+          </g>
+
+          <!-- inner highlight edge -->
+          <path
+            class="startup-arch-inner-highlight"
+            d="M126 356 L126 158 Q126 79 202 79 L438 79 Q514 79 514 158 L514 356"
+            fill="none"
+            stroke="rgba(210,200,185,0.18)"
+            stroke-width="4"
             stroke-linecap="round"
             stroke-linejoin="round"
           />

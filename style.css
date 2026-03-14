@@ -3347,3 +3347,99 @@
           skewY(6deg);
       }
     }
+
+    .startup-gate-scene {
+      overflow: visible;
+    }
+
+    .startup-wall-face {
+      transition:
+        transform 1100ms cubic-bezier(.22,.8,.2,1),
+        filter 1100ms cubic-bezier(.22,.8,.2,1),
+        opacity 1100ms cubic-bezier(.22,.8,.2,1);
+    }
+
+    .startup-wall-left,
+    .startup-wall-right,
+    .startup-wall-top {
+      filter: saturate(.88) brightness(.92);
+    }
+
+    .startup-floor-plane {
+      transition:
+        transform 1100ms cubic-bezier(.22,.8,.2,1),
+        opacity 1100ms cubic-bezier(.22,.8,.2,1);
+      opacity: .9;
+    }
+
+    .startup-stone-joints line {
+      stroke: rgba(34, 28, 24, 0.38);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      opacity: .82;
+      transition:
+        opacity 1100ms cubic-bezier(.22,.8,.2,1),
+        transform 1100ms cubic-bezier(.22,.8,.2,1);
+    }
+
+    .startup-modal__panel.is-opening .startup-wall-left {
+      transform: translateX(-8px) skewY(-1.5deg);
+      filter: saturate(.84) brightness(.84);
+    }
+
+    .startup-modal__panel.is-opening .startup-wall-right {
+      transform: translateX(8px) skewY(1.5deg);
+      filter: saturate(.84) brightness(.84);
+    }
+
+    .startup-modal__panel.is-opening .startup-wall-top {
+      transform: translateY(-4px) scaleY(1.01);
+      filter: saturate(.9) brightness(.98);
+    }
+
+    .startup-modal__panel.is-opening .startup-floor-plane {
+      opacity: 1;
+      transform: translateY(4px) scaleY(1.03);
+    }
+
+    .startup-modal__panel.is-opening .startup-stone-joints line {
+      opacity: .78;
+    }
+
+    .startup-arch-voussoirs path {
+      fill: none;
+      stroke: rgba(48, 40, 34, 0.42);
+      stroke-width: 5;
+      stroke-linecap: round;
+      transition:
+        opacity 1100ms cubic-bezier(.22,.8,.2,1),
+        transform 1100ms cubic-bezier(.22,.8,.2,1);
+    }
+
+    .startup-arch-outer {
+      transition: filter 1100ms cubic-bezier(.22,.8,.2,1);
+    }
+
+    .startup-arch-mid,
+    .startup-arch-inner-lip,
+    .startup-arch-inner-highlight {
+      transition:
+        opacity 1100ms cubic-bezier(.22,.8,.2,1),
+        filter 1100ms cubic-bezier(.22,.8,.2,1);
+    }
+
+    .startup-modal__panel.is-opening .startup-arch-outer {
+      filter: brightness(.94);
+    }
+
+    .startup-modal__panel.is-opening .startup-arch-mid {
+      filter: brightness(.92);
+    }
+
+    .startup-modal__panel.is-opening .startup-arch-inner-lip {
+      filter: brightness(.82);
+    }
+
+    .startup-modal__panel.is-opening .startup-arch-inner-highlight {
+      opacity: .24;
+    }
