@@ -817,8 +817,19 @@
         A rusted gate lies before you. It appears locked.<br><br>
       </p>
 
-      <div class="startup-inventory-panel" id="startupInventoryPanel" hidden>
-        <div class="startup-inventory-title">Inventory</div>
+      <div class="startup-inventory-popover" id="startupInventoryPanel" hidden>
+        <div class="startup-inventory-popover__head">
+          <div class="startup-inventory-title">Inventory</div>
+          <button
+            type="button"
+            class="startup-inventory-close"
+            id="startupInventoryClose"
+            aria-label="Close inventory"
+            title="Close inventory"
+          >
+            ×
+          </button>
+        </div>
 
         <div class="startup-inventory-grid">
           <div class="startup-inventory-slot">
@@ -935,6 +946,7 @@
 
       const bagButton = document.getElementById("startupBagButton");
       const inventoryPanel = document.getElementById("startupInventoryPanel");
+      const inventoryClose = document.getElementById("startupInventoryClose");
       const inventoryNote = document.getElementById("startupInventoryNote");
       const keyItem = document.getElementById("startupKeyItem");
       const gateDropzone = document.getElementById("startupGateDropzone");
@@ -975,12 +987,13 @@
       }
 
       function playGateAnimation() {
-        if (step2.classList.contains("is-opening")) return;
+        if (step2.classList.contains("is-opening") || step2.classList.contains("is-opened")) return;
 
         step2.classList.add("is-opening");
 
         setTimeout(() => {
           step2.classList.remove("is-opening");
+          step2.classList.add("is-opened");
           gateAnimationPlayed = true;
           proceedBtn.disabled = false;
           proceedBtn.textContent = "Proceed";
@@ -995,13 +1008,15 @@
         gateDropzone.dataset.locked = "false";
         gateDropzone.classList.remove("is-drop-ready", "is-drag-over");
 
-        keyItem.classList.add("startup-item-used");
+        keyItem.classList.remove("dragging");
         keyItem.setAttribute("draggable", "false");
+        keyItem.classList.add("startup-item-used");
 
         inventoryNote.textContent = "The key turns in the lock.";
         proceedBtn.textContent = "Opening...";
         proceedBtn.disabled = true;
 
+        setInventoryOpen(false);
         playGateAnimation();
       }
 
@@ -1014,8 +1029,12 @@
         setInventoryOpen(!isExpanded);
       });
 
+      inventoryClose?.addEventListener("click", () => {
+        setInventoryOpen(false);
+      });
+
       keyItem.addEventListener("dragstart", (event) => {
-        if (gateUnlocked) {
+        if (gateUnlocked || keyItem.classList.contains("startup-item-used")) {
           event.preventDefault();
           return;
         }
@@ -1084,6 +1103,14 @@
 
       backdrop?.addEventListener("click", () => {
         closeModal();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (!modal.classList.contains("is-open")) return;
+
+        if (event.key === "Escape" && !inventoryPanel.hidden) {
+          setInventoryOpen(false);
+        }
       });
     })();
   </script>
