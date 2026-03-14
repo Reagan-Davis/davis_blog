@@ -39,7 +39,8 @@
       --map-selected-stroke-dark: #111111;
     }
 
-    body.theme-dark {
+    body.theme-dark,
+    html.theme-dark body {
       --bg: #0f0f10;
       --bg-2: #17181a;
       --paper: rgba(24, 25, 27, 0.9);
@@ -87,7 +88,8 @@
       transition: background 0.2s ease, color 0.2s ease;
     }
 
-    body.theme-dark {
+    body.theme-dark,
+    html.theme-dark body {
       background:
         linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
         linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
@@ -4211,7 +4213,7 @@
 
     @media (max-width: 680px) {
       .startup-help-popup {
-        max-width: min(280px, calc(100vw - 2rem));
+        max-width: min(320px, calc(100vw - 1.5rem));
         width: auto;
         padding: 0.65rem 0.8rem;
         font-size: 0.8rem;
@@ -4240,7 +4242,7 @@
         top: auto;
         bottom: calc(100% + 10px);
         transform: translate(-50%, 8px);
-        max-width: min(280px, calc(100vw - 2rem));
+        max-width: min(320px, calc(100vw - 1.5rem));
       }
 
       .startup-help-popup--key.is-visible {
@@ -4253,4 +4255,134 @@
         bottom: -8px;
         transform: translateX(-50%) rotate(225deg);
       }
+    }
+
+    .startup-help-popup {
+      position: absolute;
+      z-index: 60;
+      width: clamp(220px, 32vw, 360px);
+      max-width: min(360px, calc(100vw - 2rem));
+      white-space: normal;
+      text-wrap: pretty;
+      padding: 0.6rem 0.8rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(20, 18, 24, 0.96);
+      color: rgba(245, 240, 233, 0.96);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+      font-size: 0.8rem;
+      line-height: 1.32;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .startup-help-popup.is-visible {
+      opacity: 1;
+    }
+
+    .startup-help-popup::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: rgba(20, 18, 24, 0.96);
+      border-left: 1px solid rgba(255,255,255,0.14);
+      border-top: 1px solid rgba(255,255,255,0.14);
+    }
+
+    /* Bag popup stays above bag */
+    .startup-help-popup--bag {
+      left: 50%;
+      bottom: calc(100% + 12px);
+      transform: translate(-50%, 8px);
+    }
+
+    .startup-help-popup--bag.is-visible {
+      transform: translate(-50%, 0);
+    }
+
+    .startup-help-popup--bag::after {
+      left: 50%;
+      bottom: -7px;
+      transform: translateX(-50%) rotate(225deg);
+    }
+
+    /* Key popup goes to the right of the key */
+    .startup-help-popup--key {
+      left: calc(100% + 10px);
+      top: 50%;
+      width: clamp(240px, 34vw, 380px);
+      max-width: min(380px, calc(100vw - 2rem));
+      transform: translateY(calc(-50% + 8px));
+    }
+
+    .startup-help-popup--key.is-visible {
+      transform: translateY(-50%);
+    }
+
+    .startup-help-popup--key::after {
+      left: -7px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-45deg);
+    }
+
+    @media (max-width: 680px) {
+      .startup-help-popup {
+        font-size: 0.76rem;
+        line-height: 1.26;
+        padding: 0.55rem 0.72rem;
+      }
+
+      .startup-help-popup--bag {
+        width: min(240px, calc(100vw - 2rem));
+        max-width: min(240px, calc(100vw - 2rem));
+        left: 50%;
+        bottom: calc(100% + 10px);
+        transform: translate(-50%, 8px);
+      }
+
+      .startup-help-popup--bag.is-visible {
+        transform: translate(-50%, 0);
+      }
+
+      .startup-help-popup--bag::after {
+        left: 50%;
+        bottom: -7px;
+        transform: translateX(-50%) rotate(225deg);
+      }
+
+      .startup-help-popup--key {
+        left: calc(100% + 8px);
+        top: 50%;
+        bottom: auto;
+        width: min(230px, 52vw);
+        max-width: min(230px, 52vw);
+        transform: translateY(calc(-50% + 8px));
+      }
+
+      .startup-help-popup--key.is-visible {
+        transform: translateY(-50%);
+      }
+
+      .startup-help-popup--key::after {
+        left: -7px;
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%) rotate(-45deg);
+      }
+    }
+
+    .startup-inventory-slot--key {
+      position: relative;
+      overflow: visible;
+      z-index: 2;
+    }
+
+    .startup-inventory-popover {
+      overflow: visible;
+    }
+
+    #themeToggle {
+      display: none !important;
     }

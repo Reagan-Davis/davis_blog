@@ -6,6 +6,14 @@
   <meta name="color-scheme" content="light dark" />
   <title>Reagan Davis</title>
 
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem("rr-theme");
+      const theme = savedTheme === "light" ? "light" : "dark";
+      document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    })();
+  </script>
+
   <link rel="stylesheet" href="style.css">
 
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
@@ -1199,7 +1207,7 @@
 
           keyItem.classList.add("dragging");
           markGateTouchState(false);
-          inventoryNote.textContent = "Drag the key onto the gate.";
+          inventoryNote.textContent = "";
 
           event.preventDefault();
         });
@@ -1256,7 +1264,6 @@
         if (!gateUnlocked) {
           proceedBtn.textContent = "Gate Locked";
           inventoryNote.textContent = "";
-          setInventoryOpen(true);
           return;
         }
 
