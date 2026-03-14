@@ -457,7 +457,7 @@
               I contemplated for a long time over what the best way to go about this would be.<br><br>
               I am only checking social media for around 10 minutes a day, and anything there runs the risk of dragging me back into that dreaded, short-form content addiction. On a personal account, something like this would be subverting what the account was initially intended for. On a new account, it would invariably end up being about follows, likes, and views. YouTube would be much the same. A website where I can change things whenever and however I want is what I settled on.<br><br>
               Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves and seeking that external validation. We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
-              Ultimately, this place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done.<br><br>
+              Ultimately, this place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done. It's set up to pester me with notifications.<br><br>
               Maybe, just maybe, you will leave here ___?
             </p>
             <div class="comment-meta"></div>
@@ -470,7 +470,7 @@
       <section class="section">
         <div class="container detail-grid">
           <article class="detail-card">
-            <button class="back-link" type="button" data-view="writingView">← Back to collected musings</button>
+            <button class="back-link" type="button" data-view="writingView">← Back to Collected Writings</button>
             <div id="postDetail"></div>
           </article>
           <aside class="detail-card">
@@ -486,7 +486,7 @@
       <section class="section">
         <div class="container detail-grid">
           <article class="detail-card">
-            <button class="back-link" type="button" data-view="recommendationsView">← Back to vault</button>
+            <button class="back-link" type="button" data-view="recommendationsView">← Back to Vault</button>
             <div id="entryDetail"></div>
           </article>
           <aside class="detail-card">
@@ -571,14 +571,13 @@
     <div class="startup-modal__backdrop"></div>
 
     <div
-      class="startup-modal__panel"
+      class="startup-modal__panel suggestion-wheel-panel"
       role="dialog"
       aria-modal="true"
       aria-labelledby="suggestionWheelTitle"
-      style="width:min(96vw, 760px);"
     >
       <p class="startup-modal__eyebrow">Vault Suggestion Wheel</p>
-      <h2 id="suggestionWheelTitle" class="startup-modal__title">Pick something worth your time</h2>
+      <h2 id="suggestionWheelTitle" class="startup-modal__title">For when you can't decide</h2>
 
       <div class="wheel-modal-layout">
         <div class="wheel-stage">
@@ -1554,7 +1553,7 @@
       return items.filter(item => item.type === category && item.rank === 5);
     }
 
-    function truncateWheelLabel(text, max = 18) {
+    function truncateWheelLabel(text, max = 16) {
       if (!text) return '';
       return text.length > max ? `${text.slice(0, max - 1)}…` : text;
     }
@@ -1592,6 +1591,10 @@
       ].join(' ');
     }
 
+    function normalizeWheelRotation(rotation) {
+      return ((rotation % 360) + 360) % 360;
+    }
+
     function renderSuggestionWheel(itemsForWheel) {
       if (!suggestionWheelSvg) return;
 
@@ -1609,7 +1612,10 @@
 
       const root = svg.append('g')
         .attr('class', 'wheel-root')
-        .attr('transform', `translate(${cx},${cy}) rotate(${suggestionWheelState.rotation})`);
+        .attr(
+          'transform',
+          `translate(${cx},${cy}) rotate(${normalizeWheelRotation(suggestionWheelState.rotation)})`
+        );
 
       if (!itemsForWheel.length) {
         svg.append('text')
@@ -1634,28 +1640,36 @@
           .attr('d', buildSlicePath(0, 0, radius, startAngle, endAngle))
           .attr('fill', getWheelSliceFill(index));
 
-        const labelRadius = radius * 0.67;
-        const labelPos = polarToCartesian(0, 0, labelRadius, midAngle);
+        const labelRadius = radius * 0.63;
+        const labelText = truncateWheelLabel(item.title, itemsForWheel.length >= 8 ? 12 : 16);
+
+        let textRotation = midAngle;
+        if (midAngle > 90 && midAngle < 270) {
+          textRotation = midAngle + 180;
+        }
+
+        const labelPoint = polarToCartesian(0, 0, labelRadius, midAngle);
 
         root.append('text')
           .attr('class', 'wheel-label')
-          .attr('transform', `translate(${labelPos.x},${labelPos.y}) rotate(${midAngle})`)
-          .text(truncateWheelLabel(item.title));
+          .attr(
+            'transform',
+            `translate(${labelPoint.x},${labelPoint.y}) rotate(${textRotation})`
+          )
+          .text(labelText);
       });
+
+      svg.append('circle')
+        .attr('class', 'wheel-center-ring')
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('r', radius);
 
       svg.append('circle')
         .attr('class', 'wheel-center-cap')
         .attr('cx', cx)
         .attr('cy', cy)
         .attr('r', 34);
-
-      svg.append('circle')
-        .attr('cx', cx)
-        .attr('cy', cy)
-        .attr('r', radius)
-        .attr('fill', 'none')
-        .attr('stroke', 'var(--line-strong)')
-        .attr('stroke-width', 2);
     }
 
     function renderWheelResult(item) {
@@ -1696,6 +1710,10 @@
       suggestionWheelState.spinning = false;
       suggestionWheelState.winner = null;
 
+      if (spinSuggestionWheelBtn) {
+        spinSuggestionWheelBtn.disabled = false;
+      }
+
       renderWheelResult(null);
       renderSuggestionWheel(eligible);
 
@@ -1713,27 +1731,78 @@
       const pool = suggestionWheelState.items;
       if (!pool.length || suggestionWheelState.spinning) return;
 
+      const wheelRoot = d3.select('#suggestionWheelSvg .wheel-root');
+      if (wheelRoot.empty()) return;
+
       suggestionWheelState.spinning = true;
       renderWheelResult(null);
+
+      if (spinSuggestionWheelBtn) {
+        spinSuggestionWheelBtn.disabled = true;
+      }
 
       const winnerIndex = Math.floor(Math.random() * pool.length);
       const arcSize = 360 / pool.length;
 
+      // Right-side inward pointer = 90 degrees in this wheel setup
+      const pointerAngle = 90;
+
+      // Center of winning slice
       const sliceCenter = winnerIndex * arcSize + arcSize / 2;
 
-      const extraSpins = 360 * (5 + Math.floor(Math.random() * 3));
-      const targetRotation = extraSpins - sliceCenter;
+      // Normalize current rotation
+      const currentRotation = suggestionWheelState.rotation || 0;
+      const currentNormalized = ((currentRotation % 360) + 360) % 360;
 
-      suggestionWheelState.rotation = targetRotation;
+      // Desired resting angle so winner center hits pointer
+      const targetNormalized = ((pointerAngle - sliceCenter) % 360 + 360) % 360;
 
-      d3.select('#suggestionWheelSvg .wheel-root')
+      // Forward-only delta from current visible angle to target visible angle
+      let deltaToTarget = targetNormalized - currentNormalized;
+      if (deltaToTarget < 0) deltaToTarget += 360;
+
+      // Real-spinner feel: always do a lot of full turns
+      const fullSpins = 7 + Math.floor(Math.random() * 4); // 7–10 full rotations
+      const extraJitter = (Math.random() - 0.5) * Math.min(arcSize * 0.28, 8);
+
+      // Final rotation is always forward, never weirdly backing up
+      const finalRotation =
+        currentRotation +
+        fullSpins * 360 +
+        deltaToTarget +
+        extraJitter;
+
+      // Tiny settle-back at end
+      const settleBack = Math.min(6, arcSize * 0.18);
+      const overshootRotation = finalRotation + settleBack;
+
+      const startRotation = suggestionWheelState.rotation || 0;
+
+      wheelRoot
+        .interrupt()
         .transition()
-        .duration(4200)
+        .duration(4600)
         .ease(d3.easeCubicOut)
-        .attr('transform', `translate(260,260) rotate(${targetRotation})`)
+        .attrTween('transform', () => {
+          const i = d3.interpolateNumber(startRotation, overshootRotation);
+          return (t) => `translate(260,260) rotate(${i(t)})`;
+        })
+        .transition()
+        .duration(320)
+        .ease(d3.easeBackOut.overshoot ? d3.easeBackOut.overshoot(2.2) : d3.easeBackOut)
+        .attrTween('transform', () => {
+          const i = d3.interpolateNumber(overshootRotation, finalRotation);
+          return (t) => `translate(260,260) rotate(${i(t)})`;
+        })
         .on('end', () => {
+          suggestionWheelState.rotation = finalRotation;
           suggestionWheelState.spinning = false;
           suggestionWheelState.winner = pool[winnerIndex];
+
+          if (spinSuggestionWheelBtn) {
+            spinSuggestionWheelBtn.disabled = false;
+          }
+
           renderWheelResult(pool[winnerIndex]);
         });
     }
@@ -3481,6 +3550,26 @@
       renderRankingList(tvList, rankings.tv, 'television creators');
     }
 
+    function keepPopupInViewport(popupEl) {
+      if (!popupEl) return;
+
+      const rect = popupEl.getBoundingClientRect();
+      const overflowRight = rect.right - window.innerWidth;
+      const overflowLeft = 0 - rect.left;
+
+      if (window.innerWidth <= 680) return;
+
+      if (overflowRight > 0) {
+        popupEl.style.right = `${overflowRight + 8}px`;
+      } else if (overflowLeft > 0) {
+        popupEl.style.right = `auto`;
+        popupEl.style.left = `8px`;
+      } else {
+        popupEl.style.left = '';
+        popupEl.style.right = '';
+      }
+    }
+
     function getCommentsTheme() {
       return document.body.classList.contains('theme-dark')
         ? COMMENTS_CONFIG.themeDark
@@ -3910,6 +3999,12 @@
 
     suggestionWheelModal?.querySelector('.startup-modal__backdrop')?.addEventListener('click', () => {
       closeSuggestionWheel();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && suggestionWheelModal?.classList.contains('is-open')) {
+        closeSuggestionWheel();
+      }
     });
 
     function restoreLastLocation() {
