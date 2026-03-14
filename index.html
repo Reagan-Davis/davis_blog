@@ -513,9 +513,10 @@
       <p class="startup-modal__eyebrow">Note</p>
 
       <h2 id="startupModalTitle" class="startup-modal__title">
-        The site is a continuous work in progress. <br><br>
+        The site is a continuous work in progress.<br><br>
+        The why behind its existence can be found on the about page.<br><br>
         It is full of placeholder text. It is designed for monitors but should be <em>mostly</em> functional on mobile.<br><br>
-        There are multiple hundreds of entries yet to be uploaded. <br><br>
+        There are multiple hundreds of things yet to be entered here.<br><br>
         You have been warned.
       </h2>
 
@@ -1000,7 +1001,7 @@
           gateAnimationPlayed = true;
           proceedBtn.disabled = false;
           proceedBtn.textContent = "Proceed";
-          inventoryNote.textContent = "The gate stands open.";
+          inventoryNote.textContent = "";
           dungeonText.innerHTML = `
             You are standing in a narrow stone corridor.<br>
             The rusted gate hangs open now.<br>
@@ -1159,10 +1160,6 @@
           return;
         }
 
-        closeModal();
-      });
-
-      backdrop?.addEventListener("click", () => {
         closeModal();
       });
 
