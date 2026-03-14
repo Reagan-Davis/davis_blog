@@ -111,7 +111,7 @@
           <article class="hero-card hero-quote-card" aria-labelledby="hero-heading">
             <div>
               <div class="eyebrow">Not a Portfolio</div>
-              <h1 id="hero-heading">But A Centralized Hub for Just About Everything.</h1>
+              <h1 id="hero-heading">But A Centralized Hub for Just About Everything I Need It to Be.</h1>
 
               <div>
                 <div class="hero-actions">
@@ -194,11 +194,15 @@
     <div id="recommendationsView" class="view" hidden>
       <section class="section">
         <div class="container recommendations-layout">
-          <div class="section-header">
+          <div class="section-header section-header-split">
             <div>
               <h2 style="font-size:2rem;">Vault</h2>
               <p>Critics suck. Numeric scores suck.</p>
             </div>
+
+            <button id="openSuggestionWheelBtn" class="shuffle-button" type="button">
+              Spin the Wheel
+            </button>
           </div>
 
       <section class="search-panel collapsible-panel" aria-labelledby="search-heading">
@@ -562,6 +566,43 @@
       </div>
     </div>
   </footer>
+
+  <div class="startup-modal" id="suggestionWheelModal" aria-hidden="true">
+    <div class="startup-modal__backdrop"></div>
+
+    <div
+      class="startup-modal__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="suggestionWheelTitle"
+      style="width:min(96vw, 760px);"
+    >
+      <p class="startup-modal__eyebrow">Vault Suggestion Wheel</p>
+      <h2 id="suggestionWheelTitle" class="startup-modal__title">Pick something worth your time</h2>
+
+      <div class="wheel-modal-layout">
+        <div class="wheel-stage">
+          <div class="wheel-pointer" aria-hidden="true"></div>
+          <svg id="suggestionWheelSvg" viewBox="0 0 520 520" role="img" aria-label="Suggestion wheel"></svg>
+        </div>
+
+        <div class="wheel-side">
+          <div class="stat-label">Current category</div>
+          <div id="wheelCategoryLabel" class="wheel-category-label">—</div>
+
+          <div class="stat-label" style="margin-top:1rem;">Selected result</div>
+          <div id="wheelResultCard" class="wheel-result-card">
+            <div class="wheel-result-empty">Spin the wheel.</div>
+          </div>
+
+          <div class="wheel-actions">
+            <button id="spinSuggestionWheelBtn" class="btn primary" type="button">Spin</button>
+            <button id="closeSuggestionWheelBtn" class="btn" type="button">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     document.documentElement.setAttribute("data-theme", "dark");
@@ -1335,6 +1376,21 @@
     const spotifyEmbedFrame = document.getElementById('spotifyEmbedFrame');
     const spotifyStatusText = document.getElementById('spotifyStatusText');
     const spotifyOpenLink = document.getElementById('spotifyOpenLink');
+
+    const openSuggestionWheelBtn = document.getElementById('openSuggestionWheelBtn');
+    const suggestionWheelModal = document.getElementById('suggestionWheelModal');
+    const spinSuggestionWheelBtn = document.getElementById('spinSuggestionWheelBtn');
+    const closeSuggestionWheelBtn = document.getElementById('closeSuggestionWheelBtn');
+    const suggestionWheelSvg = document.getElementById('suggestionWheelSvg');
+    const wheelCategoryLabel = document.getElementById('wheelCategoryLabel');
+    const wheelResultCard = document.getElementById('wheelResultCard');
+
+    const suggestionWheelState = {
+      items: [],
+      rotation: 0,
+      spinning: false,
+      winner: null
+    };
         
     const currentTypes = ["Literature", "Movies", "TV", "Music", "Video Games"];
     const currentIndices = Object.fromEntries(currentTypes.map(type => [type, 0]));
@@ -1485,6 +1541,195 @@
       mobileNavMenu.hidden = !nextState;
       menuToggle.setAttribute('aria-expanded', String(nextState));
       menuToggle.setAttribute('aria-label', nextState ? 'Close navigation menu' : 'Open navigation menu');
+    }
+
+    function getWheelEligibleItems(category) {
+      if (!category || category === 'All') return [];
+      return items.filter(item => item.type === category && item.rank === 5);
+    }
+
+    function truncateWheelLabel(text, max = 18) {
+      if (!text) return '';
+      return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+    }
+
+    function getWheelSliceFill(index) {
+      const fills = [
+        'color-mix(in srgb, var(--rank-5) 78%, white)',
+        'color-mix(in srgb, var(--accent-2) 70%, white)',
+        'color-mix(in srgb, var(--accent-3) 62%, white)',
+        'color-mix(in srgb, var(--rank-4) 72%, white)',
+        'color-mix(in srgb, var(--rank-3) 72%, white)',
+        'color-mix(in srgb, var(--map-native) 66%, white)'
+      ];
+      return fills[index % fills.length];
+    }
+
+    function polarToCartesian(cx, cy, radius, angleDeg) {
+      const angleRad = (angleDeg - 90) * Math.PI / 180;
+      return {
+        x: cx + radius * Math.cos(angleRad),
+        y: cy + radius * Math.sin(angleRad)
+      };
+    }
+
+    function buildSlicePath(cx, cy, radius, startAngle, endAngle) {
+      const start = polarToCartesian(cx, cy, radius, endAngle);
+      const end = polarToCartesian(cx, cy, radius, startAngle);
+      const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+      return [
+        `M ${cx} ${cy}`,
+        `L ${start.x} ${start.y}`,
+        `A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+        'Z'
+      ].join(' ');
+    }
+
+    function renderSuggestionWheel(itemsForWheel) {
+      if (!suggestionWheelSvg) return;
+
+      suggestionWheelState.items = itemsForWheel;
+      suggestionWheelState.winner = null;
+
+      const svg = d3.select(suggestionWheelSvg);
+      svg.selectAll('*').remove();
+
+      const width = 520;
+      const height = 520;
+      const cx = width / 2;
+      const cy = height / 2;
+      const radius = 220;
+
+      const root = svg.append('g')
+        .attr('class', 'wheel-root')
+        .attr('transform', `translate(${cx},${cy}) rotate(${suggestionWheelState.rotation})`);
+
+      if (!itemsForWheel.length) {
+        svg.append('text')
+          .attr('x', cx)
+          .attr('y', cy)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('class', 'wheel-label')
+          .text('No rank 5 items in this category');
+        return;
+      }
+
+      const arcSize = 360 / itemsForWheel.length;
+
+      itemsForWheel.forEach((item, index) => {
+        const startAngle = index * arcSize;
+        const endAngle = startAngle + arcSize;
+        const midAngle = startAngle + arcSize / 2;
+
+        root.append('path')
+          .attr('class', 'wheel-slice')
+          .attr('d', buildSlicePath(0, 0, radius, startAngle, endAngle))
+          .attr('fill', getWheelSliceFill(index));
+
+        const labelRadius = radius * 0.67;
+        const labelPos = polarToCartesian(0, 0, labelRadius, midAngle);
+
+        root.append('text')
+          .attr('class', 'wheel-label')
+          .attr('transform', `translate(${labelPos.x},${labelPos.y}) rotate(${midAngle})`)
+          .text(truncateWheelLabel(item.title));
+      });
+
+      svg.append('circle')
+        .attr('class', 'wheel-center-cap')
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('r', 34);
+
+      svg.append('circle')
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('r', radius)
+        .attr('fill', 'none')
+        .attr('stroke', 'var(--line-strong)')
+        .attr('stroke-width', 2);
+    }
+
+    function renderWheelResult(item) {
+      if (!wheelResultCard) return;
+
+      if (!item) {
+        wheelResultCard.innerHTML = `<div class="wheel-result-empty">Spin the wheel.</div>`;
+        return;
+      }
+
+      wheelResultCard.innerHTML = `
+        <h3 class="wheel-result-title">${escapeHtml(item.title)}</h3>
+        <div class="wheel-result-meta">${escapeHtml(item.creator)} · ${escapeHtml(item.subtype || item.type)} · ${escapeHtml(formatYear(item.year))}</div>
+        <div class="wheel-result-blurb">${escapeHtml(item.blurb || '')}</div>
+        <div style="margin-top:0.4rem;">
+          <button class="footer-link" type="button" data-open-entry="${escapeHtml(item.slug)}">Open entry →</button>
+        </div>
+      `;
+    }
+
+    function openSuggestionWheel() {
+      if (!suggestionWheelModal) return;
+
+      if (activeFilter === 'All') {
+        alert('Pick a specific category first.');
+        return;
+      }
+
+      const eligible = getWheelEligibleItems(activeFilter);
+
+      if (!eligible.length) {
+        alert(`No rank 5 items found in ${activeFilter}.`);
+        return;
+      }
+
+      wheelCategoryLabel.textContent = activeFilter;
+      suggestionWheelState.rotation = 0;
+      suggestionWheelState.spinning = false;
+      suggestionWheelState.winner = null;
+
+      renderWheelResult(null);
+      renderSuggestionWheel(eligible);
+
+      suggestionWheelModal.classList.add('is-open');
+      suggestionWheelModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSuggestionWheel() {
+      if (!suggestionWheelModal) return;
+      suggestionWheelModal.classList.remove('is-open');
+      suggestionWheelModal.setAttribute('aria-hidden', 'true');
+    }
+
+    function spinSuggestionWheel() {
+      const pool = suggestionWheelState.items;
+      if (!pool.length || suggestionWheelState.spinning) return;
+
+      suggestionWheelState.spinning = true;
+      renderWheelResult(null);
+
+      const winnerIndex = Math.floor(Math.random() * pool.length);
+      const arcSize = 360 / pool.length;
+
+      const sliceCenter = winnerIndex * arcSize + arcSize / 2;
+
+      const extraSpins = 360 * (5 + Math.floor(Math.random() * 3));
+      const targetRotation = extraSpins - sliceCenter;
+
+      suggestionWheelState.rotation = targetRotation;
+
+      d3.select('#suggestionWheelSvg .wheel-root')
+        .transition()
+        .duration(4200)
+        .ease(d3.easeCubicOut)
+        .attr('transform', `translate(260,260) rotate(${targetRotation})`)
+        .on('end', () => {
+          suggestionWheelState.spinning = false;
+          suggestionWheelState.winner = pool[winnerIndex];
+          renderWheelResult(pool[winnerIndex]);
+        });
     }
 
     async function ensureMapsLoaded() {
@@ -3643,6 +3888,22 @@
           openEntry(slug);
         }
       }
+    });
+
+    openSuggestionWheelBtn?.addEventListener('click', () => {
+      openSuggestionWheel();
+    });
+
+    spinSuggestionWheelBtn?.addEventListener('click', () => {
+      spinSuggestionWheel();
+    });
+
+    closeSuggestionWheelBtn?.addEventListener('click', () => {
+      closeSuggestionWheel();
+    });
+
+    suggestionWheelModal?.querySelector('.startup-modal__backdrop')?.addEventListener('click', () => {
+      closeSuggestionWheel();
     });
 
     function restoreLastLocation() {
