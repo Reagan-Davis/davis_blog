@@ -459,6 +459,9 @@
           <div class="card essay-card">
             <h2 style="font-size:1.6rem;">About</h2>
             <p class="muted">
+              If you've known me for any amount of time, you can probably say at least one of two things about me:<br><br>
+              1. I don't tend to say a lot unless around individuals or groups entirely composed of people I know pretty well.<br><br>
+              2. Over text or email, I tend to be one incredibly wordy SOB. That's the English language for you. I only wish I could say I was able to write just as much for academic papers.<br><br>
               Metrics. Metrics are everything. At least that is what I've been telling myself lately.<br><br>
               At the start of 2026 I set out to do a great many things outside of my comfort zone. Some worked out pretty well. Others not so much. But the year is far from over, and time waits for no man.<br><br>
               One of those things I neglected the most was establishing the systems I need to hold myself accountable for how I spend my time.<br><br>
@@ -1956,6 +1959,33 @@
         title: "Untitled Grand Strategy Game",
         overview: "A grand strategy game focused on creating a deep historical, political, and economic simulation through in-depth population systems and dynamic geopolitical decision-making. Drawing on the datasets developed through other projects, the game aims to create one of the most detailed historical world states to date while also allowing for plausible, ahistorical simulation of border disputes, demographic evolution, and the long-term development of states across the time period  .",
         href: "projects/grand-strategy.html"
+      }
+    ];
+
+    const HISTORICAL_ATLAS_BORDER_DEMO = [
+      {
+        name: "Border A",
+        coordinates: [
+          [-8, 43], [-4, 44], [0, 45], [6, 46], [12, 47], [18, 48]
+        ]
+      },
+      {
+        name: "Border B",
+        coordinates: [
+          [1, 50], [4, 49], [8, 48], [12, 47], [17, 45], [21, 43]
+        ]
+      },
+      {
+        name: "Border C",
+        coordinates: [
+          [-2, 54], [3, 53], [8, 52], [12, 51], [18, 50], [24, 49]
+        ]
+      },
+      {
+        name: "Border D",
+        coordinates: [
+          [10, 56], [12, 53], [14, 50], [16, 47], [18, 44], [20, 41]
+        ]
       }
     ];
 
@@ -4014,21 +4044,263 @@
       `).join('');
     }
 
+    const historicalAtlasViewportState = {
+      gl: null,
+      program: null,
+      buffer: null,
+      aPosition: null,
+      uColor: null,
+      uPointSize: null,
+      lineVertexCount: 0,
+      pointVertexCount: 0,
+      resizeObserver: null,
+      animationFrame: null
+    };
+
+    function initHistoricalAtlasViewport() {
+      const canvas = document.getElementById('historicalAtlasCanvas');
+      const shell = document.getElementById('historicalAtlasViewport');
+
+      if (!canvas || !shell) return;
+
+      if (!historicalAtlasViewportState.gl) {
+        setupHistoricalAtlasWebGL(canvas);
+      }
+
+      renderHistoricalAtlasViewport();
+
+      if (!historicalAtlasViewportState.resizeObserver) {
+        historicalAtlasViewportState.resizeObserver = new ResizeObserver(() => {
+          renderHistoricalAtlasViewport();
+        });
+
+        historicalAtlasViewportState.resizeObserver.observe(shell);
+      }
+    }
+
+    function setupHistoricalAtlasWebGL(canvas) {
+      const gl = canvas.getContext('webgl', {
+        antialias: true,
+        alpha: true,
+        premultipliedAlpha: true
+      });
+
+      if (!gl) {
+        const shell = canvas.parentElement;
+        if (shell) {
+          shell.innerHTML = `
+            <div style="padding:1rem;color:var(--muted);font-size:0.95rem;">
+              WebGL could not be initialized in this browser.
+            </div>
+          `;
+        }
+        return;
+      }
+
+      const vertexSource = `
+        attribute vec2 a_position;
+        uniform float u_pointSize;
+
+        void main() {
+          gl_Position = vec4(a_position, 0.0, 1.0);
+          gl_PointSize = u_pointSize;
+        }
+      `;
+
+      const fragmentSource = `
+        precision mediump float;
+        uniform vec4 u_color;
+
+        void main() {
+          gl_FragColor = u_color;
+        }
+      `;
+
+      const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexSource);
+      const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+      const program = createProgram(gl, vertexShader, fragmentShader);
+
+      gl.useProgram(program);
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+      const aPosition = gl.getAttribLocation(program, 'a_position');
+      const uColor = gl.getUniformLocation(program, 'u_color');
+      const uPointSize = gl.getUniformLocation(program, 'u_pointSize');
+
+      gl.enableVertexAttribArray(aPosition);
+      gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+      historicalAtlasViewportState.gl = gl;
+      historicalAtlasViewportState.program = program;
+      historicalAtlasViewportState.buffer = buffer;
+      historicalAtlasViewportState.aPosition = aPosition;
+      historicalAtlasViewportState.uColor = uColor;
+      historicalAtlasViewportState.uPointSize = uPointSize;
+    }
+
+    function compileShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        const info = gl.getShaderInfoLog(shader);
+        gl.deleteShader(shader);
+        throw new Error(`Shader compile failed: ${info}`);
+      }
+
+      return shader;
+    }
+
+    function createProgram(gl, vertexShader, fragmentShader) {
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        const info = gl.getProgramInfoLog(program);
+        gl.deleteProgram(program);
+        throw new Error(`Program link failed: ${info}`);
+      }
+
+      return program;
+    }
+
+    function renderHistoricalAtlasViewport() {
+      const canvas = document.getElementById('historicalAtlasCanvas');
+      const shell = document.getElementById('historicalAtlasViewport');
+      const gl = historicalAtlasViewportState.gl;
+
+      if (!canvas || !shell || !gl) return;
+
+      const rect = shell.getBoundingClientRect();
+      const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+
+      const width = Math.max(320, Math.round(rect.width));
+      const height = Math.max(220, Math.round(rect.height));
+
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      gl.viewport(0, 0, canvas.width, canvas.height);
+
+      const projection = d3.geoMercator()
+        .center([8, 48])
+        .scale(width * 5.2)
+        .translate([width / 2, height / 2]);
+
+      const lineVertices = [];
+      const pointVertices = [];
+
+      for (const feature of HISTORICAL_ATLAS_BORDER_DEMO) {
+        const coords = feature.coordinates || [];
+        for (let i = 0; i < coords.length; i++) {
+          const projected = projection(coords[i]);
+          if (!projected) continue;
+
+          const clip = pixelToClip(projected[0], projected[1], width, height);
+          pointVertices.push(clip[0], clip[1]);
+
+          if (i < coords.length - 1) {
+            const nextProjected = projection(coords[i + 1]);
+            if (!nextProjected) continue;
+
+            const nextClip = pixelToClip(nextProjected[0], nextProjected[1], width, height);
+
+            lineVertices.push(
+              clip[0], clip[1],
+              nextClip[0], nextClip[1]
+            );
+          }
+        }
+      }
+
+      historicalAtlasViewportState.lineVertexCount = lineVertices.length / 2;
+      historicalAtlasViewportState.pointVertexCount = pointVertices.length / 2;
+
+      gl.clearColor(0.0, 0.0, 0.0, 0.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.useProgram(historicalAtlasViewportState.program);
+
+      // Draw lines
+      gl.bindBuffer(gl.ARRAY_BUFFER, historicalAtlasViewportState.buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lineVertices), gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(historicalAtlasViewportState.aPosition);
+      gl.vertexAttribPointer(historicalAtlasViewportState.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+      gl.uniform4f(historicalAtlasViewportState.uColor, 0.84, 0.79, 0.67, 0.95);
+      gl.uniform1f(historicalAtlasViewportState.uPointSize, 1.0);
+      gl.drawArrays(gl.LINES, 0, historicalAtlasViewportState.lineVertexCount);
+
+      // Draw vertices as points
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointVertices), gl.STATIC_DRAW);
+      gl.vertexAttribPointer(historicalAtlasViewportState.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+      gl.uniform4f(historicalAtlasViewportState.uColor, 0.26, 0.62, 0.50, 0.95);
+      gl.uniform1f(historicalAtlasViewportState.uPointSize, Math.max(2.0, 2.5 * dpr));
+      gl.drawArrays(gl.POINTS, 0, historicalAtlasViewportState.pointVertexCount);
+    }
+
+    function pixelToClip(x, y, width, height) {
+      return [
+        (x / width) * 2 - 1,
+        1 - (y / height) * 2
+      ];
+    }
+
     function renderProjects() {
       if (!projectGrid) return;
 
-      projectGrid.innerHTML = projects.map(project => `
-        <article class="card project-card">
-          <div class="project-card-body">
-            <h3>${escapeHtml(project.title)}</h3>
-            <p class="muted">${escapeHtml(project.overview)}</p>
-            <div class="card-footer">
-              <span class="comment-meta">Project</span>
-              <a class="footer-link project-open-link" href="${escapeHtml(project.href)}">Project Not Yet Uploaded →</a>
+      projectGrid.innerHTML = projects.map(project => {
+        const atlasViewport = project.slug === 'historical-borders-atlas'
+          ? `
+            <div class="project-viewport-shell" id="historicalAtlasViewport">
+              <canvas
+                id="historicalAtlasCanvas"
+                class="project-viewport-canvas"
+                aria-label="Historical atlas border viewport"
+              ></canvas>
+
+              <div class="project-viewport-overlay" aria-hidden="true">
+                <div class="project-viewport-badge">WebGL Border View</div>
+                <div class="project-viewport-caption">
+                  D3 projection + GPU border rendering
+                </div>
+              </div>
             </div>
-          </div>
-        </article>
-      `).join('');
+          `
+          : '';
+
+        return `
+          <article class="card project-card">
+            <div class="project-card-body">
+              <div class="project-card-copy">
+                <h3>${escapeHtml(project.title)}</h3>
+                <p class="muted">${escapeHtml(project.overview)}</p>
+              </div>
+
+              ${project.slug === 'historical-borders-atlas' ? `
+                <div class="project-card-viewport">
+                  ${atlasViewport}
+                </div>
+              ` : ''}
+
+              <div class="card-footer">
+                <span class="comment-meta">Project</span>
+                <a class="footer-link project-open-link" href="${escapeHtml(project.href)}">Project Not Yet Uploaded →</a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      initHistoricalAtlasViewport();
     }
 
     function renderItems() {
