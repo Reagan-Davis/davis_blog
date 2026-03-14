@@ -168,7 +168,7 @@
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Collected Writings</h2>
-              <p>Longer reflections and essays sit up front rather than off to the side. The writing is part of the site’s center of gravity.</p>
+              <p>Essays, reflections, anectdotes, and maybe the occasional rant.</p>
             </div>
           </div>
           <div class="essay-grid" id="postGrid"></div>
@@ -544,10 +544,103 @@
         > <em>You enter the dungeon.</em>
       </h2>
 
+      <div class="startup-gate-wrap" aria-hidden="true">
+        <svg class="startup-gate-svg" viewBox="0 0 640 420">
+
+          <!-- background opening -->
+          <g class="startup-gate-depth">
+            <rect x="120" y="90" width="400" height="270" rx="24" class="startup-gate-depth-back"></rect>
+            <ellipse cx="320" cy="330" rx="130" ry="24" class="startup-gate-mist"></ellipse>
+          </g>
+
+          <!-- stone arch -->
+          <path
+            d="M90 370 L90 150 Q90 42 200 42 L440 42 Q550 42 550 150 L550 370"
+            fill="none"
+            stroke="rgba(145,130,112,0.5)"
+            stroke-width="26"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- inner frame -->
+          <path
+            d="M120 360 L120 155 Q120 70 200 70 L440 70 Q520 70 520 155 L520 360"
+            fill="none"
+            stroke="#4a4540"
+            stroke-width="18"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- left gate leaf -->
+          <g class="startup-gate-leaf startup-gate-leaf-left">
+            <rect x="128" y="140" width="26" height="230" rx="6" fill="#4a4540"/>
+
+            <rect x="150" y="146" width="170" height="18" rx="5" fill="#4a4540"/>
+
+            <g fill="#4a4540">
+              <rect x="172" y="156" width="12" height="190" rx="5"/>
+              <rect x="208" y="156" width="12" height="190" rx="5"/>
+              <rect x="244" y="156" width="12" height="190" rx="5"/>
+              <rect x="280" y="156" width="12" height="190" rx="5"/>
+              <rect x="316" y="156" width="12" height="190" rx="5"/>
+            </g>
+
+            <g fill="#a79f95">
+              <path d="M166 156 L178 124 L190 156 Z"/>
+              <path d="M202 156 L214 124 L226 156 Z"/>
+              <path d="M238 156 L250 124 L262 156 Z"/>
+              <path d="M274 156 L286 124 L298 156 Z"/>
+              <path d="M310 156 L322 124 L334 156 Z"/>
+            </g>
+          </g>
+
+          <!-- right gate leaf -->
+          <g class="startup-gate-leaf startup-gate-leaf-right">
+            <rect x="486" y="140" width="26" height="230" rx="6" fill="#4a4540"/>
+
+            <rect x="320" y="146" width="170" height="18" rx="5" fill="#4a4540"/>
+
+            <g fill="#4a4540">
+              <rect x="352" y="156" width="12" height="190" rx="5"/>
+              <rect x="388" y="156" width="12" height="190" rx="5"/>
+              <rect x="424" y="156" width="12" height="190" rx="5"/>
+              <rect x="460" y="156" width="12" height="190" rx="5"/>
+            </g>
+
+            <g fill="#a79f95">
+              <path d="M346 156 L358 124 L370 156 Z"/>
+              <path d="M382 156 L394 124 L406 156 Z"/>
+              <path d="M418 156 L430 124 L442 156 Z"/>
+              <path d="M454 156 L466 124 L478 156 Z"/>
+            </g>
+          </g>
+
+          <!-- center seam bar -->
+          <rect x="334" y="156" width="12" height="190" rx="5" fill="#4a4540" class="startup-gate-center-bar"/>
+
+          <!-- lock -->
+          <g class="startup-gate-lock" transform="translate(320 250)">
+            <rect x="-30" y="-10" width="60" height="70" rx="10" fill="#51463a" stroke="#9f835e" stroke-width="4"/>
+            <path
+              d="M-14 -10 L-14 -26 Q-14 -48 0 -48 Q14 -48 14 -26 L14 -10"
+              fill="none"
+              stroke="#b69467"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+            <circle cx="0" cy="18" r="8" fill="#b69467"/>
+            <rect x="-3" y="18" width="6" height="20" rx="3" fill="#b69467"/>
+          </g>
+
+        </svg>
+      </div>
+
       <p class="startup-modal__text">
         You are standing in a narrow stone corridor.<br>
         A rusted gate lies before you. It appears locked.<br><br>
-        Etched in the wood bracing to your right: <em>"No Return"</em>
+        A weathered sign hangs beside the bars: <em>"No Return"</em>
       </p>
 
       <div class="startup-modal__actions">
@@ -649,7 +742,16 @@
       });
 
       enterForRealBtn.addEventListener("click", () => {
-        closeModal();
+        if (step2.classList.contains("is-opening")) return;
+
+        step2.classList.add("is-opening");
+        enterForRealBtn.disabled = true;
+
+        setTimeout(() => {
+          closeModal();
+          step2.classList.remove("is-opening");
+          enterForRealBtn.disabled = false;
+        }, 2000);
       });
 
       backdrop?.addEventListener("click", () => {
@@ -1214,20 +1316,20 @@
     const projects = [
       {
         slug: "historical-borders-atlas",
-        title: "Historical Borders Atlas",
+        title: "Historical Borders Atlas 1648-1848",
         overview: "Drawing on historical military surveys, cadastres, treaties, and archival boundary records, this project reconstructs formalized political boundaries across Europe and the Americas between 1648 and 1848, the period associated with the Enlightenment and the emergence of the modern nation state. The Historical Borders Atlas contains spatiotemporal datasets of administrative lines and territorial units at sub-300-meter resolution intended primarily for the study of long-term territorial change, but also historical geography, political history, and spatial analysis of state formation.",
         href: "projects/historical-borders-atlas.html"
       },
       {
         slug: "ethnolinguistic-populations-distributions",
-        title: "Ethnolinguistic Population Distributions",
+        title: "Ethnolinguistic Population Distributions 1815-1930",
         overview: "Using dasymetric mapping methods pioneered by Benjamin Semenov-Tyan-Shansky (Бенжамин Петрович Семёнов-Тян-Шанский) and formalized by John Kirtland Wright, this project reconstructs historical population distributions of ethnolinguistic groups by redistributing population within administrative units according to settlement patterns, land use, and other spatial constraints. The resulting datasets are intended for research in demographic history, language geography, and long-term ethnolinguistic change.",
         href: "projects/ethnolinguistic-populations-distributions.html"
       },
       {
         slug: "lexicological-comparison-tool",
         title: "Lexicological Comparison Tool",
-        overview: "Heavily inspired by the work of Kostiantyn Tyshchenko (Костянтин Тищенко) in his 2000 publication, Metatheory of Linguistics (Метатеорія Mовознавства), this tool provides a structured framework for the comparative analysis of linguistic systems. The Lexicological Comparison Tool leverages feature mapping and typological comparison with the intent to support large-scale vocabulary acquisition and efficient language learning.",
+        overview: "Heavily inspired by the work of Kostiantyn Tyshchenko (Костянтин Тищенко) in his 2000 publication, Metatheory of Linguistics (Метатеорія Mовознавства), this tool provides a structured framework for the comparative analysis of linguistic systems. The Lexicological Comparison Tool leverages feature mapping and typological comparison with the intent to aid in large-scale vocabulary acquisition and expedited language learning.",
         href: "projects/lexicological-comparison-tool.html"
       },
       {
