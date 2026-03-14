@@ -514,8 +514,8 @@
 
       <h2 id="startupModalTitle" class="startup-modal__title">
         The site is a continuous work in progress. <br><br>
-        It is full of placeholder text. It is designed for monitors but is *mostly* functional on mobile.<br><br>
-        It is still missing a whole lot of things. <br><br>
+        It is full of placeholder text. It is designed for monitors but should be <em>mostly</em> functional on mobile.<br><br>
+        There are multiple hundreds of entries yet to be uploaded. <br><br>
         You have been warned.
       </h2>
 
@@ -541,10 +541,15 @@
       <p class="startup-modal__eyebrow">Dungeon Entrance</p>
 
       <h2 id="startupDungeonTitle" class="startup-modal__title">
-        > <em>You enter the dungeon.</em>
+        <em>You enter the dungeon.</em>
       </h2>
 
-      <div class="startup-gate-wrap" aria-hidden="true">
+      <div
+        class="startup-gate-wrap"
+        id="startupGateDropzone"
+        data-locked="true"
+        aria-label="Locked gate"
+      >
         <svg class="startup-gate-svg startup-gate-scene" viewBox="0 0 640 420">
 
           <defs>
@@ -810,10 +815,55 @@
       <p class="startup-modal__text">
         You are standing in a narrow stone corridor.<br>
         A rusted gate lies before you. It appears locked.<br><br>
-        A weathered sign hangs beside the bars: <em>"No Return"</em>
       </p>
 
-      <div class="startup-modal__actions">
+      <div class="startup-inventory-panel" id="startupInventoryPanel" hidden>
+        <div class="startup-inventory-title">Inventory</div>
+
+        <div class="startup-inventory-grid">
+          <div class="startup-inventory-slot">
+            <div class="startup-slot-base" aria-hidden="true"></div>
+            <button
+              type="button"
+              class="startup-item startup-item-key"
+              id="startupKeyItem"
+              draggable="true"
+              aria-label="Rusted key"
+              title="Rusted Key"
+            >
+              <span class="startup-key-icon" aria-hidden="true">🗝</span>
+            </button>
+          </div>
+
+          <div class="startup-inventory-slot"><div class="startup-slot-base" aria-hidden="true"></div></div>
+          <div class="startup-inventory-slot"><div class="startup-slot-base" aria-hidden="true"></div></div>
+          <div class="startup-inventory-slot"><div class="startup-slot-base" aria-hidden="true"></div></div>
+          <div class="startup-inventory-slot"><div class="startup-slot-base" aria-hidden="true"></div></div>
+          <div class="startup-inventory-slot"><div class="startup-slot-base" aria-hidden="true"></div></div>
+        </div>
+
+        <div class="startup-inventory-note" id="startupInventoryNote"></div>
+      </div>
+
+      <div class="startup-modal__actions startup-modal__actions--dungeon">
+        <button
+          class="startup-bag-button startup-bag-button-inline"
+          id="startupBagButton"
+          type="button"
+          aria-expanded="false"
+          aria-controls="startupInventoryPanel"
+          aria-label="Open bag"
+          title="Bag"
+        >
+          <span class="startup-bag-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" class="startup-bag-svg">
+              <path d="M8 9V7a4 4 0 0 1 8 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M6.5 9.5h11l-1 9.5a2 2 0 0 1-2 1.8H9.5a2 2 0 0 1-2-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9 11.5a3 3 0 0 0 6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+
         <button class="startup-modal__button" id="startupModalEnterSite" type="button">
           Proceed
         </button>
@@ -881,11 +931,23 @@
       const step2 = document.getElementById("startupModalStep2");
 
       const continueBtn = document.getElementById("startupModalContinue");
-      const enterForRealBtn = document.getElementById("startupModalEnterSite");
+      const proceedBtn = document.getElementById("startupModalEnterSite");
 
-      if (!modal || !step1 || !step2 || !continueBtn || !enterForRealBtn) return;
+      const bagButton = document.getElementById("startupBagButton");
+      const inventoryPanel = document.getElementById("startupInventoryPanel");
+      const inventoryNote = document.getElementById("startupInventoryNote");
+      const keyItem = document.getElementById("startupKeyItem");
+      const gateDropzone = document.getElementById("startupGateDropzone");
+
+      if (
+        !modal || !step1 || !step2 || !continueBtn || !proceedBtn ||
+        !bagButton || !inventoryPanel || !inventoryNote || !keyItem || !gateDropzone
+      ) return;
 
       const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
+
+      let gateUnlocked = false;
+      let gateAnimationPlayed = false;
 
       if (!hasSeenModal) {
         modal.classList.add("is-open");
@@ -907,21 +969,117 @@
         localStorage.setItem(STORAGE_KEY, "true");
       }
 
+      function setInventoryOpen(isOpen) {
+        inventoryPanel.hidden = !isOpen;
+        bagButton.setAttribute("aria-expanded", String(isOpen));
+      }
+
+      function playGateAnimation() {
+        if (step2.classList.contains("is-opening")) return;
+
+        step2.classList.add("is-opening");
+
+        setTimeout(() => {
+          step2.classList.remove("is-opening");
+          gateAnimationPlayed = true;
+          proceedBtn.disabled = false;
+          proceedBtn.textContent = "Proceed";
+          inventoryNote.textContent = "The gate stands open.";
+        }, 1100);
+      }
+
+      function unlockGate() {
+        if (gateUnlocked) return;
+
+        gateUnlocked = true;
+        gateDropzone.dataset.locked = "false";
+        gateDropzone.classList.remove("is-drop-ready", "is-drag-over");
+
+        keyItem.classList.add("startup-item-used");
+        keyItem.setAttribute("draggable", "false");
+
+        inventoryNote.textContent = "The key turns in the lock.";
+        proceedBtn.textContent = "Opening...";
+        proceedBtn.disabled = true;
+
+        playGateAnimation();
+      }
+
       continueBtn.addEventListener("click", () => {
         showStep(2);
       });
 
-      enterForRealBtn.addEventListener("click", () => {
-        if (step2.classList.contains("is-opening")) return;
+      bagButton.addEventListener("click", () => {
+        const isExpanded = bagButton.getAttribute("aria-expanded") === "true";
+        setInventoryOpen(!isExpanded);
+      });
 
-        step2.classList.add("is-opening");
-        enterForRealBtn.disabled = true;
+      keyItem.addEventListener("dragstart", (event) => {
+        if (gateUnlocked) {
+          event.preventDefault();
+          return;
+        }
 
-        setTimeout(() => {
-          closeModal();
-          step2.classList.remove("is-opening");
-          enterForRealBtn.disabled = false;
-        }, 2000);
+        event.dataTransfer.setData("text/plain", "rusted-key");
+        event.dataTransfer.effectAllowed = "move";
+        keyItem.classList.add("dragging");
+        gateDropzone.classList.add("is-drop-ready");
+        inventoryNote.textContent = "Drag the key onto the gate.";
+      });
+
+      keyItem.addEventListener("dragend", () => {
+        keyItem.classList.remove("dragging");
+        gateDropzone.classList.remove("is-drop-ready", "is-drag-over");
+
+        if (!gateUnlocked) {
+          inventoryNote.textContent = "";
+        }
+      });
+
+      gateDropzone.addEventListener("dragenter", (event) => {
+        if (gateUnlocked) return;
+        event.preventDefault();
+        gateDropzone.classList.add("is-drag-over");
+      });
+
+      gateDropzone.addEventListener("dragover", (event) => {
+        if (gateUnlocked) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+        gateDropzone.classList.add("is-drag-over");
+      });
+
+      gateDropzone.addEventListener("dragleave", (event) => {
+        if (event.target === gateDropzone) {
+          gateDropzone.classList.remove("is-drag-over");
+        }
+      });
+
+      gateDropzone.addEventListener("drop", (event) => {
+        if (gateUnlocked) return;
+        event.preventDefault();
+
+        const itemId = event.dataTransfer.getData("text/plain");
+        gateDropzone.classList.remove("is-drag-over");
+
+        if (itemId === "rusted-key") {
+          unlockGate();
+        }
+      });
+
+      proceedBtn.addEventListener("click", () => {
+        if (!gateUnlocked) {
+          proceedBtn.textContent = "Gate Locked";
+          inventoryNote.textContent = "Use the key from your bag.";
+          setInventoryOpen(true);
+          return;
+        }
+
+        if (!gateAnimationPlayed || step2.classList.contains("is-opening")) {
+          return;
+        }
+
+        closeModal();
       });
 
       backdrop?.addEventListener("click", () => {

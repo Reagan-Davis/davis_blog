@@ -3443,3 +3443,332 @@
     .startup-modal__panel.is-opening .startup-arch-inner-highlight {
       opacity: .24;
     }
+
+    .startup-inventory-ui{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:.8rem;
+      margin:1rem 0 0.9rem;
+    }
+
+    .startup-bag-button{
+      appearance:none;
+      border:1px solid var(--line-strong);
+      background:rgba(255,255,255,.05);
+      color:var(--ink);
+      border-radius:12px;
+      padding:.65rem .95rem;
+      font:inherit;
+      font-weight:600;
+      cursor:pointer;
+      transition:background 180ms ease, transform 180ms ease, border-color 180ms ease;
+    }
+
+    .startup-bag-button:hover{
+      background:rgba(255,255,255,.1);
+      transform:translateY(-1px);
+    }
+
+    .startup-inventory-panel{
+      width:min(100%, 320px);
+      border:1px solid var(--line-strong);
+      border-radius:16px;
+      padding:.9rem;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.1)),
+        rgba(0,0,0,.16);
+    }
+
+    .startup-inventory-title{
+      font-size:.82rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:.7rem;
+    }
+
+    .startup-inventory-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:.55rem;
+    }
+
+    .startup-inventory-slot{
+      aspect-ratio:1 / 1;
+      border:1px dashed rgba(255,255,255,.14);
+      border-radius:12px;
+      background:rgba(255,255,255,.03);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .startup-item{
+      appearance:none;
+      width:100%;
+      height:100%;
+      border:none;
+      background:transparent;
+      cursor:grab;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font:inherit;
+    }
+
+    .startup-item:active{
+      cursor:grabbing;
+    }
+
+    .startup-item.dragging{
+      opacity:.35;
+    }
+
+    .startup-key-icon{
+      font-size:1.8rem;
+      filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));
+    }
+
+    .startup-inventory-note{
+      margin-top:.7rem;
+      font-size:.92rem;
+      color:var(--muted);
+    }
+
+    .startup-gate-wrap{
+      position:relative;
+    }
+
+    .startup-gate-wrap::after{
+      content:"Drop key here";
+      position:absolute;
+      left:50%;
+      bottom:10px;
+      transform:translateX(-50%);
+      font-size:.78rem;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color:rgba(220,210,190,.72);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 180ms ease, transform 180ms ease;
+    }
+
+    .startup-gate-wrap.is-drop-ready::after,
+    .startup-gate-wrap.is-drag-over::after{
+      opacity:1;
+    }
+
+    .startup-gate-wrap.is-drop-ready{
+      box-shadow:
+        0 0 0 1px rgba(190,160,110,.25),
+        0 0 24px rgba(190,160,110,.12);
+    }
+
+    .startup-gate-wrap.is-drag-over{
+      box-shadow:
+        0 0 0 1px rgba(205,175,120,.42),
+        0 0 30px rgba(205,175,120,.18);
+      transform:translateY(-1px);
+    }
+
+    .startup-item-used{
+      opacity:.25;
+      pointer-events:none;
+      filter:grayscale(.4);
+    }
+
+    .startup-modal__button:disabled{
+      opacity:.7;
+      cursor:default;
+    }
+
+    @media (max-width:680px){
+      .startup-inventory-panel{
+        width:100%;
+      }
+    }
+
+    .startup-inventory-panel{
+      width:100%;
+      border:1px solid var(--line-strong);
+      border-radius:16px;
+      padding:.75rem .8rem .7rem;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(0,0,0,.11)),
+        rgba(0,0,0,.14);
+      margin:0 0 1rem;
+    }
+
+    .startup-inventory-title{
+      font-size:.76rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:.55rem;
+      text-align:center;
+    }
+
+    .startup-inventory-grid{
+      display:grid;
+      grid-template-columns:repeat(6, minmax(0, 1fr));
+      gap:.45rem;
+    }
+
+    .startup-inventory-slot{
+      position:relative;
+      aspect-ratio:1 / 1;
+      border-radius:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .startup-slot-base{
+      position:absolute;
+      inset:0;
+      border:1px dashed rgba(255,255,255,.14);
+      border-radius:11px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08)),
+        rgba(255,255,255,.015);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .startup-item{
+      appearance:none;
+      position:relative;
+      z-index:1;
+      width:100%;
+      height:100%;
+      border:none;
+      background:transparent;
+      cursor:grab;
+      border-radius:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font:inherit;
+    }
+
+    .startup-item:active{
+      cursor:grabbing;
+    }
+
+    .startup-item.dragging{
+      opacity:.28;
+    }
+
+    .startup-key-icon{
+      font-size:1.35rem;
+      filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));
+    }
+
+    .startup-item-used{
+      opacity:.18;
+      pointer-events:none;
+      filter:grayscale(.45);
+    }
+
+    .startup-inventory-note{
+      min-height:1.2em;
+      margin-top:.55rem;
+      font-size:.88rem;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    .startup-modal__actions--dungeon{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:1.15rem;
+    }
+
+    .startup-bag-button{
+      appearance:none;
+      border:1px solid var(--line-strong);
+      background:rgba(255,255,255,.05);
+      color:var(--ink);
+      border-radius:12px;
+      font:inherit;
+      font-weight:600;
+      cursor:pointer;
+      transition:background 180ms ease, transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .startup-bag-button:hover{
+      background:rgba(255,255,255,.1);
+      transform:translateY(-1px);
+    }
+
+    .startup-bag-button-inline{
+      width:46px;
+      height:46px;
+      min-width:46px;
+      padding:0;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin-right:.25rem;
+    }
+
+    .startup-bag-svg{
+      width:21px;
+      height:21px;
+      display:block;
+    }
+
+    .startup-gate-wrap{
+      position:relative;
+    }
+
+    .startup-gate-wrap::after{
+      content:"Drop key here";
+      position:absolute;
+      left:50%;
+      bottom:10px;
+      transform:translateX(-50%);
+      font-size:.74rem;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color:rgba(220,210,190,.72);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 180ms ease, transform 180ms ease;
+    }
+
+    .startup-gate-wrap.is-drop-ready::after,
+    .startup-gate-wrap.is-drag-over::after{
+      opacity:1;
+    }
+
+    .startup-gate-wrap.is-drop-ready{
+      box-shadow:
+        0 0 0 1px rgba(190,160,110,.25),
+        0 0 24px rgba(190,160,110,.12);
+    }
+
+    .startup-gate-wrap.is-drag-over{
+      box-shadow:
+        0 0 0 1px rgba(205,175,120,.42),
+        0 0 30px rgba(205,175,120,.18);
+      transform:translateY(-1px);
+    }
+
+    .startup-modal__button:disabled{
+      opacity:.7;
+      cursor:default;
+    }
+
+    @media (max-width:680px){
+      .startup-inventory-grid{
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+      }
+
+      .startup-modal__actions--dungeon{
+        gap:.9rem;
+      }
+    }
