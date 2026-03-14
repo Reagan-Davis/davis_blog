@@ -833,7 +833,7 @@
         </div>
 
         <div class="startup-inventory-grid">
-          <div class="startup-inventory-slot">
+          <div class="startup-inventory-slot startup-inventory-slot--key">
             <div class="startup-slot-base" aria-hidden="true"></div>
             <button
               type="button"
@@ -845,6 +845,16 @@
             >
               <span class="startup-key-icon" aria-hidden="true">🗝</span>
             </button>
+
+            <div
+              class="startup-help-popup startup-help-popup--key"
+              id="startupKeyHelp"
+              hidden
+              role="note"
+              aria-live="polite"
+            >
+              Items can be clicked to be selected or dragged directly onto other objects. Try clicking the key and then the gate, or dragging the key to the gate.
+            </div>
           </div>
 
           <div class="startup-inventory-slot"><div class="startup-slot-base" aria-hidden="true"></div></div>
@@ -858,23 +868,35 @@
       </div>
 
       <div class="startup-modal__actions startup-modal__actions--dungeon">
-        <button
-          class="startup-bag-button startup-bag-button-inline"
-          id="startupBagButton"
-          type="button"
-          aria-expanded="false"
-          aria-controls="startupInventoryPanel"
-          aria-label="Open bag"
-          title="Bag"
-        >
-          <span class="startup-bag-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" class="startup-bag-svg">
-              <path d="M8 9V7a4 4 0 0 1 8 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M6.5 9.5h11l-1 9.5a2 2 0 0 1-2 1.8H9.5a2 2 0 0 1-2-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M9 11.5a3 3 0 0 0 6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
-          </span>
-        </button>
+        <div class="startup-bag-help-anchor">
+          <div
+            class="startup-help-popup startup-help-popup--bag"
+            id="startupBagHelp"
+            hidden
+            role="note"
+            aria-live="polite"
+          >
+            Click the bag icon to access the inventory
+          </div>
+
+          <button
+            class="startup-bag-button startup-bag-button-inline"
+            id="startupBagButton"
+            type="button"
+            aria-expanded="false"
+            aria-controls="startupInventoryPanel"
+            aria-label="Open bag"
+            title="Bag"
+          >
+            <span class="startup-bag-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="startup-bag-svg">
+                <path d="M8 9V7a4 4 0 0 1 8 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M6.5 9.5h11l-1 9.5a2 2 0 0 1-2 1.8H9.5a2 2 0 0 1-2-1.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 11.5a3 3 0 0 0 6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+        </div>
 
         <button class="startup-modal__button" id="startupModalEnterSite" type="button">
           Proceed
@@ -954,16 +976,23 @@
 
       const dungeonText = document.getElementById("startupDungeonText");
 
+      const bagHelp = document.getElementById("startupBagHelp");
+      const keyHelp = document.getElementById("startupKeyHelp");
+
       if (
         !modal || !step1 || !step2 || !continueBtn || !proceedBtn ||
         !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
-        !gateDropzone || !dungeonText || !inventoryCloseBtn
+        !gateDropzone || !dungeonText || !inventoryCloseBtn ||
+        !bagHelp || !keyHelp
       ) return;
 
       const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
 
       let gateUnlocked = false;
       let gateAnimationPlayed = false;
+      let bagHintTimer = null;
+      let hasClickedBag = false;
+      let hasShownKeyHint = false;
 
       if (!hasSeenModal) {
         modal.classList.add("is-open");
@@ -976,9 +1005,16 @@
       function showStep(stepNumber) {
         step1.classList.toggle("is-active", stepNumber === 1);
         step2.classList.toggle("is-active", stepNumber === 2);
+
+        if (stepNumber === 2) {
+          scheduleBagHint();
+        } else {
+          hideAllTutorialHints();
+        }
       }
 
       function closeModal() {
+        hideAllTutorialHints();
         modal.classList.remove("is-open");
         modal.setAttribute("aria-hidden", "true");
         document.body.style.overflow = "";
@@ -988,6 +1024,61 @@
       function setInventoryOpen(isOpen) {
         inventoryPanel.hidden = !isOpen;
         bagButton.setAttribute("aria-expanded", String(isOpen));
+      }
+
+      function clearBagHintTimer() {
+        if (bagHintTimer) {
+          clearTimeout(bagHintTimer);
+          bagHintTimer = null;
+        }
+      }
+
+      function showHelpPopup(el) {
+        if (!el) return;
+        el.hidden = false;
+        requestAnimationFrame(() => {
+          el.classList.add("is-visible");
+        });
+      }
+
+      function hideHelpPopup(el) {
+        if (!el) return;
+        el.classList.remove("is-visible");
+        setTimeout(() => {
+          if (!el.classList.contains("is-visible")) {
+            el.hidden = true;
+          }
+        }, 220);
+      }
+
+      function scheduleBagHint() {
+        clearBagHintTimer();
+        hideHelpPopup(bagHelp);
+        hideHelpPopup(keyHelp);
+
+        if (hasClickedBag || gateUnlocked) return;
+        if (!step2.classList.contains("is-active")) return;
+
+        bagHintTimer = setTimeout(() => {
+          if (!hasClickedBag && !gateUnlocked && step2.classList.contains("is-active")) {
+            showHelpPopup(bagHelp);
+          }
+        }, 10000);
+      }
+
+      function showKeyTutorialHint() {
+        hideHelpPopup(bagHelp);
+
+        if (hasShownKeyHint || gateUnlocked) return;
+
+        hasShownKeyHint = true;
+        showHelpPopup(keyHelp);
+      }
+
+      function hideAllTutorialHints() {
+        clearBagHintTimer();
+        hideHelpPopup(bagHelp);
+        hideHelpPopup(keyHelp);
       }
 
       function playGateAnimation() {
@@ -1014,6 +1105,7 @@
         if (gateUnlocked) return;
 
         gateUnlocked = true;
+        hideAllTutorialHints();
         gateDropzone.dataset.locked = "false";
         gateDropzone.classList.remove("is-drop-ready", "is-drag-over");
         gateDropzone.setAttribute("aria-label", "Open gate");
@@ -1032,7 +1124,17 @@
 
       bagButton.addEventListener("click", () => {
         const isExpanded = bagButton.getAttribute("aria-expanded") === "true";
-        setInventoryOpen(!isExpanded);
+        const willOpen = !isExpanded;
+
+        hasClickedBag = true;
+        clearBagHintTimer();
+        hideHelpPopup(bagHelp);
+
+        setInventoryOpen(willOpen);
+
+        if (willOpen && !gateUnlocked) {
+          showKeyTutorialHint();
+        }
       });
 
       inventoryCloseBtn?.addEventListener("click", () => {
@@ -1085,6 +1187,8 @@
 
         keyItem.addEventListener("pointerdown", (event) => {
           if (gateUnlocked) return;
+
+          hideHelpPopup(keyHelp);
 
           pointerId = event.pointerId;
           dragging = true;
@@ -1151,7 +1255,7 @@
       proceedBtn.addEventListener("click", () => {
         if (!gateUnlocked) {
           proceedBtn.textContent = "Gate Locked";
-          inventoryNote.textContent = "Use the key from your bag.";
+          inventoryNote.textContent = "";
           setInventoryOpen(true);
           return;
         }
