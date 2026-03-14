@@ -4428,3 +4428,12 @@
       }
 
     }
+
+    .startup-item.is-selected {
+      outline: 2px solid rgba(182, 148, 103, 0.95);
+      outline-offset: 2px;
+      box-shadow:
+        0 0 0 3px rgba(182, 148, 103, 0.18),
+        0 10px 24px rgba(0, 0, 0, 0.28);
+      transform: translateY(-1px);
+    }

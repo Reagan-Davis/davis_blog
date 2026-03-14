@@ -804,20 +804,6 @@
           <!-- center seam bar -->
           <rect x="334" y="156" width="12" height="190" rx="5" fill="#4a4540" class="startup-gate-center-bar"/>
 
-          <!-- lock -->
-          <g class="startup-gate-lock" transform="translate(320 250)">
-            <rect x="-30" y="-10" width="60" height="70" rx="10" fill="#51463a" stroke="#9f835e" stroke-width="4"/>
-            <path
-              d="M-14 -10 L-14 -26 Q-14 -48 0 -48 Q14 -48 14 -26 L14 -10"
-              fill="none"
-              stroke="#b69467"
-              stroke-width="8"
-              stroke-linecap="round"
-            />
-            <circle cx="0" cy="18" r="8" fill="#b69467"/>
-            <rect x="-3" y="18" width="6" height="20" rx="3" fill="#b69467"/>
-          </g>
-
         </svg>
       </div>
 
@@ -988,6 +974,21 @@
       const bagHelp = document.getElementById("startupBagHelp");
       const keyHelp = document.getElementById("startupKeyHelp");
 
+      const LOCK_SVG_MARKUP = `
+        <g class="startup-gate-lock" id="startupGeneratedLock" transform="translate(320 250)">
+          <rect x="-30" y="-10" width="60" height="70" rx="10" fill="#51463a" stroke="#9f835e" stroke-width="4"/>
+          <path
+            d="M-14 -10 L-14 -26 Q-14 -48 0 -48 Q14 -48 14 -26 L14 -10"
+            fill="none"
+            stroke="#b69467"
+            stroke-width="8"
+            stroke-linecap="round"
+          />
+          <circle cx="0" cy="18" r="8" fill="#b69467"/>
+          <rect x="-3" y="18" width="6" height="20" rx="3" fill="#b69467"/>
+        </g>
+      `;
+
       const DUNGEON_ENTRY_TITLE = "<em>You enter the dungeon.</em>";
 
       const DUNGEON_LOCKED_TEXT = `
@@ -996,7 +997,6 @@
       `;
 
       const DUNGEON_OPEN_TEXT = `
-        You are standing in a narrow stone corridor.<br>
         The rusted gate hangs open now.<br>
         The passage beyond is dark.
       `;
@@ -1015,6 +1015,8 @@
       let bagHintTimer = null;
       let hasClickedBag = false;
       let hasShownKeyHint = false;
+      let hasShownGateLock = false;
+      let selectedInventoryItem = null;
 
       if (!hasSeenModal) {
         modal.classList.add("is-open");
@@ -1117,6 +1119,46 @@
         hideHelpPopup(keyHelp);
       }
 
+      function ensureGateLockVisible() {
+        if (hasShownGateLock || gateUnlocked) return;
+
+        const gateSvg = gateDropzone.querySelector(".startup-gate-svg");
+        if (!gateSvg) return;
+
+        const centerBar = gateSvg.querySelector(".startup-gate-center-bar");
+        if (!centerBar) return;
+
+        centerBar.insertAdjacentHTML("afterend", LOCK_SVG_MARKUP);
+        hasShownGateLock = true;
+      }
+
+      function setSelectedInventoryItem(itemName) {
+        selectedInventoryItem = itemName;
+
+        keyItem.classList.toggle("is-selected", itemName === "key");
+
+        if (itemName === "key") {
+          inventoryNote.textContent = "Rusted key selected.";
+          hideHelpPopup(keyHelp);
+        }
+      }
+
+      function clearSelectedInventoryItem() {
+        selectedInventoryItem = null;
+        keyItem.classList.remove("is-selected");
+      }
+
+      function useSelectedItemOnGate() {
+        if (gateUnlocked) return false;
+        if (selectedInventoryItem !== "key") return false;
+        if (keyItem.disabled) return false;
+
+        consumeKeyItem();
+        clearSelectedInventoryItem();
+        unlockGate();
+        return true;
+      }
+
       function playGateAnimation() {
         if (step2.classList.contains("is-opening") || step2.classList.contains("is-opened")) return;
 
@@ -1175,6 +1217,21 @@
 
       inventoryCloseBtn?.addEventListener("click", () => {
         setInventoryOpen(false);
+        clearSelectedInventoryItem();
+        inventoryNote.textContent = "";
+      });
+
+      gateDropzone.addEventListener("click", () => {
+        if (gateUnlocked) return;
+
+        if (useSelectedItemOnGate()) {
+          return;
+        }
+
+        ensureGateLockVisible();
+        inventoryNote.textContent = selectedInventoryItem
+          ? "That won't work here."
+          : "The gate is locked.";
       });
 
       function pointInsideRect(x, y, rect) {
@@ -1210,6 +1267,7 @@
       }
 
       function consumeKeyItem() {
+        clearSelectedInventoryItem();
         keyItem.classList.add("is-hidden");
         keyItem.disabled = true;
         keyItem.setAttribute("aria-hidden", "true");
@@ -1220,28 +1278,48 @@
         let pointerId = null;
         let ghost = null;
         let dragging = false;
+        let dragReady = false;
+        let startX = 0;
+        let startY = 0;
+
+        const DRAG_THRESHOLD = 8;
 
         keyItem.addEventListener("pointerdown", (event) => {
-          if (gateUnlocked) return;
+          if (gateUnlocked || keyItem.disabled) return;
 
           hideHelpPopup(keyHelp);
 
           pointerId = event.pointerId;
-          dragging = true;
+          dragReady = true;
+          dragging = false;
+          startX = event.clientX;
+          startY = event.clientY;
 
           keyItem.setPointerCapture(pointerId);
-          ghost = makeDragGhost();
-          setGhostPosition(ghost, event.clientX, event.clientY);
-
-          keyItem.classList.add("dragging");
-          markGateTouchState(false);
-          inventoryNote.textContent = "";
-
           event.preventDefault();
         });
 
         keyItem.addEventListener("pointermove", (event) => {
-          if (!dragging || event.pointerId !== pointerId || !ghost) return;
+          if (!dragReady || event.pointerId !== pointerId) return;
+
+          const dx = event.clientX - startX;
+          const dy = event.clientY - startY;
+          const distance = Math.hypot(dx, dy);
+
+          if (!dragging && distance >= DRAG_THRESHOLD) {
+            dragging = true;
+
+            clearSelectedInventoryItem();
+
+            ghost = makeDragGhost();
+            setGhostPosition(ghost, event.clientX, event.clientY);
+
+            keyItem.classList.add("dragging");
+            markGateTouchState(false);
+            inventoryNote.textContent = "";
+          }
+
+          if (!dragging || !ghost) return;
 
           setGhostPosition(ghost, event.clientX, event.clientY);
 
@@ -1253,23 +1331,32 @@
         });
 
         function endPointerDrag(event) {
-          if (!dragging || event.pointerId !== pointerId) return;
+          if (!dragReady || event.pointerId !== pointerId) return;
 
-          const gateRect = gateDropzone.getBoundingClientRect();
-          const droppedOnGate = pointInsideRect(event.clientX, event.clientY, gateRect);
+          if (dragging) {
+            const gateRect = gateDropzone.getBoundingClientRect();
+            const droppedOnGate = pointInsideRect(event.clientX, event.clientY, gateRect);
 
-          keyItem.classList.remove("dragging");
-          removeGhost(ghost);
-          ghost = null;
+            keyItem.classList.remove("dragging");
+            removeGhost(ghost);
+            ghost = null;
 
-          if (droppedOnGate && !gateUnlocked) {
-            consumeKeyItem();
-            clearGateTouchState();
-            unlockGate();
+            if (droppedOnGate && !gateUnlocked) {
+              consumeKeyItem();
+              clearGateTouchState();
+              unlockGate();
+            } else {
+              clearGateTouchState();
+              if (!gateUnlocked) {
+                inventoryNote.textContent = "";
+              }
+            }
           } else {
-            clearGateTouchState();
-            if (!gateUnlocked) {
+            if (selectedInventoryItem === "key") {
+              clearSelectedInventoryItem();
               inventoryNote.textContent = "";
+            } else {
+              setSelectedInventoryItem("key");
             }
           }
 
@@ -1278,6 +1365,7 @@
           } catch (_) {}
 
           dragging = false;
+          dragReady = false;
           pointerId = null;
           event.preventDefault();
         }
@@ -1290,8 +1378,9 @@
 
       proceedBtn.addEventListener("click", () => {
         if (!gateUnlocked) {
-          proceedBtn.textContent = "Gate Locked";
-          inventoryNote.textContent = "";
+          ensureGateLockVisible();
+          proceedBtn.textContent = "The Gate Appears Locked";
+          inventoryNote.textContent = "The gate is locked.";
           return;
         }
 
