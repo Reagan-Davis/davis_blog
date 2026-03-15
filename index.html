@@ -826,12 +826,42 @@
         role="status"
         aria-live="polite"
       ></div>
+
+      <div
+        class="startup-help-popup startup-help-popup--viewport"
+        id="startupViewportHelp"
+        hidden
+        role="note"
+        aria-live="polite"
+      >
+        Certain objects in the viewport can be interacted with. Try clicking the gate.
+      </div>
+
+      <div
+        class="startup-help-popup startup-help-popup--advance"
+        id="startupAdvanceHelp"
+        hidden
+        role="note"
+        aria-live="polite"
+      >
+        Arrows like these allow you to travel between scenes. Click it to move through the gate.
+      </div>
     </div>
 
       <p class="startup-modal__text" id="startupDungeonText">
         You are standing in a narrow stone corridor.<br>
         A rusted gate lies before you.
       </p>
+
+      <div
+        class="startup-help-popup startup-help-popup--dungeon-text"
+        id="startupTextHelp"
+        hidden
+        role="note"
+        aria-live="polite"
+      >
+        Interactable objects will give you a text pop-up.
+      </div>
 
       <div class="startup-inventory-popover" id="startupInventoryPanel" hidden>
         <div class="startup-inventory-popover__head">
@@ -1022,6 +1052,9 @@
 
       const bagHelp = document.getElementById("startupBagHelp");
       const keyHelp = document.getElementById("startupKeyHelp");
+      const viewportHelp = document.getElementById("startupViewportHelp");
+      const textHelp = document.getElementById("startupTextHelp");
+      const advanceHelp = document.getElementById("startupAdvanceHelp");
 
       const LOCK_SVG_MARKUP = `
         <g class="startup-gate-lock" id="startupGeneratedLock" transform="translate(320 250)">
@@ -1046,7 +1079,7 @@
       `;
 
       const DUNGEON_OPEN_TEXT = `
-        The rusted gate swings open, clanging against the stone facing.<br>
+        The rusted gate swings open, clanging against the stone facings.<br>
         The path beyond is dark, save for the faint glow of a torch.
       `;
 
@@ -1065,7 +1098,7 @@
         !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
         !gateScene || !gateObject || !advanceObject || !objectTooltip ||
         !dungeonTitle || !dungeonText || !finalTitle || !finalText ||
-        !inventoryCloseBtn || !bagHelp || !keyHelp
+        !inventoryCloseBtn || !bagHelp || !keyHelp || !viewportHelp || !textHelp || !advanceHelp
       ) return;
 
       const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
@@ -1073,8 +1106,17 @@
       let gateUnlocked = false;
       let gateAnimationPlayed = false;
       let bagHintTimer = null;
+      let textHintTimer = null;
+      let bagReturnTimer = null;
+      let advanceHintTimer = null;
+
       let hasClickedBag = false;
+      let hasShownViewportHint = false;
+      let hasShownTextHint = false;
+      let hasShownBagHint = false;
       let hasShownKeyHint = false;
+      let hasShownAdvanceHint = false;
+      let hasClickedGateOnce = false;
       let hasShownGateLock = false;
       let selectedInventoryItem = null;
 
@@ -1205,6 +1247,11 @@
 
         if (objectId === "gate") {
           ensureGateLockVisible();
+
+          if (!hasClickedGateOnce) {
+            hasClickedGateOnce = true;
+            showTextTutorialHintThenBag();
+          }
         }
 
         showObjectTooltip(obj.description);
@@ -1249,6 +1296,10 @@
               });
             }
           });
+
+          if (!gateUnlocked) {
+            hideHelpPopup(advanceHelp);
+          }
 
           scheduleBagHint();
           return;
@@ -1335,15 +1386,40 @@
         clearBagHintTimer();
         hideHelpPopup(bagHelp);
         hideHelpPopup(keyHelp);
+        hideHelpPopup(viewportHelp);
+        hideHelpPopup(textHelp);
+        hideHelpPopup(advanceHelp);
 
-        if (hasClickedBag || gateUnlocked) return;
+        if (gateUnlocked) return;
         if (!step2.classList.contains("is-active")) return;
 
-        bagHintTimer = setTimeout(() => {
-          if (!hasClickedBag && !gateUnlocked && step2.classList.contains("is-active")) {
-            showHelpPopup(bagHelp);
-          }
-        }, 10000);
+        if (!hasShownViewportHint && !hasClickedGateOnce) {
+          bagHintTimer = setTimeout(() => {
+            if (
+              !gateUnlocked &&
+              step2.classList.contains("is-active") &&
+              !hasClickedGateOnce &&
+              !hasShownViewportHint
+            ) {
+              hasShownViewportHint = true;
+              showHelpPopup(viewportHelp);
+            }
+          }, 4000);
+          return;
+        }
+
+        if (!hasShownBagHint && !hasClickedBag) {
+          bagHintTimer = setTimeout(() => {
+            if (
+              !hasClickedBag &&
+              !gateUnlocked &&
+              step2.classList.contains("is-active")
+            ) {
+              hasShownBagHint = true;
+              showHelpPopup(bagHelp);
+            }
+          }, 3000);
+        }
       }
 
       function showKeyTutorialHint() {
@@ -1355,10 +1431,73 @@
         showHelpPopup(keyHelp);
       }
 
+      function showTextTutorialHintThenBag() {
+        if (hasShownTextHint || gateUnlocked) return;
+
+        hasShownTextHint = true;
+
+        hideHelpPopup(viewportHelp);
+        hideHelpPopup(bagHelp);
+
+        showHelpPopup(textHelp);
+
+        textHintTimer = setTimeout(() => {
+          hideHelpPopup(textHelp);
+
+          bagReturnTimer = setTimeout(() => {
+            if (
+              !gateUnlocked &&
+              !hasClickedBag &&
+              step2.classList.contains("is-active")
+            ) {
+              hasShownBagHint = true;
+              showHelpPopup(bagHelp);
+            }
+          }, 1400);
+        }, 3200);
+      }
+
+      function showAdvanceTutorialHint() {
+        if (hasShownAdvanceHint) return;
+        if (!gateUnlocked || !gateAnimationPlayed) return;
+        if (!step2.classList.contains("is-active")) return;
+
+        hasShownAdvanceHint = true;
+
+        if (advanceHintTimer) {
+          clearTimeout(advanceHintTimer);
+        }
+
+        advanceHintTimer = setTimeout(() => {
+          if (step2.classList.contains("is-active") && isViewportObjectEnabled("advance")) {
+            showHelpPopup(advanceHelp);
+          }
+        }, 900);
+      }
+
       function hideAllTutorialHints() {
         clearBagHintTimer();
+
+        if (textHintTimer) {
+          clearTimeout(textHintTimer);
+          textHintTimer = null;
+        }
+
+        if (bagReturnTimer) {
+          clearTimeout(bagReturnTimer);
+          bagReturnTimer = null;
+        }
+
+        if (advanceHintTimer) {
+          clearTimeout(advanceHintTimer);
+          advanceHintTimer = null;
+        }
+
         hideHelpPopup(bagHelp);
         hideHelpPopup(keyHelp);
+        hideHelpPopup(viewportHelp);
+        hideHelpPopup(textHelp);
+        hideHelpPopup(advanceHelp);
       }
 
       function ensureGateLockVisible() {
@@ -1419,6 +1558,7 @@
           inventoryNote.textContent = "";
 
           setViewportObjectEnabled("advance", true);
+          showAdvanceTutorialHint();
 
           typePopupText(dungeonText, DUNGEON_OPEN_TEXT, {
             speed: 24,
@@ -1456,6 +1596,7 @@
         hasClickedBag = true;
         clearBagHintTimer();
         hideHelpPopup(bagHelp);
+        hideHelpPopup(viewportHelp);
 
         setInventoryOpen(willOpen);
 
@@ -1472,11 +1613,13 @@
 
       gateObject.addEventListener("click", (event) => {
         event.stopPropagation();
+        hideHelpPopup(viewportHelp);
         activateViewportObject("gate");
       });
 
       advanceObject.addEventListener("click", (event) => {
         event.stopPropagation();
+        hideHelpPopup(advanceHelp);
         activateViewportObject("advance");
       });
 

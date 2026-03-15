@@ -4798,3 +4798,115 @@
         transform: translateY(0);
       }
     }
+
+    .startup-help-popup--viewport {
+      position: absolute;
+      left: 50%;
+      top: 1rem;
+      transform: translate(-50%, -8px);
+      width: min(320px, calc(100% - 1.5rem));
+      max-width: calc(100% - 1.5rem);
+      z-index: 6;
+      text-align: center;
+    }
+
+    .startup-help-popup--viewport.is-visible {
+      transform: translate(-50%, 0);
+    }
+
+    .startup-help-popup--dungeon-text {
+      position: relative;
+      margin: 0.75rem auto 0;
+      width: fit-content;
+      max-width: min(320px, calc(100% - 1rem));
+      text-align: center;
+    }
+
+    .startup-help-popup--advance {
+      position: absolute;
+      left: 50%;
+      bottom: 4.5rem;
+      transform: translate(-50%, 8px);
+      width: min(340px, calc(100% - 1.5rem));
+      max-width: calc(100% - 1.5rem);
+      z-index: 6;
+      text-align: center;
+    }
+
+    .startup-help-popup--advance.is-visible {
+      transform: translate(-50%, 0);
+    }
+
+    .startup-help-popup--viewport,
+    .startup-help-popup--dungeon-text,
+    .startup-help-popup--advance {
+      position: absolute;
+    }
+
+    .startup-help-popup--viewport::after,
+    .startup-help-popup--dungeon-text::after,
+    .startup-help-popup--advance::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: rgba(20, 18, 17, 0.94);
+      border-right: 1px solid rgba(220, 205, 180, 0.18);
+      border-bottom: 1px solid rgba(220, 205, 180, 0.18);
+      transform: rotate(45deg);
+    }
+
+    .startup-help-popup--viewport {
+      left: 50%;
+      top: 0.75rem;
+      transform: translate(-50%, -8px);
+      width: min(320px, calc(100% - 1.5rem));
+      max-width: calc(100% - 1.5rem);
+      z-index: 6;
+      text-align: center;
+    }
+
+    .startup-help-popup--viewport.is-visible {
+      transform: translate(-50%, 0);
+    }
+
+    .startup-help-popup--viewport::after {
+      left: 50%;
+      bottom: -8px;
+      margin-left: -7px;
+    }
+
+    .startup-help-popup--dungeon-text {
+      position: relative;
+      margin: 0.9rem auto 0;
+      width: fit-content;
+      max-width: min(320px, calc(100% - 1rem));
+      text-align: center;
+    }
+
+    .startup-help-popup--dungeon-text::after {
+      left: 50%;
+      top: -8px;
+      margin-left: -7px;
+      transform: rotate(225deg);
+    }
+
+    .startup-help-popup--advance {
+      left: 50%;
+      bottom: 3.9rem;
+      transform: translate(-50%, 8px);
+      width: min(340px, calc(100% - 1.5rem));
+      max-width: calc(100% - 1.5rem);
+      z-index: 6;
+      text-align: center;
+    }
+
+    .startup-help-popup--advance.is-visible {
+      transform: translate(-50%, 0);
+    }
+
+    .startup-help-popup--advance::after {
+      left: 50%;
+      bottom: -8px;
+      margin-left: -7px;
+    }
