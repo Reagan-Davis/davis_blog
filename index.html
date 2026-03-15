@@ -162,7 +162,7 @@
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Projects</h2>
-              <p>Current projects and endeavors.</p>
+              <p>Current projects and endeavors</p>
             </div>
           </div>
           <div class="project-list" id="projectGrid"></div>
@@ -176,7 +176,7 @@
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Collected Writings</h2>
-              <p>Essays, reflections, anectdotes, and maybe the occasional rant.</p>
+              <p>Essays, reflections, anectdotes, and maybe the occasional rant</p>
             </div>
           </div>
           <div class="essay-grid" id="postGrid"></div>
@@ -230,8 +230,8 @@
         <div id="searchPanelBody" class="collapse-body" hidden>
           <div class="search-controls">
             <label>
-              <span>Search by title, creator, tag, keyword, or quote</span>
-              <input id="searchInput" type="search" placeholder="Search literature, directors, albums, themes, quotes..." autocomplete="off" />
+              <span>Search</span>
+              <input id="searchInput" type="search" placeholder="Enter title, creator, tags, or keywords" autocomplete="off" />
             </label>
             <label>
               <span>Order entries</span>
@@ -275,14 +275,14 @@
               </select>
             </label>
 
-            <label>
+            <!-- <label>
               <span>Ownership</span>
               <select id="ownedSelect">
                 <option value="all">Owned & unowned</option>
                 <option value="owned">Owned only</option>
                 <option value="not-owned"></option>
               </select>
-            </label>
+            </label> -->
 
             <label>
               <span>Vault view</span>
@@ -474,7 +474,7 @@
               I am only checking social media for 10-15 minutes a day, and anything there runs the risk of dragging me back into that dreaded, short-form content addiction. On a personal account, something like this would be subverting what the account was initially intended for. On a new account, it would invariably end up being about follows, likes, and views. YouTube would be much the same.<br><br>
               Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves or seeking that external validation.<br><br>
               We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
-              This place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done. It is set up in a way to pester me with notifications and reward me for finishing things.<br><br>
+              This place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done. It is set up in a way to pester me with notifications. It is set up to reward me for finishing things and to make me feel bad when I do not..<br><br>
               This site is ultimately designed for me, but if one other person takes something away from it, then that can only be a good thing.
             </p>
             <div class="comment-meta"></div>
@@ -1562,7 +1562,7 @@
     const menuToggle = document.getElementById('menuToggle');
     const mobileNavMenu = document.getElementById('mobileNavMenu');
     const statusSelect = document.getElementById('statusSelect');
-    const ownedSelect = document.getElementById('ownedSelect');
+    // const ownedSelect = document.getElementById('ownedSelect');
     const vaultViewSelect = document.getElementById('vaultViewSelect');
     const chartModeSelect = document.getElementById('chartModeSelect');
     const vaultCardsWrap = document.getElementById('vaultCardsWrap');
@@ -4760,11 +4760,11 @@
       if (vaultViewMode === 'charts') renderVaultChart();
     });
 
-    ownedSelect.addEventListener('change', (event) => {
-      ownedMode = event.target.value;
-      renderItems();
-      if (vaultViewMode === 'charts') renderVaultChart();
-    });
+    //ownedSelect.addEventListener('change', (event) => {
+      //ownedMode = event.target.value;
+      //renderItems();
+      //if (vaultViewMode === 'charts') renderVaultChart();
+    //});
 
     vaultViewSelect.addEventListener('change', (event) => {
       vaultViewMode = event.target.value;
