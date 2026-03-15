@@ -23,6 +23,7 @@
       --topbar-height: 73px;
       --footer-height: 0px;
       --view-padding-bottom: 1.75rem;
+      --tutorial-popup-bg: rgba(20, 18, 24, 0.96);
 
       --map-ocean-fill: #dbe7ef;
       --map-ocean-stroke: rgba(39, 53, 67, 0.16);
@@ -4198,7 +4199,7 @@
       padding: 0.6rem 0.8rem;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(20, 18, 24, 0.96);
+      background: var(--tutorial-popup-bg);
       color: rgba(245, 240, 233, 0.96);
       box-shadow: 0 10px 26px rgba(0,0,0,0.35);
       font-size: 0.8rem;
@@ -4215,11 +4216,10 @@
     .startup-help-popup::after {
       content: "";
       position: absolute;
-      width: 12px;
-      height: 12px;
-      background: rgba(20, 18, 24, 0.96);
-      border-left: 1px solid rgba(255,255,255,0.14);
-      border-top: 1px solid rgba(255,255,255,0.14);
+      width: 14px;
+      height: 14px;
+      background: var(--tutorial-popup-bg);
+      transform: rotate(45deg);
     }
 
     /* Bag popup stays above bag */
@@ -4748,9 +4748,10 @@
 
     .startup-viewport-object--advance {
       left: 41%;
-      top: 56%;
+      top: 52%;
       width: 18%;
       height: 10%;
+      transform: translateX(-7%);
       display: grid;
       place-items: center;
       z-index: 4;
@@ -4858,7 +4859,7 @@
 
     .startup-help-popup--viewport {
       left: 50%;
-      top: 0.75rem;
+      top: 0.25rem;
       transform: translate(-50%, -8px);
       width: min(320px, calc(100% - 1.5rem));
       max-width: calc(100% - 1.5rem);
@@ -4877,27 +4878,35 @@
     }
 
     .startup-help-popup--dungeon-text {
-      position: relative;
-      margin: 0.9rem auto 0;
-      width: fit-content;
-      max-width: min(320px, calc(100% - 1rem));
+      position: absolute;
+      left: 50%;
+      top: calc(100% - 10rem);
+      transform: translate(-50%, 8px);
+      width: min(320px, calc(100% - 1rem));
+      max-width: calc(100% - 1rem);
+      z-index: 6;
       text-align: center;
+    }
+
+    .startup-help-popup--dungeon-text.is-visible {
+      transform: translate(-50%, 0);
     }
 
     .startup-help-popup--dungeon-text::after {
       left: 50%;
       top: -8px;
       margin-left: -7px;
-      transform: rotate(225deg);
+      transform: rotate(45deg);
     }
 
     .startup-help-popup--advance {
+      position: absolute;
       left: 50%;
-      bottom: 3.9rem;
+      bottom: 0.5rem;
       transform: translate(-50%, 8px);
       width: min(340px, calc(100% - 1.5rem));
       max-width: calc(100% - 1.5rem);
-      z-index: 6;
+      z-index: 60;
       text-align: center;
     }
 
@@ -4906,7 +4915,22 @@
     }
 
     .startup-help-popup--advance::after {
+      content: "";
+      position: absolute;
       left: 50%;
-      bottom: -8px;
+      top: -8px;
+      width: 14px;
+      height: 14px;
       margin-left: -7px;
+      background: rgba(20, 18, 17, 0.94);
+      border-top: 1px solid rgba(220, 205, 180, 0.18);
+      border-left: 1px solid rgba(220, 205, 180, 0.18);
+      border-right: none;
+      border-bottom: none;
+      transform: rotate(45deg);
+    }
+
+    .startup-help-popup,
+    .startup-object-tooltip {
+      pointer-events: none;
     }

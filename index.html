@@ -844,7 +844,7 @@
         role="note"
         aria-live="polite"
       >
-        Arrows like these allow you to travel between scenes. Click it to move through the gate.
+        Arrows like these allow you to travel between scenes. Click it to move through the now open gate.
       </div>
     </div>
 
@@ -1023,6 +1023,7 @@
   <script>
     (function () {
       const STORAGE_KEY = "rrr_site_notice_seen";
+      const DEBUG_ALWAYS_SHOW_INTRO = true;
 
       const modal = document.getElementById("startupModal");
       const backdrop = modal?.querySelector(".startup-modal__backdrop");
@@ -1079,7 +1080,7 @@
       `;
 
       const DUNGEON_OPEN_TEXT = `
-        The rusted gate swings open, clanging against the stone facings.<br>
+        The rusted gate swings open, clanging against the stone facings on either side.<br>
         The path beyond is dark, save for the faint glow of a torch.
       `;
 
@@ -1101,7 +1102,7 @@
         !inventoryCloseBtn || !bagHelp || !keyHelp || !viewportHelp || !textHelp || !advanceHelp
       ) return;
 
-      const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
+      const hasSeenModal = !DEBUG_ALWAYS_SHOW_INTRO && localStorage.getItem(STORAGE_KEY) === "true";
 
       let gateUnlocked = false;
       let gateAnimationPlayed = false;
@@ -1163,7 +1164,7 @@
 
         objectTooltipTimer = setTimeout(() => {
           hideObjectTooltip();
-        }, 1600);
+        }, 4800);
       }
 
       function hideObjectTooltip() {
@@ -1404,7 +1405,7 @@
               hasShownViewportHint = true;
               showHelpPopup(viewportHelp);
             }
-          }, 4000);
+          }, 6000);
           return;
         }
 
@@ -1453,8 +1454,8 @@
               hasShownBagHint = true;
               showHelpPopup(bagHelp);
             }
-          }, 1400);
-        }, 3200);
+          }, 2400);
+        }, 5000);
       }
 
       function showAdvanceTutorialHint() {
