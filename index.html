@@ -472,9 +472,10 @@
               <div class="section-divider"></div>
               I contemplated for a long time over what the best way to go about this would be.<br><br>
               I am only checking social media for 10-15 minutes a day, and anything there runs the risk of dragging me back into that dreaded, short-form content addiction. On a personal account, something like this would be subverting what the account was initially intended for. On a new account, it would invariably end up being about follows, likes, and views. YouTube would be much the same.<br><br>
-              Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves or seeking that external validation. We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
-              Ultimately, this place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done. It is set up to pester me with notifications.<br><br>
-              Maybe, just maybe, you will leave here ___?
+              Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves or seeking that external validation.<br><br>
+              We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
+              This place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done. It is set up in a way to pester me with notifications and reward me for finishing things.<br><br>
+              This site is ultimately designed for me, but if one other person takes something away from it, then that can only be a good thing.
             </p>
             <div class="comment-meta"></div>
           </div>
@@ -530,7 +531,7 @@
 
       <h2 id="startupModalTitle" class="startup-modal__title">
         This site is incomplete and a continuous work in progress.<br><br>
-        There exists a significant amount of work yet to be transferred here. It is full of placeholder text or features at the moment. <br><br>
+        There exists a significant amount of work yet to be transferred here. It is full of placeholder text and features at the moment. <br><br>
         It is designed for monitors but should be <em>almost</em> entirely functional on mobile.<br><br>
         The why behind the existence of this site can be found on the about page after this.<br><br>
         You have been warned.
@@ -882,6 +883,27 @@
         </button>
       </div>
     </div>
+
+        <!-- Step 3 -->
+    <div
+      class="startup-modal__panel startup-modal__panel--step"
+      id="startupModalStep3"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="startupFinalTitle"
+    >
+      <p class="startup-modal__eyebrow">Threshold</p>
+
+      <h2 id="startupFinalTitle" class="startup-modal__title"></h2>
+
+      <p class="startup-modal__text" id="startupFinalText"></p>
+
+      <div class="startup-modal__actions">
+        <button class="startup-modal__button" id="startupModalFinalContinue" type="button">
+          Continue to Site
+        </button>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -942,9 +964,11 @@
 
       const step1 = document.getElementById("startupModalStep1");
       const step2 = document.getElementById("startupModalStep2");
+      const step3 = document.getElementById("startupModalStep3");
 
       const continueBtn = document.getElementById("startupModalContinue");
       const proceedBtn = document.getElementById("startupModalEnterSite");
+      const finalContinueBtn = document.getElementById("startupModalFinalContinue");
 
       const bagButton = document.getElementById("startupBagButton");
       const inventoryPanel = document.getElementById("startupInventoryPanel");
@@ -955,6 +979,8 @@
 
       const dungeonTitle = document.getElementById("startupDungeonTitle");
       const dungeonText = document.getElementById("startupDungeonText");
+      const finalTitle = document.getElementById("startupFinalTitle");
+      const finalText = document.getElementById("startupFinalText");
 
       const bagHelp = document.getElementById("startupBagHelp");
       const keyHelp = document.getElementById("startupKeyHelp");
@@ -986,11 +1012,18 @@
         The path beyond is dark, save for the faint glow of a torch.
       `;
 
+      const FINAL_STEP_TITLE = "<em></em>";
+
+      const FINAL_STEP_TEXT = `
+        Heh, did I make you think I was going to force you play through an entire game to navigate this site?<br><br>
+        Okay, yeah, that would be incredibly on-brand for me. Touché. The systems are mostly in place, so maybe another time.
+      `;
+
       if (
-        !modal || !step1 || !step2 || !continueBtn || !proceedBtn ||
+        !modal || !step1 || !step2 || !step3 || !continueBtn || !proceedBtn || !finalContinueBtn ||
         !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
-        !gateDropzone || !dungeonTitle || !dungeonText || !inventoryCloseBtn ||
-        !bagHelp || !keyHelp
+        !gateDropzone || !dungeonTitle || !dungeonText || !finalTitle || !finalText ||
+        !inventoryCloseBtn || !bagHelp || !keyHelp
       ) return;
 
       const hasSeenModal = localStorage.getItem(STORAGE_KEY) === "true";
@@ -1009,11 +1042,13 @@
         document.body.style.overflow = "hidden";
         step1.classList.add("is-active");
         step2.classList.remove("is-active");
+        step3.classList.remove("is-active");
       }
 
       function showStep(stepNumber) {
         step1.classList.toggle("is-active", stepNumber === 1);
         step2.classList.toggle("is-active", stepNumber === 2);
+        step3.classList.toggle("is-active", stepNumber === 3);
 
         if (stepNumber === 2) {
           dungeonTitle.innerHTML = "";
@@ -1031,9 +1066,33 @@
           });
 
           scheduleBagHint();
-        } else {
-          hideAllTutorialHints();
+          return;
         }
+
+        if (stepNumber === 3) {
+          hideAllTutorialHints();
+          setInventoryOpen(false);
+          clearSelectedInventoryItem();
+          inventoryNote.textContent = "";
+
+          finalTitle.innerHTML = "";
+          finalText.innerHTML = "";
+
+          typePopupText(finalTitle, FINAL_STEP_TITLE, {
+            speed: 30,
+            startDelay: 100,
+            onComplete: () => {
+              typePopupText(finalText, FINAL_STEP_TEXT, {
+                speed: 22,
+                startDelay: 140
+              });
+            }
+          });
+
+          return;
+        }
+
+        hideAllTutorialHints();
       }
 
       function closeModal() {
@@ -1373,6 +1432,10 @@
           return;
         }
 
+        showStep(3);
+      });
+
+      finalContinueBtn.addEventListener("click", () => {
         closeModal();
       });
 
