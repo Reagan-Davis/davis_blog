@@ -1012,10 +1012,10 @@
         The path beyond is dark, save for the faint glow of a torch.
       `;
 
-      const FINAL_STEP_TITLE = "</em></em>";
+      const FINAL_STEP_TITLE = "<em></em>";
 
       const FINAL_STEP_TEXT = `
-        </em>As you make your way down the corridor...</em> [[pause=900]] <br><br>
+        <em>As you make your way down the corridor...</em> [[pause=2700]] <br><br>
         Heh, did I make you think I was going to force you play through an entire game to navigate this site?<br><br>
         Okay, yeah, you got me. That would be incredibly on-brand for me.<br><br>
         What you are about to see is far from my final vision for things, so if you made it this far, I hope you stick around or check back in every now and then.<br><br>
@@ -1673,6 +1673,7 @@
       startDelay = 120,
       onComplete = null
     } = {}) {
+
       if (!element) return;
 
       popupTypingRunId += 1;
@@ -1682,27 +1683,45 @@
       element.innerHTML = "";
       element.classList.add("popupTyping");
 
+      // Detect pause tokens
+      const pauses = [];
+      let cleanText = html;
+      let match;
+
+      const regex = /\[\[pause=(\d+)\]\]/g;
+
+      while ((match = regex.exec(html)) !== null) {
+        pauses.push({
+          index: match.index,
+          delay: Number(match[1])
+        });
+      }
+
+      // Remove pause tokens from the text
+      cleanText = html.replace(regex, "");
+
       let index = 0;
 
       function step() {
         if (runId !== popupTypingRunId) return;
 
-        const remaining = html.slice(index);
-        const pauseMatch = remaining.match(/^\[\[pause=(\d+)\]\]/);
+        index += 1;
 
-        if (pauseMatch) {
-          index += pauseMatch[0].length;
-          popupTypingTimer = setTimeout(step, Number(pauseMatch[1]));
+        element.innerHTML = cleanText.slice(0, index);
+
+        // Check if a pause should happen here
+        const pause = pauses.find(p => p.index === index);
+
+        if (pause) {
+          popupTypingTimer = setTimeout(step, pause.delay);
           return;
         }
 
-        index += 1;
-        element.innerHTML = html.slice(0, index);
-
-        if (index < html.length) {
+        if (index < cleanText.length) {
           popupTypingTimer = setTimeout(step, speed);
         } else {
           element.classList.remove("popupTyping");
+
           if (typeof onComplete === "function") {
             onComplete();
           }
