@@ -4507,3 +4507,45 @@
         transparent
       );
     }
+
+    .project-viewport-shell {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-viewport-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .project-viewport-title {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 3;
+
+      padding: 0.45rem 0.7rem;
+      border-radius: 10px;
+
+      background: rgba(20, 20, 20, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+
+      pointer-events: none;
+    }
+
+    .project-viewport-overlay {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 3;
+
+      pointer-events: none;
+    }

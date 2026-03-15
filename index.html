@@ -4401,7 +4401,7 @@
         const state = historicalAtlasViewportState;
         const oldZoom = state.zoom;
         const zoomFactor = event.deltaY < 0 ? 1.12 : 0.89;
-        const newZoom = Math.max(1, Math.min(18, oldZoom * zoomFactor));
+        const newZoom = Math.max(0.1, Math.min(18, oldZoom * zoomFactor));
 
         if (newZoom === oldZoom) return;
 
@@ -4583,10 +4583,14 @@
                 aria-label="Historical atlas border viewport"
               ></canvas>
 
+              <div class="project-viewport-title">
+                Царство Польское 1815–1867 <br>
+                Wolne Miasto Kraków 1815-1846
+              </div>
+
               <div class="project-viewport-overlay" aria-hidden="true">
-                <div class="project-viewport-badge">WebGL Border View</div>
-                <div class="project-viewport-caption">
-                  D3 projection + GPU border rendering
+                <div class="project-viewport-badge"></div>
+                <div class="project-viewport-caption"> Drag to move. Pinch to zoom.
                 </div>
               </div>
             </div>
