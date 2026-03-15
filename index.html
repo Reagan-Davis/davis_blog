@@ -562,236 +562,253 @@
         <em>You enter the dungeon.</em>
       </h2>
 
-      <div
-        class="startup-gate-wrap"
-        id="startupGateDropzone"
-        data-locked="true"
-        aria-label="Locked gate"
-      >
-        <svg class="startup-gate-svg startup-gate-scene" viewBox="0 0 640 420">
+    <div
+      class="startup-gate-wrap"
+      id="startupGateScene"
+      data-locked="true"
+      aria-label="Dungeon viewport"
+    >
+      <svg class="startup-gate-svg startup-gate-scene" viewBox="0 0 640 420">
 
-          <defs>
-            <linearGradient id="startupStoneFront" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0%" stop-color="#8c8478"/>
-              <stop offset="100%" stop-color="#5f584f"/>
-            </linearGradient>
+        <defs>
+          <linearGradient id="startupStoneFront" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#8c8478"/>
+            <stop offset="100%" stop-color="#5f584f"/>
+          </linearGradient>
 
-            <linearGradient id="startupStoneSideLeft" x1="1" x2="0" y1="0" y2="0">
-              <stop offset="0%" stop-color="#5f584f"/>
-              <stop offset="100%" stop-color="#3f3a34"/>
-            </linearGradient>
+          <linearGradient id="startupStoneSideLeft" x1="1" x2="0" y1="0" y2="0">
+            <stop offset="0%" stop-color="#5f584f"/>
+            <stop offset="100%" stop-color="#3f3a34"/>
+          </linearGradient>
 
-            <linearGradient id="startupStoneSideRight" x1="0" x2="1" y1="0" y2="0">
-              <stop offset="0%" stop-color="#5f584f"/>
-              <stop offset="100%" stop-color="#3f3a34"/>
-            </linearGradient>
+          <linearGradient id="startupStoneSideRight" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#5f584f"/>
+            <stop offset="100%" stop-color="#3f3a34"/>
+          </linearGradient>
 
-            <linearGradient id="startupStoneTop" x1="0" x2="0" y1="1" y2="0">
-              <stop offset="0%" stop-color="#655e55"/>
-              <stop offset="100%" stop-color="#8d8579"/>
-            </linearGradient>
+          <linearGradient id="startupStoneTop" x1="0" x2="0" y1="1" y2="0">
+            <stop offset="0%" stop-color="#655e55"/>
+            <stop offset="100%" stop-color="#8d8579"/>
+          </linearGradient>
 
-            <linearGradient id="startupFloorPlane" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stop-color="rgba(110,104,96,0.22)"/>
-              <stop offset="100%" stop-color="rgba(38,34,31,0.08)"/>
-            </linearGradient>
-          </defs>
+          <linearGradient id="startupFloorPlane" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(110,104,96,0.22)"/>
+            <stop offset="100%" stop-color="rgba(38,34,31,0.08)"/>
+          </linearGradient>
+        </defs>
 
-          <!-- left wall face -->
-          <polygon
-            class="startup-wall-face startup-wall-left"
-            points="90,370 90,150 28,118 28,392"
-            fill="url(#startupStoneSideLeft)"
-          />
+        <!-- left wall face -->
+        <polygon
+          class="startup-wall-face startup-wall-left"
+          points="90,370 90,150 28,118 28,392"
+          fill="url(#startupStoneSideLeft)"
+        />
 
-          <!-- right wall face -->
-          <polygon
-            class="startup-wall-face startup-wall-right"
-            points="550,150 550,370 612,392 612,118"
-            fill="url(#startupStoneSideRight)"
-          />
+        <!-- right wall face -->
+        <polygon
+          class="startup-wall-face startup-wall-right"
+          points="550,150 550,370 612,392 612,118"
+          fill="url(#startupStoneSideRight)"
+        />
 
-          <!-- ceiling face -->
-          <polygon
-            class="startup-wall-face startup-wall-top"
-            points="90,150 200,42 440,42 550,150 612,118 486,12 154,12 28,118"
-            fill="url(#startupStoneTop)"
-          />
+        <!-- ceiling face -->
+        <polygon
+          class="startup-wall-face startup-wall-top"
+          points="90,150 200,42 440,42 550,150 612,118 486,12 154,12 28,118"
+          fill="url(#startupStoneTop)"
+        />
 
-          <!-- floor plane -->
-          <polygon
-            class="startup-floor-plane"
-            points="90,370 550,370 612,392 28,392"
-            fill="url(#startupFloorPlane)"
-          />
+        <!-- floor plane -->
+        <polygon
+          class="startup-floor-plane"
+          points="90,370 550,370 612,392 28,392"
+          fill="url(#startupFloorPlane)"
+        />
 
-          <g class="startup-stone-joints" aria-hidden="true">
-            <!-- LEFT WALL -->
-            <line x1="28" y1="160" x2="90" y2="174"/>
-            <line x1="28" y1="214" x2="90" y2="224"/>
-            <line x1="28" y1="270" x2="90" y2="278"/>
-            <line x1="28" y1="328" x2="90" y2="334"/>
+        <g class="startup-stone-joints" aria-hidden="true">
+          <!-- LEFT WALL -->
+          <line x1="28" y1="160" x2="90" y2="174"/>
+          <line x1="28" y1="214" x2="90" y2="224"/>
+          <line x1="28" y1="270" x2="90" y2="278"/>
+          <line x1="28" y1="328" x2="90" y2="334"/>
 
-            <line x1="45" y1="126" x2="45" y2="174"/>
-            <line x1="68" y1="137" x2="68" y2="179"/>
+          <line x1="45" y1="126" x2="45" y2="174"/>
+          <line x1="68" y1="137" x2="68" y2="179"/>
 
-            <line x1="37" y1="174" x2="37" y2="224"/>
-            <line x1="60" y1="180" x2="60" y2="228"/>
-            <line x1="82" y1="186" x2="82" y2="232"/>
+          <line x1="37" y1="174" x2="37" y2="224"/>
+          <line x1="60" y1="180" x2="60" y2="228"/>
+          <line x1="82" y1="186" x2="82" y2="232"/>
 
-            <line x1="46" y1="224" x2="46" y2="278"/>
-            <line x1="70" y1="230" x2="70" y2="282"/>
+          <line x1="46" y1="224" x2="46" y2="278"/>
+          <line x1="70" y1="230" x2="70" y2="282"/>
 
-            <line x1="36" y1="278" x2="36" y2="334"/>
-            <line x1="59" y1="282" x2="59" y2="338"/>
-            <line x1="81" y1="286" x2="81" y2="342"/>
+          <line x1="36" y1="278" x2="36" y2="334"/>
+          <line x1="59" y1="282" x2="59" y2="338"/>
+          <line x1="81" y1="286" x2="81" y2="342"/>
 
-            <!-- RIGHT WALL -->
-            <line x1="550" y1="174" x2="612" y2="160"/>
-            <line x1="550" y1="224" x2="612" y2="214"/>
-            <line x1="550" y1="278" x2="612" y2="270"/>
-            <line x1="550" y1="334" x2="612" y2="328"/>
+          <!-- RIGHT WALL -->
+          <line x1="550" y1="174" x2="612" y2="160"/>
+          <line x1="550" y1="224" x2="612" y2="214"/>
+          <line x1="550" y1="278" x2="612" y2="270"/>
+          <line x1="550" y1="334" x2="612" y2="328"/>
 
-            <line x1="595" y1="126" x2="595" y2="174"/>
-            <line x1="572" y1="137" x2="572" y2="179"/>
+          <line x1="595" y1="126" x2="595" y2="174"/>
+          <line x1="572" y1="137" x2="572" y2="179"/>
 
-            <line x1="603" y1="174" x2="603" y2="224"/>
-            <line x1="580" y1="180" x2="580" y2="228"/>
-            <line x1="558" y1="186" x2="558" y2="232"/>
+          <line x1="603" y1="174" x2="603" y2="224"/>
+          <line x1="580" y1="180" x2="580" y2="228"/>
+          <line x1="558" y1="186" x2="558" y2="232"/>
 
-            <line x1="594" y1="224" x2="594" y2="278"/>
-            <line x1="570" y1="230" x2="570" y2="282"/>
+          <line x1="594" y1="224" x2="594" y2="278"/>
+          <line x1="570" y1="230" x2="570" y2="282"/>
 
-            <line x1="604" y1="278" x2="604" y2="334"/>
-            <line x1="581" y1="282" x2="581" y2="338"/>
-            <line x1="559" y1="286" x2="559" y2="342"/>
+          <line x1="604" y1="278" x2="604" y2="334"/>
+          <line x1="581" y1="282" x2="581" y2="338"/>
+          <line x1="559" y1="286" x2="559" y2="342"/>
 
-            <!-- CEILING SEAMS -->
-            <line x1="90" y1="150" x2="28" y2="118"/>
-            <line x1="550" y1="150" x2="612" y2="118"/>
-            <line x1="154" y1="12" x2="200" y2="42"/>
-            <line x1="486" y1="12" x2="440" y2="42"/>
+          <!-- CEILING SEAMS -->
+          <line x1="90" y1="150" x2="28" y2="118"/>
+          <line x1="550" y1="150" x2="612" y2="118"/>
+          <line x1="154" y1="12" x2="200" y2="42"/>
+          <line x1="486" y1="12" x2="440" y2="42"/>
 
-            <line x1="170" y1="28" x2="470" y2="28"/>
-            <line x1="124" y1="78" x2="516" y2="78"/>
+          <line x1="170" y1="28" x2="470" y2="28"/>
+          <line x1="124" y1="78" x2="516" y2="78"/>
 
-            <line x1="232" y1="18" x2="232" y2="42"/>
-            <line x1="322" y1="14" x2="322" y2="42"/>
-            <line x1="410" y1="18" x2="410" y2="42"/>
+          <line x1="232" y1="18" x2="232" y2="42"/>
+          <line x1="322" y1="14" x2="322" y2="42"/>
+          <line x1="410" y1="18" x2="410" y2="42"/>
 
-            <line x1="180" y1="58" x2="180" y2="82"/>
-            <line x1="270" y1="58" x2="270" y2="82"/>
-            <line x1="365" y1="58" x2="365" y2="82"/>
-            <line x1="455" y1="58" x2="455" y2="82"/>
+          <line x1="180" y1="58" x2="180" y2="82"/>
+          <line x1="270" y1="58" x2="270" y2="82"/>
+          <line x1="365" y1="58" x2="365" y2="82"/>
+          <line x1="455" y1="58" x2="455" y2="82"/>
+        </g>
+
+        <!-- background opening -->
+        <g class="startup-gate-depth">
+          <rect x="120" y="90" width="400" height="270" rx="24" class="startup-gate-depth-back"></rect>
+          <ellipse cx="320" cy="330" rx="130" ry="24" class="startup-gate-mist"></ellipse>
+        </g>
+
+        <!-- outer arch mass -->
+        <path
+          class="startup-arch-outer"
+          d="M90 370 L90 150 Q90 42 200 42 L440 42 Q550 42 550 150 L550 370"
+          fill="none"
+          stroke="url(#startupStoneFront)"
+          stroke-width="42"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <!-- mid arch face -->
+        <path
+          class="startup-arch-mid"
+          d="M90 370 L90 150 Q90 42 200 42 L440 42 Q550 42 550 150 L550 370"
+          fill="none"
+          stroke="#72695f"
+          stroke-width="28"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <!-- inner arch lip -->
+        <path
+          class="startup-arch-inner-lip"
+          d="M120 360 L120 155 Q120 70 200 70 L440 70 Q520 70 520 155 L520 360"
+          fill="none"
+          stroke="#3e3934"
+          stroke-width="18"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <!-- inner highlight edge -->
+        <path
+          class="startup-arch-inner-highlight"
+          d="M126 356 L126 158 Q126 79 202 79 L438 79 Q514 79 514 158 L514 356"
+          fill="none"
+          stroke="rgba(210,200,185,0.18)"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <!-- inner frame -->
+        <path
+          d="M120 360 L120 155 Q120 70 200 70 L440 70 Q520 70 520 155 L520 360"
+          fill="none"
+          stroke="#4a4540"
+          stroke-width="18"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <!-- left gate leaf -->
+        <g class="startup-gate-leaf startup-gate-leaf-left">
+          <rect x="128" y="140" width="26" height="230" rx="6" fill="#4a4540"/>
+          <rect x="150" y="146" width="170" height="18" rx="5" fill="#4a4540"/>
+
+          <g fill="#4a4540">
+            <rect x="172" y="156" width="12" height="190" rx="5"/>
+            <rect x="208" y="156" width="12" height="190" rx="5"/>
+            <rect x="244" y="156" width="12" height="190" rx="5"/>
+            <rect x="280" y="156" width="12" height="190" rx="5"/>
+            <rect x="316" y="156" width="12" height="190" rx="5"/>
+          </g>
+        </g>
+
+        <!-- right gate leaf -->
+        <g class="startup-gate-leaf startup-gate-leaf-right">
+          <rect x="486" y="140" width="26" height="230" rx="6" fill="#4a4540"/>
+          <rect x="320" y="146" width="170" height="18" rx="5" fill="#4a4540"/>
+
+          <g fill="#4a4540">
+            <rect x="352" y="156" width="12" height="190" rx="5"/>
+            <rect x="388" y="156" width="12" height="190" rx="5"/>
+            <rect x="424" y="156" width="12" height="190" rx="5"/>
+            <rect x="460" y="156" width="12" height="190" rx="5"/>
           </g>
 
-          <!-- background opening -->
-          <g class="startup-gate-depth">
-            <rect x="120" y="90" width="400" height="270" rx="24" class="startup-gate-depth-back"></rect>
-            <ellipse cx="320" cy="330" rx="130" ry="24" class="startup-gate-mist"></ellipse>
+          <g fill="#a79f95">
+            <path d="M346 156 L358 124 L370 156 Z"/>
+            <path d="M382 156 L394 124 L406 156 Z"/>
+            <path d="M418 156 L430 124 L442 156 Z"/>
+            <path d="M454 156 L466 124 L478 156 Z"/>
           </g>
 
-          <!-- outer arch mass -->
-          <path
-            class="startup-arch-outer"
-            d="M90 370 L90 150 Q90 42 200 42 L440 42 Q550 42 550 150 L550 370"
-            fill="none"
-            stroke="url(#startupStoneFront)"
-            stroke-width="42"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-
-          <!-- mid arch face -->
-          <path
-            class="startup-arch-mid"
-            d="M90 370 L90 150 Q90 42 200 42 L440 42 Q550 42 550 150 L550 370"
-            fill="none"
-            stroke="#72695f"
-            stroke-width="28"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-
-          <!-- inner arch lip -->
-          <path
-            class="startup-arch-inner-lip"
-            d="M120 360 L120 155 Q120 70 200 70 L440 70 Q520 70 520 155 L520 360"
-            fill="none"
-            stroke="#3e3934"
-            stroke-width="18"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-
-          <!-- inner highlight edge -->
-          <path
-            class="startup-arch-inner-highlight"
-            d="M126 356 L126 158 Q126 79 202 79 L438 79 Q514 79 514 158 L514 356"
-            fill="none"
-            stroke="rgba(210,200,185,0.18)"
-            stroke-width="4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-
-          <!-- inner frame -->
-          <path
-            d="M120 360 L120 155 Q120 70 200 70 L440 70 Q520 70 520 155 L520 360"
-            fill="none"
-            stroke="#4a4540"
-            stroke-width="18"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-
-          <!-- left gate leaf -->
-          <g class="startup-gate-leaf startup-gate-leaf-left">
-            <rect x="128" y="140" width="26" height="230" rx="6" fill="#4a4540"/>
-
-            <rect x="150" y="146" width="170" height="18" rx="5" fill="#4a4540"/>
-
-            <g fill="#4a4540">
-              <rect x="172" y="156" width="12" height="190" rx="5"/>
-              <rect x="208" y="156" width="12" height="190" rx="5"/>
-              <rect x="244" y="156" width="12" height="190" rx="5"/>
-              <rect x="280" y="156" width="12" height="190" rx="5"/>
-              <rect x="316" y="156" width="12" height="190" rx="5"/>
-            </g>
+          <g fill="#a79f95">
+            <path d="M166 156 L178 124 L190 156 Z"/>
+            <path d="M202 156 L214 124 L226 156 Z"/>
+            <path d="M238 156 L250 124 L262 156 Z"/>
+            <path d="M274 156 L286 124 L298 156 Z"/>
+            <path d="M310 156 L322 124 L334 156 Z"/>
           </g>
+        </g>
+      </svg>
 
-          <!-- right gate leaf -->
-          <g class="startup-gate-leaf startup-gate-leaf-right">
-            <rect x="486" y="140" width="26" height="230" rx="6" fill="#4a4540"/>
-
-            <rect x="320" y="146" width="170" height="18" rx="5" fill="#4a4540"/>
-
-            <g fill="#4a4540">
-              <rect x="352" y="156" width="12" height="190" rx="5"/>
-              <rect x="388" y="156" width="12" height="190" rx="5"/>
-              <rect x="424" y="156" width="12" height="190" rx="5"/>
-              <rect x="460" y="156" width="12" height="190" rx="5"/>
-            </g>
-
-            <!-- Spikes -->
-
-            <g fill="#a79f95">
-              <path d="M346 156 L358 124 L370 156 Z"/>
-              <path d="M382 156 L394 124 L406 156 Z"/>
-              <path d="M418 156 L430 124 L442 156 Z"/>
-              <path d="M454 156 L466 124 L478 156 Z"/>
-            </g>
-
-            <g fill="#a79f95">
-              <path d="M166 156 L178 124 L190 156 Z"/>
-              <path d="M202 156 L214 124 L226 156 Z"/>
-              <path d="M238 156 L250 124 L262 156 Z"/>
-              <path d="M274 156 L286 124 L298 156 Z"/>
-              <path d="M310 156 L322 124 L334 156 Z"/>
-            </g>
-          </g>
-        </svg>
+      <div class="startup-viewport-objects" aria-hidden="false">
+        <button
+          type="button"
+          id="startupObjectGate"
+          class="startup-viewport-object startup-viewport-object--gate"
+          data-object-id="gate"
+          aria-label="Gate"
+          title="Gate"
+        >
+          <span class="startup-viewport-object__outline" aria-hidden="true"></span>
+        </button>
       </div>
+
+      <div
+        class="startup-object-tooltip"
+        id="startupObjectTooltip"
+        hidden
+        role="status"
+        aria-live="polite"
+      ></div>
+    </div>
 
       <p class="startup-modal__text" id="startupDungeonText">
         You are standing in a narrow stone corridor.<br>
@@ -974,7 +991,9 @@
       const inventoryPanel = document.getElementById("startupInventoryPanel");
       const inventoryNote = document.getElementById("startupInventoryNote");
       const keyItem = document.getElementById("startupKeyItem");
-      const gateDropzone = document.getElementById("startupGateDropzone");
+      const gateScene = document.getElementById("startupGateScene");
+      const gateObject = document.getElementById("startupObjectGate");
+      const objectTooltip = document.getElementById("startupObjectTooltip");
       const inventoryCloseBtn = document.getElementById("startupInventoryClose");
 
       const dungeonTitle = document.getElementById("startupDungeonTitle");
@@ -1008,7 +1027,7 @@
       `;
 
       const DUNGEON_OPEN_TEXT = `
-        The rusted gate swings open, clanging against the stone passageway.<br>
+        The rusted gate swings open, clanging against the stone facing.<br>
         The path beyond is dark, save for the faint glow of a torch.
       `;
 
@@ -1025,7 +1044,8 @@
       if (
         !modal || !step1 || !step2 || !step3 || !continueBtn || !proceedBtn || !finalContinueBtn ||
         !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
-        !gateDropzone || !dungeonTitle || !dungeonText || !finalTitle || !finalText ||
+        !gateScene || !gateObject || !objectTooltip ||
+        !dungeonTitle || !dungeonText || !finalTitle || !finalText ||
         !inventoryCloseBtn || !bagHelp || !keyHelp
       ) return;
 
@@ -1039,6 +1059,100 @@
       let hasShownGateLock = false;
       let selectedInventoryItem = null;
 
+      let objectTooltipTimer = null;
+
+      const viewportObjects = {
+        gate: {
+          id: "gate",
+          element: gateObject,
+          description: "a rusted gate",
+          accepts: ["key"]
+        }
+      };
+
+      function clearObjectHighlights() {
+        Object.values(viewportObjects).forEach(obj => {
+          obj.element.classList.remove(
+            "is-active",
+            "is-highlighted",
+            "is-valid-target",
+            "is-invalid-target"
+          );
+        });
+      }
+
+      function showObjectTooltip(text) {
+        if (!objectTooltip) return;
+
+        clearTimeout(objectTooltipTimer);
+        objectTooltip.textContent = text;
+        objectTooltip.hidden = false;
+
+        requestAnimationFrame(() => {
+          objectTooltip.classList.add("is-visible");
+        });
+
+        objectTooltipTimer = setTimeout(() => {
+          hideObjectTooltip();
+        }, 1600);
+      }
+
+      function hideObjectTooltip() {
+        if (!objectTooltip) return;
+
+        clearTimeout(objectTooltipTimer);
+        objectTooltip.classList.remove("is-visible");
+
+        setTimeout(() => {
+          if (!objectTooltip.classList.contains("is-visible")) {
+            objectTooltip.hidden = true;
+          }
+        }, 180);
+      }
+
+      function setViewportObjectState(objectId, stateName, enabled) {
+        const obj = viewportObjects[objectId];
+        if (!obj) return;
+        obj.element.classList.toggle(stateName, !!enabled);
+      }
+
+      function getViewportObjectFromPoint(x, y) {
+        const el = document.elementFromPoint(x, y)?.closest(".startup-viewport-object");
+        if (!el) return null;
+        return viewportObjects[el.dataset.objectId] || null;
+      }
+
+      function objectAcceptsSelectedItem(objectId) {
+        const obj = viewportObjects[objectId];
+        if (!obj || !selectedInventoryItem) return false;
+        return Array.isArray(obj.accepts) && obj.accepts.includes(selectedInventoryItem);
+      }
+
+      function activateViewportObject(objectId) {
+        const obj = viewportObjects[objectId];
+        if (!obj || gateUnlocked) return;
+
+        clearObjectHighlights();
+        setViewportObjectState(objectId, "is-active", true);
+
+        if (selectedInventoryItem && objectAcceptsSelectedItem(objectId)) {
+          if (objectId === "gate") {
+            useSelectedItemOnGate();
+          }
+          return;
+        }
+
+        if (objectId === "gate") {
+          ensureGateLockVisible();
+        }
+
+        showObjectTooltip(obj.description);
+
+        inventoryNote.textContent = selectedInventoryItem
+          ? "That won't work here."
+          : "You see " + obj.description + ".";
+      }
+
       if (!hasSeenModal) {
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
@@ -1051,6 +1165,8 @@
       }
 
       function showStep(stepNumber) {
+      hideObjectTooltip();
+
         step1.classList.toggle("is-active", stepNumber === 1);
         step2.classList.toggle("is-active", stepNumber === 2);
         step3.classList.toggle("is-active", stepNumber === 3);
@@ -1101,6 +1217,7 @@
       }
 
       function closeModal() {
+        hideObjectTooltip();
         hideAllTutorialHints();
         modal.classList.remove("is-open");
         modal.setAttribute("aria-hidden", "true");
@@ -1173,25 +1290,17 @@
       function ensureGateLockVisible() {
         if (hasShownGateLock || gateUnlocked) return;
 
-        const gateSvg = gateDropzone.querySelector(".startup-gate-svg");
+        const gateSvg = gateScene.querySelector(".startup-gate-svg");
         if (!gateSvg) return;
 
-        const centerBar = gateSvg.querySelector(".startup-gate-center-bar");
-        if (!centerBar) return;
-
-        centerBar.insertAdjacentHTML("afterend", LOCK_SVG_MARKUP);
+        gateSvg.insertAdjacentHTML("beforeend", LOCK_SVG_MARKUP);
         hasShownGateLock = true;
       }
 
-      function setSelectedInventoryItem(itemName) {
-        selectedInventoryItem = itemName;
-
-        keyItem.classList.toggle("is-selected", itemName === "key");
-
-        if (itemName === "key") {
-          inventoryNote.textContent = "Rusted key selected.";
-          hideHelpPopup(keyHelp);
-        }
+      function clearSelectedInventoryItem() {
+        selectedInventoryItem = null;
+        keyItem.classList.remove("is-selected");
+        clearObjectHighlights();
       }
 
       function clearSelectedInventoryItem() {
@@ -1235,9 +1344,10 @@
 
         gateUnlocked = true;
         hideAllTutorialHints();
-        gateDropzone.dataset.locked = "false";
-        gateDropzone.classList.remove("is-drop-ready", "is-drag-over");
-        gateDropzone.setAttribute("aria-label", "Open gate");
+        gateScene.dataset.locked = "false";
+        clearObjectHighlights();
+        gateObject.setAttribute("aria-label", "Open gate");
+        hideObjectTooltip();
 
         inventoryNote.textContent = "The key turns in the lock.";
         proceedBtn.textContent = "Opening...";
@@ -1272,17 +1382,9 @@
         inventoryNote.textContent = "";
       });
 
-      gateDropzone.addEventListener("click", () => {
-        if (gateUnlocked) return;
-
-        if (useSelectedItemOnGate()) {
-          return;
-        }
-
-        ensureGateLockVisible();
-        inventoryNote.textContent = selectedInventoryItem
-          ? "That won't work here."
-          : "The gate is locked.";
+      gateObject.addEventListener("click", (event) => {
+        event.stopPropagation();
+        activateViewportObject("gate");
       });
 
       function pointInsideRect(x, y, rect) {
@@ -1308,13 +1410,20 @@
         }
       }
 
-      function markGateTouchState(over) {
-        gateDropzone.classList.add("is-touch-drop-ready");
-        gateDropzone.classList.toggle("is-touch-drop-over", !!over);
+      function markObjectDragState(objectId, over, valid) {
+        const obj = viewportObjects[objectId];
+        if (!obj) return;
+
+        obj.element.classList.remove("is-valid-target", "is-invalid-target");
+        if (!over) return;
+
+        obj.element.classList.add(valid ? "is-valid-target" : "is-invalid-target");
       }
 
-      function clearGateTouchState() {
-        gateDropzone.classList.remove("is-touch-drop-ready", "is-touch-drop-over");
+      function clearAllObjectDragStates() {
+        Object.values(viewportObjects).forEach(obj => {
+          obj.element.classList.remove("is-valid-target", "is-invalid-target");
+        });
       }
 
       function consumeKeyItem() {
@@ -1332,6 +1441,7 @@
         let dragReady = false;
         let startX = 0;
         let startY = 0;
+        let currentHoverObjectId = null;
 
         const DRAG_THRESHOLD = 8;
 
@@ -1339,12 +1449,14 @@
           if (gateUnlocked || keyItem.disabled) return;
 
           hideHelpPopup(keyHelp);
+          hideObjectTooltip();
 
           pointerId = event.pointerId;
           dragReady = true;
           dragging = false;
           startX = event.clientX;
           startY = event.clientY;
+          currentHoverObjectId = null;
 
           keyItem.setPointerCapture(pointerId);
           event.preventDefault();
@@ -1366,7 +1478,7 @@
             setGhostPosition(ghost, event.clientX, event.clientY);
 
             keyItem.classList.add("dragging");
-            markGateTouchState(false);
+            clearAllObjectDragStates();
             inventoryNote.textContent = "";
           }
 
@@ -1374,10 +1486,16 @@
 
           setGhostPosition(ghost, event.clientX, event.clientY);
 
-          const gateRect = gateDropzone.getBoundingClientRect();
-          const overGate = pointInsideRect(event.clientX, event.clientY, gateRect);
+          const hoveredObject = getViewportObjectFromPoint(event.clientX, event.clientY);
+          currentHoverObjectId = hoveredObject?.id || null;
 
-          markGateTouchState(overGate);
+          clearAllObjectDragStates();
+
+          if (hoveredObject) {
+            const valid = Array.isArray(hoveredObject.accepts) && hoveredObject.accepts.includes("key");
+            markObjectDragState(hoveredObject.id, true, valid);
+          }
+
           event.preventDefault();
         });
 
@@ -1385,19 +1503,18 @@
           if (!dragReady || event.pointerId !== pointerId) return;
 
           if (dragging) {
-            const gateRect = gateDropzone.getBoundingClientRect();
-            const droppedOnGate = pointInsideRect(event.clientX, event.clientY, gateRect);
+            const droppedObject = getViewportObjectFromPoint(event.clientX, event.clientY);
 
             keyItem.classList.remove("dragging");
             removeGhost(ghost);
             ghost = null;
 
-            if (droppedOnGate && !gateUnlocked) {
+            if (droppedObject?.id === "gate" && !gateUnlocked) {
               consumeKeyItem();
-              clearGateTouchState();
+              clearAllObjectDragStates();
               unlockGate();
             } else {
-              clearGateTouchState();
+              clearAllObjectDragStates();
               if (!gateUnlocked) {
                 inventoryNote.textContent = "";
               }
@@ -1418,6 +1535,7 @@
           dragging = false;
           dragReady = false;
           pointerId = null;
+          currentHoverObjectId = null;
           event.preventDefault();
         }
 

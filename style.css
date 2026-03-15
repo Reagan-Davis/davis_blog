@@ -4557,3 +4557,111 @@
       position: fixed;
       width: 100%;
     }
+
+    .startup-gate-wrap {
+      position: relative;
+    }
+
+    .startup-viewport-objects {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .startup-viewport-object {
+      position: absolute;
+      pointer-events: auto;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .startup-viewport-object:focus-visible {
+      outline: none;
+    }
+
+    .startup-viewport-object__outline {
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem 1.5rem 0.6rem 0.6rem;
+      border: 1.5px solid rgba(226, 217, 196, 0.28);
+      box-shadow:
+        0 0 0 1px rgba(255, 244, 220, 0.06) inset,
+        0 0 18px rgba(255, 225, 160, 0.10);
+      opacity: 0;
+      transform: scale(0.985);
+      transition:
+        opacity 160ms ease,
+        transform 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .startup-viewport-object.is-active .startup-viewport-object__outline,
+    .startup-viewport-object.is-highlighted .startup-viewport-object__outline,
+    .startup-viewport-object.is-valid-target .startup-viewport-object__outline,
+    .startup-viewport-object:focus-visible .startup-viewport-object__outline {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .startup-viewport-object:hover .startup-viewport-object__outline {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .startup-viewport-object.is-valid-target .startup-viewport-object__outline {
+      border-color: rgba(198, 169, 95, 0.92);
+      box-shadow:
+        0 0 0 1px rgba(255, 230, 165, 0.22) inset,
+        0 0 26px rgba(198, 169, 95, 0.34);
+    }
+
+    .startup-viewport-object.is-invalid-target .startup-viewport-object__outline {
+      opacity: 1;
+      border-color: rgba(180, 94, 94, 0.88);
+      box-shadow:
+        0 0 0 1px rgba(255, 204, 204, 0.12) inset,
+        0 0 22px rgba(180, 94, 94, 0.28);
+    }
+
+    .startup-viewport-object--gate {
+      left: 18.5%;
+      top: 11.5%;
+      width: 63%;
+      height: 76.5%;
+    }
+
+    .startup-object-tooltip {
+      position: absolute;
+      left: 50%;
+      bottom: 1rem;
+      transform: translateX(-50%) translateY(8px);
+      z-index: 5;
+      min-width: 0;
+      max-width: min(260px, calc(100% - 1.5rem));
+      padding: 0.65rem 0.8rem;
+      border-radius: 12px;
+      border: 1px solid rgba(220, 205, 180, 0.18);
+      background: rgba(19, 17, 16, 0.88);
+      color: var(--ink-inverse, #f5efe6);
+      font-size: 0.92rem;
+      line-height: 1.35;
+      text-align: center;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .startup-object-tooltip.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
