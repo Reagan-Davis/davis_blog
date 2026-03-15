@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
-  <title>Reagan Davis</title>
+  <title>The Drafting Table</title>
 
   <script>
     (function () {
@@ -31,8 +31,8 @@
           <svg id="brandGlobe" viewBox="0 0 64 64" preserveAspectRatio="xMidYMid meet"></svg>
         </div>
         <div>
-          <div>Reagan Davis</div>
-          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">A Website</div>
+          <div>The Drafting Table</div>
+          <div style="font-size:0.82rem;color:var(--muted);font-weight:500;">Reagan Davis</div>
         </div>
       </a>
 
@@ -474,8 +474,8 @@
               I am only checking social media for 10-15 minutes a day, and anything there runs the risk of dragging me back into that dreaded, short-form content addiction. On a personal account, something like this would be subverting what the account was initially intended for. On a new account, it would invariably end up being about follows, likes, and views. YouTube would be much the same.<br><br>
               Growth comes from within, and I see too many people every single day who are stuck and make no meaningful steps to change. I see too many who never stop attributing fault to themselves or seeking that external validation.<br><br>
               We cannot control the situation we are born into or what others think of us. We can control our opinion of others, our pursuits and desires, and what we avoid.<br><br>
-              This place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done. It is set up in a way to pester me with notifications. It is set up to reward me for finishing things and to make me feel bad when I do not..<br><br>
-              This site is ultimately designed for me, but if one other person takes something away from it, then that can only be a good thing.
+              This place serves many purposes for me: an archive of interests for me to revisit, a means of showing reflection and growth with some tangibility, and of course, holding myself accountable for getting things done. It is set up in a way to pester me with notifications. It is set up to reward me for finishing things and to make me feel bad when I do not. It is set up to push me to make next steps.<br><br>
+              This site is ultimately designed entirely for me, but if one other person takes something away from it, then that can only really be a good thing.
             </p>
             <div class="comment-meta"></div>
           </div>
@@ -892,7 +892,7 @@
       aria-modal="true"
       aria-labelledby="startupFinalTitle"
     >
-      <p class="startup-modal__eyebrow">Threshold</p>
+      <p class="startup-modal__eyebrow">Main Hallway</p>
 
       <h2 id="startupFinalTitle" class="startup-modal__title"></h2>
 
@@ -1012,11 +1012,14 @@
         The path beyond is dark, save for the faint glow of a torch.
       `;
 
-      const FINAL_STEP_TITLE = "<em></em>";
+      const FINAL_STEP_TITLE = "</em></em>";
 
       const FINAL_STEP_TEXT = `
+        </em>As you make your way down the corridor...</em> [[pause=900]] <br><br>
         Heh, did I make you think I was going to force you play through an entire game to navigate this site?<br><br>
-        Okay, yeah, that would be incredibly on-brand for me. Touché. The systems are mostly in place, so maybe another time.
+        Okay, yeah, you got me. That would be incredibly on-brand for me.<br><br>
+        What you are about to see is far from my final vision for things, so if you made it this far, I hope you stick around or check back in every now and then.<br><br>
+        It might just surprise you.
       `;
 
       if (
@@ -1683,6 +1686,15 @@
 
       function step() {
         if (runId !== popupTypingRunId) return;
+
+        const remaining = html.slice(index);
+        const pauseMatch = remaining.match(/^\[\[pause=(\d+)\]\]/);
+
+        if (pauseMatch) {
+          index += pauseMatch[0].length;
+          popupTypingTimer = setTimeout(step, Number(pauseMatch[1]));
+          return;
+        }
 
         index += 1;
         element.innerHTML = html.slice(0, index);
