@@ -1026,7 +1026,7 @@
   <script>
     (function () {
       const STORAGE_KEY = "rrr_site_notice_seen";
-      const DEBUG_ALWAYS_SHOW_INTRO = false;
+      const DEBUG_ALWAYS_SHOW_INTRO = true;
 
       const modal = document.getElementById("startupModal");
       const backdrop = modal?.querySelector(".startup-modal__backdrop");
@@ -1091,9 +1091,9 @@
 
       const FINAL_STEP_TEXT = `
         <em>As you make your way down the corridor...</em> [[pause=2150]] <br><br>
-        Heh. [[pause=1200]] <br><br>
-        Did I make you think I was going to force you play through a game to navigate this site?<br><br>
-        Okay, yeah, you got me. That would be incredibly on-brand for me.<br><br>
+        Heh. [[pause=1400]] <br><br>
+        Did I make you think I was going to force you play through a game to navigate this site? [[pause=1800]] <br><br>
+        Okay, yeah, you got me. That would be incredibly on-brand for me. [[pause=700]] <br><br>
         Now for the actual site:
       `;
 
@@ -2044,7 +2044,6 @@
       startDelay = 120,
       onComplete = null
     } = {}) {
-
       if (!element) return;
 
       popupTypingRunId += 1;
@@ -2054,34 +2053,68 @@
       element.innerHTML = "";
       element.classList.add("popupTyping");
 
-      // Tokenize text into characters, tags, and pause markers
       const tokens = [];
-      const regex = /(<[^>]+>)|\[\[pause=(\d+)\]\]|./g;
-
+      const regex = /(<[^>]+>)|\[\[pause=(\d+)\]\]|./gs;
       let match;
 
       while ((match = regex.exec(html)) !== null) {
-
-        // HTML tag
         if (match[1]) {
           tokens.push({ type: "tag", value: match[1] });
-        }
-
-        // Pause token
-        else if (match[2]) {
+        } else if (match[2]) {
           tokens.push({ type: "pause", delay: Number(match[2]) });
+        } else {
+          tokens.push({ type: "char", value: match[0] });
+        }
+      }
+
+      const nodeStack = [element];
+
+      function getCurrentParent() {
+        return nodeStack[nodeStack.length - 1];
+      }
+
+      function appendTag(tagString) {
+        const trimmed = tagString.trim();
+
+        if (/^<br\s*\/?>$/i.test(trimmed)) {
+          getCurrentParent().appendChild(document.createElement("br"));
+          return;
         }
 
-        // Normal character
-        else {
-          tokens.push({ type: "char", value: match[0] });
+        const closingMatch = trimmed.match(/^<\/\s*([a-z0-9-]+)\s*>$/i);
+        if (closingMatch) {
+          if (nodeStack.length > 1) {
+            nodeStack.pop();
+          }
+          return;
+        }
+
+        const openingMatch = trimmed.match(/^<\s*([a-z0-9-]+)([^>]*)>$/i);
+        if (openingMatch) {
+          const tagName = openingMatch[1].toLowerCase();
+          const attrString = openingMatch[2] || "";
+          const node = document.createElement(tagName);
+
+          const attrRegex = /([a-zA-Z_:][a-zA-Z0-9:._-]*)(?:="([^"]*)")?/g;
+          let attrMatch;
+
+          while ((attrMatch = attrRegex.exec(attrString)) !== null) {
+            const attrName = attrMatch[1];
+            const attrValue = attrMatch[2] ?? "";
+            node.setAttribute(attrName, attrValue);
+          }
+
+          getCurrentParent().appendChild(node);
+
+          if (!/\/\s*>$/.test(trimmed)) {
+            nodeStack.push(node);
+          }
         }
       }
 
       let i = 0;
 
       function step() {
-
         if (runId !== popupTypingRunId) return;
 
         if (i >= tokens.length) {
@@ -2090,24 +2123,21 @@
           return;
         }
 
-        const token = tokens[i];
-        i++;
-
+        const token = tokens[i++];
+        
         if (token.type === "tag") {
-
-          element.innerHTML += token.value;
-          step(); // immediately continue
-
-        } else if (token.type === "pause") {
-
-          popupTypingTimer = setTimeout(step, token.delay);
-
-        } else {
-
-          element.innerHTML += token.value;
-          popupTypingTimer = setTimeout(step, speed);
-
+          appendTag(token.value);
+          step();
+          return;
         }
+
+        if (token.type === "pause") {
+          popupTypingTimer = setTimeout(step, token.delay);
+          return;
+        }
+
+        getCurrentParent().appendChild(document.createTextNode(token.value));
+        popupTypingTimer = setTimeout(step, speed);
       }
 
       popupTypingTimer = setTimeout(step, startDelay);
