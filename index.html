@@ -799,6 +799,24 @@
         >
           <span class="startup-viewport-object__outline" aria-hidden="true"></span>
         </button>
+
+        <button
+          type="button"
+          id="startupObjectAdvance"
+          class="startup-viewport-object startup-viewport-object--advance"
+          data-object-id="advance"
+          aria-label="Continue forward"
+          title="Continue forward"
+          hidden
+        >
+          <span class="startup-viewport-object__outline startup-viewport-object__outline--triangle" aria-hidden="true"></span>
+
+          <span class="startup-viewport-triangle" aria-hidden="true">
+            <svg viewBox="0 0 120 40" class="startup-viewport-triangle-svg">
+              <path d="M60 6 L112 34 L8 34 Z"></path>
+            </svg>
+          </span>
+        </button>
       </div>
 
       <div
@@ -873,7 +891,7 @@
             role="note"
             aria-live="polite"
           >
-            Click the bag icon to access the inventory
+            Click the bag icon to access the inventory.
           </div>
 
           <button
@@ -993,6 +1011,7 @@
       const keyItem = document.getElementById("startupKeyItem");
       const gateScene = document.getElementById("startupGateScene");
       const gateObject = document.getElementById("startupObjectGate");
+      const advanceObject = document.getElementById("startupObjectAdvance");
       const objectTooltip = document.getElementById("startupObjectTooltip");
       const inventoryCloseBtn = document.getElementById("startupInventoryClose");
 
@@ -1036,7 +1055,7 @@
       const FINAL_STEP_TEXT = `
         <em>As you make your way down the corridor...</em> [[pause=2150]] <br><br>
         Heh. [[pause=1200]] <br><br>
-        Did I make you think I was going to force you play through an entire game to navigate this site?<br><br>
+        Did I make you think I was going to force you play through a game to navigate this site?<br><br>
         Okay, yeah, you got me. That would be incredibly on-brand for me.<br><br>
         Now for the actual site:
       `;
@@ -1044,7 +1063,7 @@
       if (
         !modal || !step1 || !step2 || !step3 || !continueBtn || !proceedBtn || !finalContinueBtn ||
         !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
-        !gateScene || !gateObject || !objectTooltip ||
+        !gateScene || !gateObject || !advanceObject || !objectTooltip ||
         !dungeonTitle || !dungeonText || !finalTitle || !finalText ||
         !inventoryCloseBtn || !bagHelp || !keyHelp
       ) return;
@@ -1065,8 +1084,16 @@
         gate: {
           id: "gate",
           element: gateObject,
-          description: "a rusted gate",
-          accepts: ["key"]
+          description: "A Rusted Gate",
+          accepts: ["key"],
+          enabled: true
+        },
+        advance: {
+          id: "advance",
+          element: advanceObject,
+          description: "Move Forward",
+          accepts: [],
+          enabled: false
         }
       };
 
@@ -1116,10 +1143,30 @@
         obj.element.classList.toggle(stateName, !!enabled);
       }
 
+      function setViewportObjectEnabled(objectId, enabled) {
+        const obj = viewportObjects[objectId];
+        if (!obj) return;
+
+        obj.enabled = !!enabled;
+        obj.element.hidden = !enabled;
+        obj.element.setAttribute("aria-hidden", String(!enabled));
+        obj.element.tabIndex = enabled ? 0 : -1;
+        obj.element.classList.toggle("is-available", !!enabled);
+      }
+
+      function isViewportObjectEnabled(objectId) {
+        const obj = viewportObjects[objectId];
+        return !!obj?.enabled;
+      }
+
       function getViewportObjectFromPoint(x, y) {
         const el = document.elementFromPoint(x, y)?.closest(".startup-viewport-object");
         if (!el) return null;
-        return viewportObjects[el.dataset.objectId] || null;
+
+        const obj = viewportObjects[el.dataset.objectId] || null;
+        if (!obj || !obj.enabled) return null;
+
+        return obj;
       }
 
       function objectAcceptsSelectedItem(objectId) {
@@ -1130,10 +1177,24 @@
 
       function activateViewportObject(objectId) {
         const obj = viewportObjects[objectId];
-        if (!obj || gateUnlocked) return;
+        if (!obj || !obj.enabled) return;
 
         clearObjectHighlights();
         setViewportObjectState(objectId, "is-active", true);
+
+        if (objectId === "advance") {
+          if (!gateUnlocked || !gateAnimationPlayed || step2.classList.contains("is-opening")) {
+            return;
+          }
+
+          showObjectTooltip(obj.description);
+          showStep(3);
+          return;
+        }
+
+        if (objectId === "gate" && gateUnlocked) {
+          return;
+        }
 
         if (selectedInventoryItem && objectAcceptsSelectedItem(objectId)) {
           if (objectId === "gate") {
@@ -1174,6 +1235,9 @@
         if (stepNumber === 2) {
           dungeonTitle.innerHTML = "";
           dungeonText.innerHTML = "";
+
+          setViewportObjectEnabled("gate", !gateUnlocked);
+          setViewportObjectEnabled("advance", gateUnlocked && gateAnimationPlayed);
 
           typePopupText(dungeonTitle, DUNGEON_ENTRY_TITLE, {
             speed: 30,
@@ -1226,6 +1290,16 @@
         window.scrollTo(0, lockedScrollY);
         localStorage.setItem(STORAGE_KEY, "true");
       }
+
+      [gateObject, advanceObject].forEach((el) => {
+        el?.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            const objectId = el.dataset.objectId;
+            activateViewportObject(objectId);
+          }
+        });
+      });
 
       function setInventoryOpen(isOpen) {
         inventoryPanel.hidden = !isOpen;
@@ -1297,15 +1371,24 @@
         hasShownGateLock = true;
       }
 
-      function clearSelectedInventoryItem() {
-        selectedInventoryItem = null;
-        keyItem.classList.remove("is-selected");
+      function setSelectedInventoryItem(itemName) {
+        selectedInventoryItem = itemName;
+
+        keyItem.classList.toggle("is-selected", itemName === "key");
+
         clearObjectHighlights();
+
+        if (itemName === "key" && !gateUnlocked) {
+          setViewportObjectState("gate", "is-highlighted", true);
+          inventoryNote.textContent = "Rusted key selected.";
+          hideHelpPopup(keyHelp);
+        }
       }
 
       function clearSelectedInventoryItem() {
         selectedInventoryItem = null;
         keyItem.classList.remove("is-selected");
+        clearObjectHighlights();
       }
 
       function useSelectedItemOnGate() {
@@ -1324,6 +1407,9 @@
 
         step2.classList.add("is-opening");
 
+        setViewportObjectEnabled("gate", false);
+        setViewportObjectEnabled("advance", false);
+
         setTimeout(() => {
           step2.classList.remove("is-opening");
           step2.classList.add("is-opened");
@@ -1331,6 +1417,8 @@
           proceedBtn.disabled = false;
           proceedBtn.textContent = "Proceed";
           inventoryNote.textContent = "";
+
+          setViewportObjectEnabled("advance", true);
 
           typePopupText(dungeonText, DUNGEON_OPEN_TEXT, {
             speed: 24,
@@ -1385,6 +1473,11 @@
       gateObject.addEventListener("click", (event) => {
         event.stopPropagation();
         activateViewportObject("gate");
+      });
+
+      advanceObject.addEventListener("click", (event) => {
+        event.stopPropagation();
+        activateViewportObject("advance");
       });
 
       function pointInsideRect(x, y, rect) {
