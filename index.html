@@ -162,7 +162,7 @@
           <div class="section-header">
             <div>
               <h2 style="font-size:2rem;">Projects</h2>
-              <p>Current projects and endeavors</p>
+              <p>Ongoing projects and endeavors</p>
             </div>
           </div>
           <div class="project-list" id="projectGrid"></div>
@@ -205,7 +205,7 @@
           <div class="section-header section-header-split">
             <div>
               <h2 style="font-size:2rem;">Vault</h2>
-              <p>Critics suck. Numeric scores suck.</p>
+              <p>For remembering and revisiting</p>
             </div>
 
             <button id="openSuggestionWheelBtn" class="shuffle-button" type="button">
@@ -967,7 +967,7 @@
       <p class="startup-modal__text" id="startupFinalText"></p>
 
       <div class="startup-modal__actions">
-        <button class="startup-modal__button" id="startupModalFinalContinue" type="button">
+        <button class="startup-modal__button" id="startupModalFinalContinue" type="button" hidden>
           Continue to Site
         </button>
       </div>
@@ -1318,14 +1318,21 @@
           finalTitle.innerHTML = "";
           finalText.innerHTML = "";
 
+          finalContinueBtn.hidden = true;   // keep button hidden while typing
+
           typePopupText(finalTitle, FINAL_STEP_TITLE, {
             speed: 30,
             startDelay: 100,
             onComplete: () => {
+
               typePopupText(finalText, FINAL_STEP_TEXT, {
                 speed: 22,
-                startDelay: 140
+                startDelay: 140,
+                onComplete: () => {
+                  finalContinueBtn.hidden = false;   // reveal button after typing
+                }
               });
+
             }
           });
 
