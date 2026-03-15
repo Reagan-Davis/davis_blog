@@ -256,7 +256,7 @@
           aria-controls="vaultControlsBody"
         >
           <span class="collapse-title">
-            <span class="stat-label" id="vault-controls-heading">Vault controls</span>
+            <span class="stat-label" id="vault-controls-heading">Vault Filtering</span>
           </span>
           <span class="collapse-arrow" aria-hidden="true">▸</span>
         </button>
@@ -284,7 +284,7 @@
               </select>
             </label> -->
 
-            <label>
+            <!-- <label>
               <span>Vault view</span>
               <select id="vaultViewSelect">
                 <option value="cards">Cards</option>
@@ -299,7 +299,7 @@
                 <option value="rank">Count by rating tier</option>
                 <option value="status">Count by status</option>
               </select>
-            </label>
+            </label> -->
           </div>
         </div>
       </section>
@@ -1563,8 +1563,8 @@
     const mobileNavMenu = document.getElementById('mobileNavMenu');
     const statusSelect = document.getElementById('statusSelect');
     // const ownedSelect = document.getElementById('ownedSelect');
-    const vaultViewSelect = document.getElementById('vaultViewSelect');
-    const chartModeSelect = document.getElementById('chartModeSelect');
+    // const vaultViewSelect = document.getElementById('vaultViewSelect');
+    // const chartModeSelect = document.getElementById('chartModeSelect');
     const vaultCardsWrap = document.getElementById('vaultCardsWrap');
     const vaultChartsWrap = document.getElementById('vaultChartsWrap');
     const vaultChart = document.getElementById('vaultChart');
@@ -4766,15 +4766,15 @@
       //if (vaultViewMode === 'charts') renderVaultChart();
     //});
 
-    vaultViewSelect.addEventListener('change', (event) => {
-      vaultViewMode = event.target.value;
-      updateVaultView();
-    });
+    // vaultViewSelect.addEventListener('change', (event) => {
+    //   vaultViewMode = event.target.value;
+    //   updateVaultView();
+    // });
 
-    chartModeSelect.addEventListener('change', (event) => {
-      chartMode = event.target.value;
-      if (vaultViewMode === 'charts') renderVaultChart();
-    });
+    // chartModeSelect.addEventListener('change', (event) => {
+    //   chartMode = event.target.value;
+    //   if (vaultViewMode === 'charts') renderVaultChart();
+    // });
 
     searchToggle.addEventListener('click', () => {
       toggleCollapse(searchToggle, searchPanelBody);
