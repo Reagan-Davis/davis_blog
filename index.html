@@ -1015,11 +1015,10 @@
       const FINAL_STEP_TITLE = "<em></em>";
 
       const FINAL_STEP_TEXT = `
-        <em>As you make your way down the corridor...</em> [[pause=2700]] <br><br>
+        <em>As you make your way down the corridor...</em> [[pause=2150]] <br><br>
         Heh, did I make you think I was going to force you play through an entire game to navigate this site?<br><br>
         Okay, yeah, you got me. That would be incredibly on-brand for me.<br><br>
-        What you are about to see is far from my final vision for things, so if you made it this far, I hope you stick around or check back in every now and then.<br><br>
-        It might just surprise you.
+        Now for the actual site.
       `;
 
       if (
@@ -1683,48 +1682,59 @@
       element.innerHTML = "";
       element.classList.add("popupTyping");
 
-      // Detect pause tokens
-      const pauses = [];
-      let cleanText = html;
+      // Tokenize text into characters, tags, and pause markers
+      const tokens = [];
+      const regex = /(<[^>]+>)|\[\[pause=(\d+)\]\]|./g;
+
       let match;
 
-      const regex = /\[\[pause=(\d+)\]\]/g;
-
       while ((match = regex.exec(html)) !== null) {
-        pauses.push({
-          index: match.index,
-          delay: Number(match[1])
-        });
+
+        // HTML tag
+        if (match[1]) {
+          tokens.push({ type: "tag", value: match[1] });
+        }
+
+        // Pause token
+        else if (match[2]) {
+          tokens.push({ type: "pause", delay: Number(match[2]) });
+        }
+
+        // Normal character
+        else {
+          tokens.push({ type: "char", value: match[0] });
+        }
       }
 
-      // Remove pause tokens from the text
-      cleanText = html.replace(regex, "");
-
-      let index = 0;
+      let i = 0;
 
       function step() {
+
         if (runId !== popupTypingRunId) return;
 
-        index += 1;
-
-        element.innerHTML = cleanText.slice(0, index);
-
-        // Check if a pause should happen here
-        const pause = pauses.find(p => p.index === index);
-
-        if (pause) {
-          popupTypingTimer = setTimeout(step, pause.delay);
+        if (i >= tokens.length) {
+          element.classList.remove("popupTyping");
+          if (typeof onComplete === "function") onComplete();
           return;
         }
 
-        if (index < cleanText.length) {
-          popupTypingTimer = setTimeout(step, speed);
-        } else {
-          element.classList.remove("popupTyping");
+        const token = tokens[i];
+        i++;
 
-          if (typeof onComplete === "function") {
-            onComplete();
-          }
+        if (token.type === "tag") {
+
+          element.innerHTML += token.value;
+          step(); // immediately continue
+
+        } else if (token.type === "pause") {
+
+          popupTypingTimer = setTimeout(step, token.delay);
+
+        } else {
+
+          element.innerHTML += token.value;
+          popupTypingTimer = setTimeout(step, speed);
+
         }
       }
 
