@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="color-scheme" content="light dark" />
   <title>The Drafting Table</title>
 
@@ -1018,7 +1018,7 @@
         <em>As you make your way down the corridor...</em> [[pause=2150]] <br><br>
         Heh, did I make you think I was going to force you play through an entire game to navigate this site?<br><br>
         Okay, yeah, you got me. That would be incredibly on-brand for me.<br><br>
-        Now for the actual site.
+        Now for the actual site:
       `;
 
       if (
@@ -1041,7 +1041,9 @@
       if (!hasSeenModal) {
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
+        lockedScrollY = window.scrollY || window.pageYOffset || 0;
+        document.body.classList.add("modal-lock");
+        document.body.style.top = `-${lockedScrollY}px`;
         step1.classList.add("is-active");
         step2.classList.remove("is-active");
         step3.classList.remove("is-active");
@@ -1101,7 +1103,9 @@
         hideAllTutorialHints();
         modal.classList.remove("is-open");
         modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
+        document.body.classList.remove("modal-lock");
+        document.body.style.top = "";
+        window.scrollTo(0, lockedScrollY);
         localStorage.setItem(STORAGE_KEY, "true");
       }
 
@@ -1666,6 +1670,8 @@
 
     let popupTypingTimer = null;
     let popupTypingRunId = 0;
+
+    let lockedScrollY = 0;
 
     function typePopupText(element, html, {
       speed = 26,
