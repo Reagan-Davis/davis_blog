@@ -982,8 +982,8 @@
       `;
 
       const DUNGEON_OPEN_TEXT = `
-        The rusted gate swings open, clanging against the stone.<br>
-        The passage beyond is dark, save for the faint glow of a torch.
+        The rusted gate swings open, clanging against the stone passageway.<br>
+        The path beyond is dark, save for the faint glow of a torch.
       `;
 
       if (
@@ -4044,7 +4044,16 @@
       dragStartX: 0,
       dragStartY: 0,
       dragStartOffsetX: 0,
-      dragStartOffsetY: 0
+      dragStartOffsetY: 0,
+
+      activePointers: new Map(),
+      pinchStartDistance: 0,
+      pinchStartZoom: 1,
+      pinchStartMidX: 0,
+      pinchStartMidY: 0,
+      pinchStartOffsetX: 0,
+      pinchStartOffsetY: 0,
+      isPinching: false
     };
 
     function initHistoricalAtlasViewport() {
@@ -4345,11 +4354,42 @@
       gl.drawArrays(gl.POINTS, 0, historicalAtlasViewportState.pointVertexCount);
     }
 
+    function getPointerDistance(a, b) {
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      return Math.hypot(dx, dy);
+    }
+
+    function getPointerMidpoint(a, b) {
+      return {
+        x: (a.x + b.x) / 2,
+        y: (a.y + b.y) / 2
+      };
+    }
+
+    function zoomAroundScreenPoint(state, newZoom, anchorX, anchorY, width, height) {
+      const oldZoom = state.zoom;
+      if (oldZoom === newZoom) return;
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      state.offsetX =
+        anchorX - centerX - ((anchorX - centerX - state.offsetX) * (newZoom / oldZoom));
+
+      state.offsetY =
+        anchorY - centerY - ((anchorY - centerY - state.offsetY) * (newZoom / oldZoom));
+
+      state.zoom = newZoom;
+    }
+
     function bindHistoricalAtlasInteractions() {
       const canvas = document.getElementById('historicalAtlasCanvas');
       if (!canvas || canvas.dataset.bound === 'true') return;
 
       canvas.dataset.bound = 'true';
+      canvas.style.touchAction = 'none';
+      canvas.style.cursor = 'grab';
 
       canvas.addEventListener('wheel', (event) => {
         event.preventDefault();
@@ -4360,69 +4400,146 @@
 
         const state = historicalAtlasViewportState;
         const oldZoom = state.zoom;
-
         const zoomFactor = event.deltaY < 0 ? 1.12 : 0.89;
         const newZoom = Math.max(1, Math.min(18, oldZoom * zoomFactor));
 
         if (newZoom === oldZoom) return;
 
-        const width = rect.width;
-        const height = rect.height;
-        const centerX = width / 2;
-        const centerY = height / 2;
-
-        // Keep the mouse position anchored while zooming
-        state.offsetX = mouseX - centerX - ((mouseX - centerX - state.offsetX) * (newZoom / oldZoom));
-        state.offsetY = mouseY - centerY - ((mouseY - centerY - state.offsetY) * (newZoom / oldZoom));
-
-        state.zoom = newZoom;
+        zoomAroundScreenPoint(state, newZoom, mouseX, mouseY, rect.width, rect.height);
         renderHistoricalAtlasViewport();
       }, { passive: false });
 
       canvas.addEventListener('pointerdown', (event) => {
+        const rect = canvas.getBoundingClientRect();
         const state = historicalAtlasViewportState;
 
-        state.isDragging = true;
-        state.dragPointerId = event.pointerId;
-        state.dragStartX = event.clientX;
-        state.dragStartY = event.clientY;
-        state.dragStartOffsetX = state.offsetX;
-        state.dragStartOffsetY = state.offsetY;
+        state.activePointers.set(event.pointerId, {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        });
 
         canvas.setPointerCapture(event.pointerId);
-        canvas.style.cursor = 'grabbing';
+
+        // One pointer: normal drag
+        if (state.activePointers.size === 1) {
+          state.isDragging = true;
+          state.isPinching = false;
+          state.dragPointerId = event.pointerId;
+          state.dragStartX = event.clientX;
+          state.dragStartY = event.clientY;
+          state.dragStartOffsetX = state.offsetX;
+          state.dragStartOffsetY = state.offsetY;
+          canvas.style.cursor = 'grabbing';
+          return;
+        }
+
+        // Two pointers: start pinch
+        if (state.activePointers.size === 2) {
+          const pointers = Array.from(state.activePointers.values());
+          const a = pointers[0];
+          const b = pointers[1];
+
+          state.isDragging = false;
+          state.dragPointerId = null;
+          state.isPinching = true;
+
+          state.pinchStartDistance = getPointerDistance(a, b);
+          state.pinchStartZoom = state.zoom;
+
+          const mid = getPointerMidpoint(a, b);
+          state.pinchStartMidX = mid.x;
+          state.pinchStartMidY = mid.y;
+          state.pinchStartOffsetX = state.offsetX;
+          state.pinchStartOffsetY = state.offsetY;
+        }
       });
 
       canvas.addEventListener('pointermove', (event) => {
+        const rect = canvas.getBoundingClientRect();
         const state = historicalAtlasViewportState;
-        if (!state.isDragging || event.pointerId !== state.dragPointerId) return;
 
-        const dx = event.clientX - state.dragStartX;
-        const dy = event.clientY - state.dragStartY;
+        if (!state.activePointers.has(event.pointerId)) return;
 
-        state.offsetX = state.dragStartOffsetX + dx;
-        state.offsetY = state.dragStartOffsetY + dy;
+        state.activePointers.set(event.pointerId, {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        });
 
-        renderHistoricalAtlasViewport();
+        // Pinch zoom
+        if (state.isPinching && state.activePointers.size >= 2) {
+          const pointers = Array.from(state.activePointers.values());
+          const a = pointers[0];
+          const b = pointers[1];
+
+          const currentDistance = getPointerDistance(a, b);
+          if (state.pinchStartDistance <= 0) return;
+
+          const rawZoom = state.pinchStartZoom * (currentDistance / state.pinchStartDistance);
+          const newZoom = Math.max(1, Math.min(18, rawZoom));
+
+          // Reset to pinch-start camera before recalculating anchored zoom
+          state.zoom = state.pinchStartZoom;
+          state.offsetX = state.pinchStartOffsetX;
+          state.offsetY = state.pinchStartOffsetY;
+
+          const mid = getPointerMidpoint(a, b);
+
+          zoomAroundScreenPoint(
+            state,
+            newZoom,
+            mid.x,
+            mid.y,
+            rect.width,
+            rect.height
+          );
+
+          renderHistoricalAtlasViewport();
+          return;
+        }
+
+        // One-finger pan
+        if (state.isDragging && event.pointerId === state.dragPointerId) {
+          const dx = event.clientX - state.dragStartX;
+          const dy = event.clientY - state.dragStartY;
+
+          state.offsetX = state.dragStartOffsetX + dx;
+          state.offsetY = state.dragStartOffsetY + dy;
+
+          renderHistoricalAtlasViewport();
+        }
       });
 
-      function endDrag(event) {
+      function endPointer(event) {
         const state = historicalAtlasViewportState;
-        if (event.pointerId !== state.dragPointerId) return;
 
-        state.isDragging = false;
-        state.dragPointerId = null;
-        canvas.style.cursor = 'grab';
+        state.activePointers.delete(event.pointerId);
 
         try {
           canvas.releasePointerCapture(event.pointerId);
         } catch (_) {}
+
+        // If pinch drops to one finger, stop pinch and restart drag from current state
+        if (state.isPinching && state.activePointers.size === 1) {
+          const remainingId = Array.from(state.activePointers.keys())[0];
+          state.isPinching = false;
+          state.isDragging = true;
+          state.dragPointerId = remainingId;
+          state.dragStartOffsetX = state.offsetX;
+          state.dragStartOffsetY = state.offsetY;
+          canvas.style.cursor = 'grabbing';
+          return;
+        }
+
+        if (state.activePointers.size === 0) {
+          state.isDragging = false;
+          state.isPinching = false;
+          state.dragPointerId = null;
+          canvas.style.cursor = 'grab';
+        }
       }
 
-      canvas.addEventListener('pointerup', endDrag);
-      canvas.addEventListener('pointercancel', endDrag);
-
-      canvas.style.cursor = 'grab';
+      canvas.addEventListener('pointerup', endPointer);
+      canvas.addEventListener('pointercancel', endPointer);
     }
 
     function applyViewportTransform(x, y, width, height, zoom, offsetX, offsetY) {
