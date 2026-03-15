@@ -1,0 +1,26 @@
+[
+      {
+        "slug": "historical-borders-atlas",
+        "title": "Historical Borders Atlas 1648-1848",
+        "overview": "Drawing on historical military surveys, cadastres, treaties, and archival boundary records, this project reconstructs formalized political boundaries across Europe and the Americas between 1648 and 1848, the period associated with the Enlightenment and the emergence of the modern nation state. The Historical Borders Atlas contains spatiotemporal datasets of administrative lines and territorial units at sub-300-meter resolution intended primarily for the study of long-term territorial change, but also historical geography, political history, and spatial analysis of state formation.",
+        "href": "projects/historical-borders-atlas.html"
+      },
+      {
+        "slug": "ethnolinguistic-populations-distributions",
+        "title": "Ethnolinguistic Population Distributions 1815-1930",
+        "overview": "Using dasymetric mapping methods pioneered by Benjamin Semenov-Tyan-Shansky (Бенжамин Петрович Семёнов-Тян-Шанский) and formalized by John Kirtland Wright, this project reconstructs historical population distributions of ethnolinguistic groups by redistributing population within administrative units according to settlement patterns, land use, and other spatial constraints. The resulting datasets are intended for research in demographic history, language geography, and long-term ethnolinguistic change.",
+        "href": "projects/ethnolinguistic-populations-distributions.html"
+      },
+      {
+        "slug": "lexicological-comparison-tool",
+        "title": "Lexicological Comparison Tool",
+        "overview": "Heavily inspired by the work of Kostiantyn Tyshchenko (Костянтин Тищенко) in his 2000 publication, Metatheory of Linguistics (Метатеорія Mовознавства), this tool provides a structured framework for the comparative analysis of linguistic systems. The Lexicological Comparison Tool leverages feature mapping and typological comparison with the intent to aid in large-scale vocabulary acquisition and expedited language learning.",
+        "href": "projects/lexicological-comparison-tool.html"
+      },
+      {
+        "slug": "grand-strategy",
+        "title": "Untitled Grand Strategy Game",
+        "overview": "A grand strategy game focused on creating a deep historical, political, and economic simulation through in-depth population systems and dynamic geopolitical decision-making. Drawing on the datasets developed through other projects, the game aims to create one of the most detailed historical world states to date while also allowing for plausible, ahistorical simulation of border disputes, demographic evolution, and the long-term development of states across the time period  .",
+        "href": "projects/grand-strategy.html"
+      }
+    ]

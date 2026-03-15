@@ -1,0 +1,16 @@
+[
+      { "country": "United States of America", "language": "English", "categories": ["native"] },
+      { "country": "Canada", "language": "English", "categories": ["native"] },
+      { "country": "United Kingdom", "language": "English", "categories": ["native"] },
+      { "country": "Australia", "language": "English", "categories": ["native"] },
+      { "country": "New Zealand", "language": "English", "categories": ["native"] },
+
+      { "country": "Russia", "language": "Russian", "categories": ["reading-speaking"] },
+      { "country": "France", "language": "French", "categories": ["reading"] },
+      { "country": "Germany", "language": "German", "categories": ["reading"] },
+      { "country": "Austria", "language": "German", "categories": ["reading"] },
+      { "country": "Luxembourg", "language": "German", "categories": ["reading"] },
+
+      { "country": "Italy", "language": "Latin", "categories": ["in-progress", "todo"] },
+      { "country": "Greece", "language": "Attic Greek", "categories": ["in-progress"] }
+    ]

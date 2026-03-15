@@ -1,0 +1,8 @@
+[
+      { "name": "New York", "lat": 40.7128, "lon": -74.0060, "region": "us", "area": "New York" },
+      { "name": "Los Angeles", "lat": 34.0522, "lon": -118.2437, "region": "us", "area": "California" },
+
+      { "name": "London", "lat": 51.5074, "lon": -0.1278, "region": "europe", "area": "United Kingdom" },
+      { "name": "Paris", "lat": 48.8566, "lon": 2.3522, "region": "europe", "area": "France" },
+      { "name": "Edinburgh", "lat": 55.9533, "lon": -3.1883, "region": "europe", "area": "United Kingdom" }
+    ]

@@ -1389,512 +1389,12 @@
   <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 
   <script>
-    const items = [
-      {
-        slug: "brothers-karamazov",
-        title: "The Brothers Karamazov",
-        type: "Literature",
-        subtype: "Novel",
-        year: 1880,
-        creator: "Fyodor Dostoevsky",
-        creatorRole: "writer",
-        status: "revisiting",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["russian", "philosophy", "novel", "essential"],
-        keywords: ["faith", "freedom", "morality", "brothers", "dostoevsky"],
-        rank: 5,
-        commentCount: 12,
-        comments: [
-          { author: "Marian", date: "2 days ago", text: "This is exactly the kind of entry page I wanted — opinionated, not generic." },
-          { author: "Julian", date: "5 days ago", text: "The quote treatment works much better here than burying it on the card." }
-        ]
-      },
-      {
-        slug: "stalker",
-        title: "Stalker",
-        type: "Movies",
-        subtype: "Film",
-        year: 1979,
-        creator: "Andrei Tarkovsky",
-        creatorRole: "director",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["film", "russian", "philosophical", "atmosphere"],
-        keywords: ["zone", "pilgrimage", "metaphysical", "tarkovsky"],
-        rank: 5,
-        commentCount: 7,
-        comments: [
-          { author: "Reader", date: "1 week ago", text: "Glad this is ranked at the top tier. It should be." }
-        ]
-      },
-      {
-        slug: "kind-of-blue",
-        title: "Kind of Blue",
-        type: "Music",
-        subtype: "Album",
-        year: 1959,
-        creator: "Miles Davis",
-        creatorRole: "artist",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["jazz", "album", "classic"],
-        keywords: ["modal", "jazz", "trumpet", "album"],
-        rank: 4,
-        commentCount: 5,
-        comments: []
-      },
-      {
-        slug: "mad-men",
-        title: "Mad Men",
-        type: "TV",
-        subtype: "Series",
-        year: 2007,
-        creator: "Matthew Weiner",
-        creatorRole: "tv",
-        status: "in-progress",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["television", "character-driven", "period"],
-        keywords: ["advertising", "identity", "1960s", "television"],
-        rank: 4,
-        commentCount: 9,
-        comments: []
-      },
-      {
-        slug: "faust",
-        title: "Faust",
-        type: "Literature",
-        subtype: "Drama",
-        year: 1808,
-        creator: "Johann Wolfgang von Goethe",
-        creatorRole: "writer",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["german", "drama", "poetry", "essential"],
-        keywords: ["faustian", "drama", "striving", "goethe"],
-        rank: 5,
-        commentCount: 11,
-        comments: [
-          { author: "Cora", date: "3 days ago", text: "The two-souls line really does deserve pride of place here." }
-        ]
-      },
-      {
-        slug: "a-hidden-life",
-        title: "A Hidden Life",
-        type: "Movies",
-        subtype: "Film",
-        year: 2019,
-        creator: "Terrence Malick",
-        creatorRole: "director",
-        status: "in-progress",
-        owned: false,
-        blurb: "",
-        description: "",
-        tags: ["film", "spiritual", "historical"],
-        keywords: ["conscience", "war", "malick", "resistance"],
-        rank: 4,
-        commentCount: 3,
-        comments: []
-      },
-      {
-        slug: "epistles-of-seneca",
-        title: "Epistles of Seneca",
-        type: "Literature",
-        subtype: "Letters",
-        year: 65,
-        creator: "Seneca",
-        creatorRole: "writer",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["stoicism", "letters", "latin"],
-        keywords: ["ethics", "letters", "seneca", "stoicism"],
-        rank: 4,
-        commentCount: 4,
-        comments: []
-      },
-      {
-        slug: "in-rainbows",
-        title: "In Rainbows",
-        type: "Music",
-        subtype: "Album",
-        year: 2007,
-        creator: "Radiohead",
-        creatorRole: "artist",
-        status: "in-progress",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["alternative", "album", "modern"],
-        keywords: ["rock", "radiohead", "album"],
-        rank: 4,
-        commentCount: 6,
-        comments: []
-      },
-      {
-        slug: "outer-wilds",
-        title: "Outer Wilds",
-        type: "Video Games",
-        subtype: "Exploration",
-        year: 2019,
-        creator: "Mobius Digital",
-        creatorRole: "artist",
-        status: "in-progress",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["game", "exploration", "mystery"],
-        keywords: ["time loop", "space", "discovery", "game"],
-        rank: 5,
-        commentCount: 8,
-        comments: [
-          { author: "Nora", date: "4 days ago", text: "Good call adding games. This deserves to be one of the first." }
-        ]
-      },
-      {
-        slug: "robocop-rogue-city",
-        title: "RoboCop: Rogue City",
-        type: "Video Games",
-        subtype: "Shooter",
-        year: 2023,
-        creator: "Teyon",
-        creatorRole: "developer",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["game", "shooter", "cyberpunk"],
-        keywords: ["robocop", "detroit", "fps", "cyberpunk"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "star-wars-jedi-fallen-order",
-        title: "STAR WARS Jedi: Fallen Order",
-        type: "Video Games",
-        subtype: "Action Adventure",
-        year: 2019,
-        creator: "Respawn Entertainment",
-        creatorRole: "developer",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["game", "star-wars", "adventure"],
-        keywords: ["jedi", "lightsaber", "empire", "exploration"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "soma",
-        title: "SOMA",
-        type: "Video Games",
-        subtype: "Horror",
-        year: 2015,
-        creator: "Frictional Games",
-        creatorRole: "developer",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["game", "horror", "philosophical"],
-        keywords: ["identity", "ai", "consciousness", "horror"],
-        rank: 5,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "dark-forces-remaster",
-        title: "STAR WARS: Dark Forces Remaster",
-        type: "Video Games",
-        subtype: "Shooter",
-        year: 2024,
-        creator: "Nightdive Studios",
-        creatorRole: "developer",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["game", "star-wars", "retro"],
-        keywords: ["fps", "classic", "remaster", "kyle katarn"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "still-wakes-the-deep",
-        title: "Still Wakes the Deep",
-        type: "Video Games",
-        subtype: "Narrative Horror",
-        year: 2024,
-        creator: "The Chinese Room",
-        creatorRole: "developer",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["game", "horror", "narrative"],
-        keywords: ["oil rig", "cosmic horror", "atmosphere"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "sharpe",
-        title: "Sharpe",
-        type: "TV",
-        subtype: "Series",
-        year: 1993,
-        creator: "ITV",
-        creatorRole: "tv",
-        status: "in-progress",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["television", "historical", "war"],
-        keywords: ["napoleonic wars", "riflemen", "british army"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "moral-orel",
-        title: "Moral Orel",
-        type: "TV",
-        subtype: "Animated Series",
-        year: 2005,
-        creator: "Dino Stamatopoulos",
-        creatorRole: "tv",
-        status: "in-progress",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["television", "animation", "satire"],
-        keywords: ["religion", "satire", "adult swim"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "lost",
-        title: "LOST",
-        type: "TV",
-        subtype: "Series",
-        year: 2004,
-        creator: "J. J. Abrams",
-        creatorRole: "tv",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["television", "mystery", "drama"],
-        keywords: ["island", "mystery", "survival"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "chuck",
-        title: "Chuck",
-        type: "TV",
-        subtype: "Series",
-        year: 2007,
-        creator: "Josh Schwartz",
-        creatorRole: "tv",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["television", "comedy", "spy"],
-        keywords: ["spy", "comedy", "nerd"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "dexter",
-        title: "Dexter",
-        type: "TV",
-        subtype: "Series",
-        year: 2006,
-        creator: "James Manos Jr.",
-        creatorRole: "tv",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["television", "crime", "drama"],
-        keywords: ["serial killer", "miami", "crime"],
-        rank: 4,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "breaking-bad",
-        title: "Breaking Bad",
-        type: "TV",
-        subtype: "Series",
-        year: 2008,
-        creator: "Vince Gilligan",
-        creatorRole: "tv",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["television", "crime", "drama"],
-        keywords: ["meth", "crime", "transformation"],
-        rank: 5,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "alien",
-        title: "Alien",
-        type: "Movies",
-        subtype: "Film",
-        year: 1979,
-        creator: "Ridley Scott",
-        creatorRole: "director",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["film", "sci-fi", "horror"],
-        keywords: ["xenomorph", "space", "horror"],
-        rank: 5,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "jurassic-park",
-        title: "Jurassic Park",
-        type: "Movies",
-        subtype: "Film",
-        year: 1993,
-        creator: "Steven Spielberg",
-        creatorRole: "director",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["film", "adventure", "sci-fi"],
-        keywords: ["dinosaurs", "theme park", "spielberg"],
-        rank: 5,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "star-wars-a-new-hope",
-        title: "Star Wars: A New Hope",
-        type: "Movies",
-        subtype: "Film",
-        year: 1977,
-        creator: "George Lucas",
-        creatorRole: "director",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["film", "sci-fi", "adventure"],
-        keywords: ["jedi", "rebellion", "space opera"],
-        rank: 5,
-        commentCount: 0,
-        comments: []
-      },
-      {
-        slug: "blade-runner",
-        title: "Blade Runner",
-        type: "Movies",
-        subtype: "Film",
-        year: 1982,
-        creator: "Ridley Scott",
-        creatorRole: "director",
-        status: "completed",
-        owned: true,
-        blurb: "",
-        description: "",
-        tags: ["film", "cyberpunk", "sci-fi"],
-        keywords: ["replicants", "cyberpunk", "future"],
-        rank: 5,
-        commentCount: 0,
-        comments: []
-      },
-    ];
-
-    const quotes = [
-      {
-        title: "The Brothers Karamazov",
-        text: "The mystery of human existence lies not in just staying alive, but in finding something to live for.",
-        source: "Top Quote",
-        character: "Elder Zosima"
-      },
-      {
-        title: "The Brothers Karamazov",
-        text: "The mystery of human existence lies not in just staying alive, but in finding something to live for.",
-        source: "Top Quote",
-        character: "Elder Zosima"
-      },
-      {
-        title: "The Brothers Karamazov",
-        text: "The mystery of human existence lies not in just staying alive, but in finding something to live for.",
-        source: "Top Quote",
-        character: "Elder Zosima"
-      },
-      {
-        title: "The Brothers Karamazov",
-        text: "The mystery of human existence lies not in just staying alive, but in finding something to live for.",
-        source: "Top Quote",
-        character: "Elder Zosima"
-      },
-      {
-        title: "The Brothers Karamazov",
-        text: "The more I love humanity in general, the less I love man in particular.",
-        source: "Fyodor Dostoevsky",
-        character: "Ivan Karamazov"
-      },
-      {
-        title: "Faust",
-        text: "Two souls, alas, dwell in my breast.",
-        source: "Top Quote",
-        character: "Faust"
-      },
-      {
-        title: "Faust",
-        text: "Gray, dear friend, is all theory, and green the golden tree of life.",
-        source: "Johann Wolfgang von Goethe",
-        character: "Mephistopheles"
-      },
-      {
-        title: "Epistles of Seneca",
-        text: "We suffer more often in imagination than in reality.",
-        source: "Seneca",
-        character: "Seneca"
-      },
-      {
-        title: "Stalker",
-        text: "Let everything that’s been planned come true.",
-        source: "Stalker",
-        character: "Stalker"
-      },
-      {
-        title: "Outer Wilds",
-        text: "The future is always built on the past, even if we won’t get to see it.",
-        source: "Outer Wilds",
-        character: "Riebeck"
-      }
-    ];
+    let items = [];
+    let quotes = [];
+    let posts = [];
+    let projects = [];
+    let travelPlaces = [];
+    let LANGUAGE_MAP_DATA = [];
 
     const QUOTES_PAGE_LIMIT = 8;
 
@@ -1902,80 +1402,7 @@
       return shuffleArray(quotes).slice(0, limit);
     }
 
-    const posts = [
-      {
-        slug: "why-lists-feel-personal",
-        date: "March 12, 2026",
-        original_date: "Drafted March 3, 2026",
-        title: "Why the best recommendation lists feel personal rather than authoritative",
-        excerpt: "A short essay on curation, trust, and why people return to individuals with taste instead of faceless lists.",
-        body: [
-          "The appeal of a strong recommendation list is not objectivity. It is personality under discipline. A good list does not pretend to be neutral; it reveals a sensibility worth trusting.",
-          "That is why I would rather read a page assembled by someone with real preferences than a polished, committee-safe ranking designed not to offend anyone.",
-          "This site is meant to lean into that. The archive matters, but the taste behind the archive matters more."
-        ],
-        tags: ["essay", "taste", "curation"],
-        commentCount: 12,
-        comments: [
-          { author: "Marian", date: "2 days ago", text: "This feels owned in a way most recommendation sites do not." },
-          { author: "Julian", date: "5 days ago", text: "The distinction between archive and taste is exactly right." }
-        ]
-      },
-      {
-        slug: "memory-palace-of-interests",
-        date: "March 4, 2026",
-        title: "On building a site that becomes a memory palace for your interests",
-        excerpt: "Part essay, part design note: how tags, notes, and categories slowly turn into a public map of a person’s mind.",
-        body: [
-          "The value of a site like this is cumulative. One entry is just one entry. A hundred entries begin to sketch a worldview.",
-          "That is why structure matters: not to look tidy, but to make return possible. Quotes, notes, recommendations, and longer writing should speak to each other.",
-          "The longer I work on this kind of archive, the less I want it to feel like a dashboard and the more I want it to feel like a study."
-        ],
-        tags: ["note", "design", "archive"],
-        commentCount: 9,
-        comments: [
-          { author: "Reader", date: "1 week ago", text: "The study metaphor is much better than calling it a platform." }
-        ]
-      }
-    ];
-
-    const projects = [
-      {
-        slug: "historical-borders-atlas",
-        title: "Historical Borders Atlas 1648-1848",
-        overview: "Drawing on historical military surveys, cadastres, treaties, and archival boundary records, this project reconstructs formalized political boundaries across Europe and the Americas between 1648 and 1848, the period associated with the Enlightenment and the emergence of the modern nation state. The Historical Borders Atlas contains spatiotemporal datasets of administrative lines and territorial units at sub-300-meter resolution intended primarily for the study of long-term territorial change, but also historical geography, political history, and spatial analysis of state formation.",
-        href: "projects/historical-borders-atlas.html"
-      },
-      {
-        slug: "ethnolinguistic-populations-distributions",
-        title: "Ethnolinguistic Population Distributions 1815-1930",
-        overview: "Using dasymetric mapping methods pioneered by Benjamin Semenov-Tyan-Shansky (Бенжамин Петрович Семёнов-Тян-Шанский) and formalized by John Kirtland Wright, this project reconstructs historical population distributions of ethnolinguistic groups by redistributing population within administrative units according to settlement patterns, land use, and other spatial constraints. The resulting datasets are intended for research in demographic history, language geography, and long-term ethnolinguistic change.",
-        href: "projects/ethnolinguistic-populations-distributions.html"
-      },
-      {
-        slug: "lexicological-comparison-tool",
-        title: "Lexicological Comparison Tool",
-        overview: "Heavily inspired by the work of Kostiantyn Tyshchenko (Костянтин Тищенко) in his 2000 publication, Metatheory of Linguistics (Метатеорія Mовознавства), this tool provides a structured framework for the comparative analysis of linguistic systems. The Lexicological Comparison Tool leverages feature mapping and typological comparison with the intent to aid in large-scale vocabulary acquisition and expedited language learning.",
-        href: "projects/lexicological-comparison-tool.html"
-      },
-      {
-        slug: "grand-strategy",
-        title: "Untitled Grand Strategy Game",
-        overview: "A grand strategy game focused on creating a deep historical, political, and economic simulation through in-depth population systems and dynamic geopolitical decision-making. Drawing on the datasets developed through other projects, the game aims to create one of the most detailed historical world states to date while also allowing for plausible, ahistorical simulation of border disputes, demographic evolution, and the long-term development of states across the time period  .",
-        href: "projects/grand-strategy.html"
-      }
-    ];
-
     let HISTORICAL_ATLAS_BORDER_DEMO = [];
-
-    const travelPlaces = [
-      { name: "New York", lat: 40.7128, lon: -74.0060, region: "us", area: "New York" },
-      { name: "Los Angeles", lat: 34.0522, lon: -118.2437, region: "us", area: "California" },
-
-      { name: "London", lat: 51.5074, lon: -0.1278, region: "europe", area: "United Kingdom" },
-      { name: "Paris", lat: 48.8566, lon: 2.3522, region: "europe", area: "France" },
-      { name: "Edinburgh", lat: 55.9533, lon: -3.1883, region: "europe", area: "United Kingdom" }
-    ];
 
     const LANGUAGE_CATEGORY_META = {
       native: {
@@ -2004,23 +1431,6 @@
         colorVar: '--map-todo'
       }
     };
-
-    const LANGUAGE_MAP_DATA = [
-      { country: 'United States of America', language: 'English', categories: ['native'] },
-      { country: 'Canada', language: 'English', categories: ['native'] },
-      { country: 'United Kingdom', language: 'English', categories: ['native'] },
-      { country: 'Australia', language: 'English', categories: ['native'] },
-      { country: 'New Zealand', language: 'English', categories: ['native'] },
-
-      { country: 'Russia', language: 'Russian', categories: ['reading-speaking'] },
-      { country: 'France', language: 'French', categories: ['reading'] },
-      { country: 'Germany', language: 'German', categories: ['reading'] },
-      { country: 'Austria', language: 'German', categories: ['reading'] },
-      { country: 'Luxembourg', language: 'German', categories: ['reading'] },
-
-      { country: 'Italy', language: 'Latin', categories: ['in-progress', 'todo'] },
-      { country: 'Greece', language: 'Attic Greek', categories: ['in-progress'] }
-    ];
 
     const LANGUAGE_MAP_LOOKUP = new Map(
       LANGUAGE_MAP_DATA.map(entry => [entry.country, entry])
@@ -4056,11 +3466,16 @@
       isPinching: false
     };
 
-    function initHistoricalAtlasViewport() {
+    async function initHistoricalAtlasViewport() {
       const canvas = document.getElementById('historicalAtlasCanvas');
       const shell = document.getElementById('historicalAtlasViewport');
 
       if (!canvas || !shell) return;
+
+      // LOAD GEOJSON FIRST
+      if (!HISTORICAL_ATLAS_BORDER_DEMO.length) {
+        await loadHistoricalAtlasGeoJson();
+      }
 
       if (!historicalAtlasViewportState.gl) {
         setupHistoricalAtlasWebGL(canvas);
@@ -4590,7 +4005,7 @@
 
               <div class="project-viewport-overlay" aria-hidden="true">
                 <div class="project-viewport-badge"></div>
-                <div class="project-viewport-caption"> Drag to move. Pinch to zoom.
+                <div class="project-viewport-caption"> Drag to Move. Pinch/Scroll to Zoom.
                 </div>
               </div>
             </div>
@@ -5455,8 +4870,48 @@
     observeMapContainer('travelView', 'travelUsMap', renderTravelMap);
     observeMapContainer('travelView', 'travelEuropeMap', renderTravelMap);
 
+    async function loadJson(path) {
+      const response = await fetch(path);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load ${path}: ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    async function loadSiteData() {
+      const [
+        loadedItems,
+        loadedQuotes,
+        loadedPosts,
+        loadedProjects,
+        loadedTravelPlaces,
+        loadedLanguageMapData
+      ] = await Promise.all([
+        loadJson('./data/items.json'),
+        loadJson('./data/quotes.json'),
+        loadJson('./data/posts.json'),
+        loadJson('./data/projects.json'),
+        loadJson('./data/travel-places.json'),
+        loadJson('./data/language-map.json')
+      ]);
+
+      items = loadedItems;
+      quotes = loadedQuotes;
+      posts = loadedPosts;
+      projects = loadedProjects;
+      travelPlaces = loadedTravelPlaces;
+      LANGUAGE_MAP_DATA = loadedLanguageMapData;
+
+      LANGUAGE_MAP_LOOKUP = new Map(
+        LANGUAGE_MAP_DATA.map(entry => [entry.country, entry])
+      );
+    }
+
     (async function initializeSite() {
       try {
+        await loadSiteData();
         await loadHistoricalAtlasGeoJson();
       } catch (error) {
         console.error(error);
