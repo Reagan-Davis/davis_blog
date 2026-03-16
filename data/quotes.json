@@ -1,9 +1,33 @@
 [
       {
-        "title": "This Film",
-        "text": "This Film was totally hecking radical bruh",
-        "source": "Top Quote",
-        "character": "This Film Character"
+        "title": "War and Peace",
+        "source": "",
+        "character": "Prince Andrei Bolkonsky",
+        "quotes": {
+          "short": {
+            "native": "Какъ же я не видалъ прежде этого высокаго неба? И какъ я счастливъ, что узналъ его наконецъ.",
+            "english": "How was it that I had not seen that lofty sky before? And how happy I am to have finally known it."
+          },
+          "long": {
+            "native": "Какъ же я не видалъ прежде этого высокаго неба? И какъ я счастливъ, что узналъ его наконецъ. Да! всё пустое, всё обманъ, кромѣ этого безконечнаго неба. Ничего, ничего нѣтъ, кромѣ его. Но и его даже нѣтъ, ничего нѣтъ, кромѣ тишины, успокоенія. И слава Богу!..",
+            "english": "How was it that I had not seen that lofty sky before? And how happy I am to have finally known it. Yes—everything is empty, everything is deception except that infinite sky…"
+          }
+        }
+      },
+      {
+        "title": "War and Peace",
+        "source": "",
+        "character": "Pierre Bezukho",
+        "quotes": {
+          "short": {
+            "native": "Что человѣкъ созданъ для счастья, и что счастье это — въ жизни, въ любви къ людямъ и въ согласіи съ Божьей волей.",
+            "english": "That man is created for happiness, and that this happiness lies in life, in love for people, and in harmony with God’s will."
+          },
+          "long": {
+            "native": "И теперь, благодаря Платону Каратаеву, онъ понялъ то простое и вѣчное, что прежде было закрыто для него: что человѣкъ созданъ для счастья, и что счастье это — въ жизни, въ любви къ людямъ и въ согласіи съ Божьей волей.",
+            "english": "And now, thanks to Platon Karataev, he understood the simple and eternal truth that had before been hidden from him: that man is created for happiness, and that this happiness lies in life, in love for people, and in harmony with God’s will."
+          }
+        }
       },
       {
         "title": "That Film",

@@ -131,5 +131,22 @@
         "tags": ["video-game"],
         "keywords": ["shooter"],
         "rank": 5
+      },
+      {
+        "slug": "war-and-peace",
+        "title": "War and Peace",
+        "type": "Novel",
+        "subtype": "Novel",
+        "cover_url": "google.com",
+        "year": 1869,
+        "creator": "Lev Tolstoy",
+        "creatorRole": "author",
+        "status": "completed",
+        "owned": true,
+        "blurb": "",
+        "description": "",
+        "tags": ["novel"],
+        "keywords": ["classic"],
+        "rank": 5
       }
     ]

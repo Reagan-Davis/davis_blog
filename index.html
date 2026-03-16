@@ -3602,7 +3602,19 @@
 
         const relatedQuotes = getQuotesForTitle(item.title);
         const quoteText = relatedQuotes
-          .map(q => [q.text, q.source, q.character].filter(Boolean).join(' '))
+          .map(q => {
+            const shortQuote = getShortQuoteText(q);
+            const longQuote = getLongQuoteText(q);
+
+            return [
+              shortQuote.native,
+              shortQuote.english,
+              longQuote.native,
+              longQuote.english,
+              q.source,
+              q.character
+            ].filter(Boolean).join(' ');
+          })
           .join(' ');
 
         const haystack = [
@@ -3667,6 +3679,31 @@
     function getPrimaryQuoteForTitle(title) {
       const matches = getQuotesForTitle(title);
       return matches.length ? matches[0] : null;
+    }
+
+    function getQuoteVariant(quote, variant = 'short') {
+      const fallbackText = quote?.text || '';
+
+      const variantData = quote?.quotes?.[variant];
+      if (variantData) {
+        return {
+          native: variantData.native || variantData.english || fallbackText,
+          english: variantData.english || variantData.native || fallbackText
+        };
+      }
+
+      return {
+        native: fallbackText,
+        english: fallbackText
+      };
+    }
+
+    function getShortQuoteText(quote) {
+      return getQuoteVariant(quote, 'short');
+    }
+
+    function getLongQuoteText(quote) {
+      return getQuoteVariant(quote, 'long');
     }
 
     function getRandomQuote() {
@@ -3802,6 +3839,99 @@
 
       heroQuoteTypingTimer = setTimeout(step, startDelay);
     }
+    const HERO_QUOTE_SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    function getRandomScrambleChar() {
+      return HERO_QUOTE_SCRAMBLE_CHARS[
+        Math.floor(Math.random() * HERO_QUOTE_SCRAMBLE_CHARS.length)
+      ];
+    }
+
+    function scrambleTextToTarget(element, fromText, toText, {
+      duration = 700,
+      frameRate = 36,
+      onComplete = null,
+      animationId = 0
+    } = {}) {
+      if (!element) return;
+
+      clearTimeout(heroQuoteTypingTimer);
+
+      const source = String(fromText || '');
+      const target = String(toText || '');
+
+      lockQuoteBoxSize(element, target);
+
+      const totalFrames = Math.max(1, Math.round((duration / 1000) * frameRate));
+      const maxLength = Math.max(source.length, target.length);
+
+      const paddedSource = source.padEnd(maxLength, ' ');
+      const paddedTarget = target.padEnd(maxLength, ' ');
+
+      const revealOrder = Array.from({ length: maxLength }, (_, i) => i)
+        .sort(() => Math.random() - 0.5);
+
+      let frame = 0;
+
+      function step() {
+        if (animationId !== heroQuoteAnimationId) {
+          unlockQuoteBoxSize(element);
+          return;
+        }
+
+        frame += 1;
+
+        const progress = frame / totalFrames;
+        const revealCount = Math.floor(progress * maxLength);
+        const revealed = new Set(revealOrder.slice(0, revealCount));
+
+        let output = '';
+
+        for (let i = 0; i < maxLength; i++) {
+          const sourceChar = paddedSource[i];
+          const targetChar = paddedTarget[i];
+
+          const isWhitespace = targetChar === ' ' && sourceChar === ' ';
+          const isStablePunctuation = /[.,;:!?'"“”‘’()[\]—\-]/.test(targetChar);
+
+          if (isWhitespace) {
+            output += ' ';
+            continue;
+          }
+
+          if (revealed.has(i)) {
+            output += targetChar;
+            continue;
+          }
+
+          if (targetChar === ' ') {
+            output += Math.random() < 0.65 ? ' ' : getRandomScrambleChar();
+            continue;
+          }
+
+          if (isStablePunctuation && Math.random() < 0.7) {
+            output += targetChar;
+            continue;
+          }
+
+          output += Math.random() < 0.45 && sourceChar !== ' '
+            ? sourceChar
+            : getRandomScrambleChar();
+        }
+
+        element.textContent = output.trimEnd();
+
+        if (frame < totalFrames) {
+          heroQuoteTypingTimer = setTimeout(step, 1000 / frameRate);
+        } else {
+          element.textContent = target;
+          unlockQuoteBoxSize(element);
+          if (typeof onComplete === 'function') onComplete();
+        }
+      }
+
+      step();
+    }
 
     function renderHeroQuote({ animate = true } = {}) {
       const featured = getRandomQuote();
@@ -3810,12 +3940,17 @@
       heroQuoteAnimationId += 1;
       const animationId = heroQuoteAnimationId;
 
-      const fullQuote = `“${featured.text}”`;
+      const shortQuote = getShortQuoteText(featured);
+      const nativeQuote = `“${shortQuote.native}”`;
+      const englishQuote = `“${shortQuote.english}”`;
+
       const linkedItem = getItemByTitle(featured.title);
 
       heroQuoteText.classList.remove('heroQuoteTyping');
       heroQuoteCharacter.classList.remove('heroMetaTyping');
       heroQuoteSource.classList.remove('heroMetaTyping');
+
+      clearTimeout(heroQuoteTypingTimer);
 
       heroQuoteCharacter.textContent = '';
       heroQuoteSource.textContent = '';
@@ -3832,9 +3967,10 @@
       }
 
       const sourceText = sourceBits.join(', ');
+      const needsTranslationEffect = shortQuote.native !== shortQuote.english;
 
       if (!animate) {
-        heroQuoteText.textContent = fullQuote;
+        heroQuoteText.textContent = needsTranslationEffect ? englishQuote : nativeQuote;
         heroQuoteCharacter.textContent = speakerText;
         heroQuoteSource.textContent = sourceText;
         return;
@@ -3842,7 +3978,7 @@
 
       heroQuoteText.classList.add('heroQuoteTyping');
 
-      typeText(heroQuoteText, fullQuote, {
+      typeText(heroQuoteText, nativeQuote, {
         speed: 30,
         startDelay: 320,
         animationId,
@@ -3851,41 +3987,64 @@
 
           heroQuoteText.classList.remove('heroQuoteTyping');
 
-          setTimeout(() => {
-            if (speakerText) {
-              heroQuoteCharacter.classList.add('heroMetaTyping');
+          const continueToMeta = () => {
+            setTimeout(() => {
+              if (animationId !== heroQuoteAnimationId) return;
 
-              typeText(heroQuoteCharacter, speakerText, {
-                speed: 14,
-                startDelay: 0,
+              if (speakerText) {
+                heroQuoteCharacter.classList.add('heroMetaTyping');
+
+                typeText(heroQuoteCharacter, speakerText, {
+                  speed: 14,
+                  startDelay: 0,
+                  animationId,
+                  onComplete: () => {
+                    if (animationId !== heroQuoteAnimationId) return;
+
+                    heroQuoteCharacter.classList.remove('heroMetaTyping');
+                    heroQuoteSource.classList.add('heroMetaTyping');
+
+                    typeText(heroQuoteSource, sourceText, {
+                      speed: 30,
+                      startDelay: 60,
+                      animationId,
+                      onComplete: () => {
+                        if (animationId !== heroQuoteAnimationId) return;
+                        heroQuoteSource.classList.remove('heroMetaTyping');
+                      }
+                    });
+                  }
+                });
+              } else {
+                heroQuoteSource.classList.add('heroMetaTyping');
+
+                typeText(heroQuoteSource, sourceText, {
+                  speed: 24,
+                  startDelay: 0,
+                  animationId,
+                  onComplete: () => {
+                    if (animationId !== heroQuoteAnimationId) return;
+                    heroQuoteSource.classList.remove('heroMetaTyping');
+                  }
+                });
+              }
+            }, 220);
+          };
+
+          if (needsTranslationEffect) {
+            setTimeout(() => {
+              if (animationId !== heroQuoteAnimationId) return;
+
+              scrambleTextToTarget(heroQuoteText, nativeQuote, englishQuote, {
+                duration: 650,
+                frameRate: 40,
                 animationId,
-                onComplete: () => {
-                  heroQuoteCharacter.classList.remove('heroMetaTyping');
-                  heroQuoteSource.classList.add('heroMetaTyping');
-
-                  typeText(heroQuoteSource, sourceText, {
-                    speed: 30,
-                    startDelay: 60,
-                    animationId,
-                    onComplete: () => {
-                      heroQuoteSource.classList.remove('heroMetaTyping');
-                    }
-                  });
-                }
+                onComplete: continueToMeta
               });
-            } else {
-              heroQuoteSource.classList.add('heroMetaTyping');
-
-              typeText(heroQuoteSource, sourceText, {
-                speed: 24,
-                startDelay: 0,
-                animationId,
-                onComplete: () => {
-                  heroQuoteSource.classList.remove('heroMetaTyping');
-                }
-              });
-            }
-          }, 220);
+            }, 180);
+          } else {
+            continueToMeta();
+          }
         }
       });
     }
@@ -3902,19 +4061,73 @@
       renderFinishedPanel();
     }
 
+    function lockQuoteBoxSize(element, targetText) {
+      if (!element) return null;
+
+      const rectBefore = element.getBoundingClientRect();
+
+      const measure = document.createElement(element.tagName || "div");
+      measure.style.position = "absolute";
+      measure.style.visibility = "hidden";
+      measure.style.pointerEvents = "none";
+      measure.style.whiteSpace = getComputedStyle(element).whiteSpace;
+      measure.style.lineHeight = getComputedStyle(element).lineHeight;
+      measure.style.font = getComputedStyle(element).font;
+      measure.style.fontSize = getComputedStyle(element).fontSize;
+      measure.style.fontFamily = getComputedStyle(element).fontFamily;
+      measure.style.fontWeight = getComputedStyle(element).fontWeight;
+      measure.style.fontStyle = getComputedStyle(element).fontStyle;
+      measure.style.letterSpacing = getComputedStyle(element).letterSpacing;
+      measure.style.wordBreak = getComputedStyle(element).wordBreak;
+      measure.style.overflowWrap = getComputedStyle(element).overflowWrap;
+      measure.style.width = `${rectBefore.width}px`;
+      measure.style.boxSizing = "border-box";
+      measure.textContent = targetText;
+
+      document.body.appendChild(measure);
+      const measuredHeight = measure.getBoundingClientRect().height;
+      document.body.removeChild(measure);
+
+      element.style.width = `${rectBefore.width}px`;
+      element.style.minHeight = `${Math.max(rectBefore.height, measuredHeight)}px`;
+      element.style.height = `${Math.max(rectBefore.height, measuredHeight)}px`;
+      element.style.display = "block";
+      element.style.overflow = "hidden";
+
+      return {
+        width: element.style.width,
+        minHeight: element.style.minHeight,
+        height: element.style.height,
+        overflow: element.style.overflow
+      };
+    }
+
+    function unlockQuoteBoxSize(element) {
+      if (!element) return;
+      element.style.height = "";
+      element.style.minHeight = "";
+      element.style.overflow = "";
+    }
+
     function renderQuotes() {
       const quotesGrid = document.getElementById('quotesGrid');
       if (!quotesGrid) return;
 
       const selectedQuotes = getRandomizedQuotes();
 
-      quotesGrid.innerHTML = selectedQuotes.map(quote => `
-        <article class="quote-card">
-          <blockquote>“${escapeHtml(quote.text)}”</blockquote>
-          ${quote.character ? `<div class="quote-character">${escapeHtml(quote.character)}</div>` : ''}
-          <div class="quote-source">${escapeHtml(quote.title)}${quote.source ? `, <em>${escapeHtml(quote.source)}</em>` : ''}</div>
-        </article>
-      `).join('');
+      quotesGrid.innerHTML = selectedQuotes.map(quote => {
+        const shortQuote = getShortQuoteText(quote);
+        const hasTranslation = shortQuote.native !== shortQuote.english;
+
+        return `
+          <article class="quote-card">
+            <blockquote>“${escapeHtml(shortQuote.native)}”</blockquote>
+            ${hasTranslation ? `<div class="quote-translation">${escapeHtml(shortQuote.english)}</div>` : ''}
+            ${quote.character ? `<div class="quote-character">${escapeHtml(quote.character)}</div>` : ''}
+            <div class="quote-source">${escapeHtml(quote.title)}${quote.source ? `, <em>${escapeHtml(quote.source)}</em>` : ''}</div>
+          </article>
+        `;
+      }).join('');
     }
 
     function renderPosts() {
