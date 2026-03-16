@@ -2044,6 +2044,44 @@
 
     let lockedScrollY = 0;
 
+    let currentPanelRotationTimer = null;
+    let finishedPanelRotationTimer = null;
+
+    function rotatePanelIndices(getItemsForType, indices) {
+      currentTypes.forEach((type) => {
+        const matches = getItemsForType(type);
+        if (!matches || matches.length <= 1) return;
+
+        indices[type] = (indices[type] + 1) % matches.length;
+      });
+    }
+
+    function startHomePanelRotation() {
+      stopHomePanelRotation();
+
+      finishedPanelRotationTimer = setInterval(() => {
+        rotatePanelIndices(getFinishedItemsForType, finishedIndices);
+        renderFinishedPanel();
+      }, 7000);
+
+      currentPanelRotationTimer = setInterval(() => {
+        rotatePanelIndices(getCurrentItemsForType, currentIndices);
+        renderCurrentPanel();
+      }, 9000);
+    }
+
+    function stopHomePanelRotation() {
+      if (finishedPanelRotationTimer) {
+        clearInterval(finishedPanelRotationTimer);
+        finishedPanelRotationTimer = null;
+      }
+
+      if (currentPanelRotationTimer) {
+        clearInterval(currentPanelRotationTimer);
+        currentPanelRotationTimer = null;
+      }
+    }
+
     function typePopupText(element, html, {
       speed = 26,
       startDelay = 120,
@@ -5793,6 +5831,7 @@
       renderRankings();
       renderCurrentPanel();
       renderFinishedPanel();
+      startHomePanelRotation();
       updateVaultView();
       restoreLastLocation();
     })();
