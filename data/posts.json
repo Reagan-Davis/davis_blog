@@ -1,36 +1,15 @@
 [
       {
-        "slug": "why-lists-feel-personal",
-        "date": "March 12, 2026",
-        "original_date": "Drafted March 3, 2026",
-        "title": "Why the best recommendation lists feel personal rather than authoritative",
-        "excerpt": "A short essay on curation, trust, and why people return to individuals with taste instead of faceless lists.",
+        "slug": "not-uploaded",
+        "date": "October 21, 2124",
+        "original_date": "Drafted March 3, 400",
+        "title": "I am the ghost of posts not yet posted",
+        "excerpt": "Born of the past and posted from the future oooooooooooooooooooo.",
         "body": [
-          "The appeal of a strong recommendation list is not objectivity. It is personality under discipline. A good list does not pretend to be neutral; it reveals a sensibility worth trusting.",
-          "That is why I would rather read a page assembled by someone with real preferences than a polished, committee-safe ranking designed not to offend anyone.",
-          "This site is meant to lean into that. The archive matters, but the taste behind the archive matters more."
+          "I saw Flying Lotus at a grocery store in Los Angeles yesterday. I told him how cool it was to meet him in person, but I didn’t want to be a douche and bother him and ask him for photos or anything. He said, “Oh, like you’re doing now?” I was taken aback, and all I could say was “Huh?” but he kept cutting me off and going “huh? huh? huh?” and closing his hand shut in front of my face. I walked away and continued with my shopping, and I heard him chuckle as I walked off. When I came to pay for my stuff up front I saw him trying to walk out the doors with like fifteen Milky Ways in his hands without paying.",
+          "The girl at the counter was very nice about it and professional, and was like “Sir, you need to pay for those first.” At first he kept pretending to be tired and not hear her, but eventually turned back around and brought them to the counter.",
+          "When she took one of the bars and started scanning it multiple times, he stopped her and told her to scan them each individually “to prevent any electrical infetterence,” and then turned around and winked at me. I don’t even think that’s a word. After she scanned each bar and put them in a bag and started to say the price, he kept interrupting her by yawning really loudly."
         ],
-        "tags": ["essay", "taste", "curation"],
-        "commentCount": 12,
-        "comments": [
-          { "author": "Marian", "date": "2 days ago", "text": "This feels owned in a way most recommendation sites do not." },
-          { "author": "Julian", "date": "5 days ago", "text": "The distinction between archive and taste is exactly right." }
-        ]
-      },
-      {
-        "slug": "memory-palace-of-interests",
-        "date": "March 4, 2026",
-        "title": "On building a site that becomes a memory palace for your interests",
-        "excerpt": "Part essay, part design note: how tags, notes, and categories slowly turn into a public map of a person’s mind.",
-        "body": [
-          "The value of a site like this is cumulative. One entry is just one entry. A hundred entries begin to sketch a worldview.",
-          "That is why structure matters: not to look tidy, but to make return possible. Quotes, notes, recommendations, and longer writing should speak to each other.",
-          "The longer I work on this kind of archive, the less I want it to feel like a dashboard and the more I want it to feel like a study."
-        ],
-        "tags": ["note", "design", "archive"],
-        "commentCount": 9,
-        "comments": [
-          { "author": "Reader", "date": "1 week ago", "text": "The study metaphor is much better than calling it a platform." }
-        ]
+        "tags": ["i-am-tag"]
       }
     ]

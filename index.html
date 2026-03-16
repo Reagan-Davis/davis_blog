@@ -534,10 +534,9 @@
 
       <h2 id="startupModalTitle" class="startup-modal__title">
         This site is incomplete and a continuous work in progress.<br><br>
+        This popup sequence will appear every refresh until the site is ready.<br><br>
         There exists a significant amount of work yet to be transferred here. It is full of placeholder text and features at the moment. <br><br>
-        It is designed for monitors but should be <em>almost</em> entirely functional on mobile.<br><br>
-        The why behind the existence of this site can be found on the about page after this.<br><br>
-        You have been warned.
+        I would advise coming back later, but if you choose to continue... you have been warned.
       </h2>
 
       <div class="startup-modal__actions">
@@ -1093,7 +1092,7 @@
         <em>As you make your way down the corridor...</em> [[pause=2150]] <br><br>
         Heh. [[pause=1400]] <br><br>
         Did I make you think I was going to force you play through a game to navigate this site? [[pause=1800]] <br><br>
-        Okay, yeah, you got me. That would be incredibly on-brand for me. [[pause=700]] <br><br>
+        Okay, yeah, you got me. That would be incredibly on-brand for me. [[pause=1200]] <br><br>
         Now for the actual site:
       `;
 
@@ -3930,7 +3929,7 @@
           </div>
           <h3>${escapeHtml(post.title)}</h3>
           <p class="muted">${escapeHtml(post.excerpt)}</p>
-          <div class="comment-meta">Discussion</div>
+          <div class="comment-meta">Post</div>
           <div class="card-footer">
             <span class="tag">${escapeHtml(post.tags[0])}</span>
             <button class="footer-link" type="button" data-open-post="${escapeHtml(post.slug)}" aria-label="Open post ${escapeHtml(post.title)}">Open post →</button>
@@ -5009,62 +5008,179 @@
     }) {
       if (!gridElement) return;
 
-      gridElement.innerHTML = currentTypes.map(type => {
-        const matches = getItemsForType(type);
+      gridElement.innerHTML = currentTypes.map((type) => {
+        const entries = getItemsForType(type) || [];
+        const hasMultiple = entries.length > 1;
 
-        if (!matches.length) {
+        let activeItem = null;
+        if (entries.length > 0) {
+          const currentIndex = ((indices[type] || 0) % entries.length + entries.length) % entries.length;
+          activeItem = entries[currentIndex];
+        }
+
+        const cardInner = renderStatusCardContent(activeItem, type, emptyText);
+
+        const cycleControls = hasMultiple ? `
+          <div class="status-mini-cycles">
+            <button
+              class="status-cycle-btn"
+              type="button"
+              data-status-cycle="${escapeHtml(panelKey)}"
+              data-status-type="${escapeHtml(type)}"
+              data-direction="-1"
+              aria-label="Previous ${escapeHtml(type)} item"
+              title="Previous"
+            >
+              ‹
+            </button>
+            <button
+              class="status-cycle-btn"
+              type="button"
+              data-status-cycle="${escapeHtml(panelKey)}"
+              data-status-type="${escapeHtml(type)}"
+              data-direction="1"
+              aria-label="Next ${escapeHtml(type)} item"
+              title="Next"
+            >
+              ›
+            </button>
+          </div>
+        ` : '';
+
+        if (!activeItem) {
           return `
-            <article class="status-mini-card">
-              <div class="status-mini-head">
-                <div class="status-mini-type">${escapeHtml(type)}</div>
-              </div>
-              <div class="status-mini-empty">${escapeHtml(emptyText)}</div>
-            </article>
+            <div class="status-mini-block">
+              ${cardInner}
+            </div>
           `;
         }
 
-        const index = ((indices[type] || 0) % matches.length + matches.length) % matches.length;
-        const item = matches[index];
-
         return `
-          <article
-            class="status-mini-card status-mini-link"
-            tabindex="0"
-            role="link"
-            data-open-entry="${escapeHtml(item.slug)}"
-            aria-label="Open ${escapeHtml(item.title)} in vault"
-          >
-            <div class="status-mini-head">
-              <div class="status-mini-type">${escapeHtml(type)}</div>
-              <div class="status-mini-controls">
-                <button
-                  class="status-mini-arrow"
-                  type="button"
-                  data-status-cycle="${panelKey}"
-                  data-status-type="${escapeHtml(type)}"
-                  data-direction="-1"
-                  aria-label="Previous ${panelKey} ${escapeHtml(type)} item"
-                >‹</button>
-                <button
-                  class="status-mini-arrow"
-                  type="button"
-                  data-status-cycle="${panelKey}"
-                  data-status-type="${escapeHtml(type)}"
-                  data-direction="1"
-                  aria-label="Next ${panelKey} ${escapeHtml(type)} item"
-                >›</button>
-              </div>
+          <div class="status-mini-block">
+            <div
+              class="status-mini-link"
+              data-open-entry="${escapeHtml(activeItem.slug)}"
+              role="button"
+              tabindex="0"
+              aria-label="Open ${escapeHtml(activeItem.title || 'entry')}"
+            >
+              ${cardInner}
+              ${cycleControls}
             </div>
-
-            <div class="status-mini-main">
-              <h3 class="status-mini-title">${escapeHtml(item.title)}</h3>
-              <div class="status-mini-meta">${escapeHtml(item.creator)} · ${escapeHtml(item.subtype || item.type)}</div>
-            </div>
-
-            <div class="status-mini-blurb">${escapeHtml((item.blurb || '').slice(0, 88))}${item.blurb && item.blurb.length > 88 ? '…' : ''}</div>
-          </article>
+          </div>
         `;
       }).join('');
+    }
+
+    function getSteamCoverUrl(appId) {
+      if (!appId) return '';
+      return `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
+    }
+
+    function isVideoGameItem(item) {
+      return item && item.type === 'Video Games' && item.id;
+    }
+
+    function renderHomeStatusCard(item, label) {
+      if (!item) {
+        return `
+          <article class="status-card">
+            <div class="status-card__label">${escapeHtml(label)}</div>
+            <div class="status-card__empty">Nothing marked finished yet.</div>
+          </article>
+        `;
+      }
+
+      if (isVideoGameItem(item)) {
+        const coverUrl = getSteamCoverUrl(item.id);
+        const creatorLine = [item.creator, item.subtype || item.medium || item.genre]
+          .filter(Boolean)
+          .join(' · ');
+
+        return `
+          <article class="status-card status-card--cover">
+            <img
+              class="status-card__cover-image"
+              src="${coverUrl}"
+              alt="${escapeHtml(item.title)} cover"
+              loading="lazy"
+              onerror="this.closest('.status-card').classList.add('status-card--cover-fallback'); this.remove();"
+            />
+
+            <div class="status-card__cover-overlay">
+              <div class="status-card__label">${escapeHtml(label)}</div>
+              <h3 class="status-card__title">${escapeHtml(item.title || '')}</h3>
+              <p class="status-card__meta">${escapeHtml(creatorLine)}</p>
+            </div>
+          </article>
+        `;
+      }
+
+      const creatorLine = [item.creator, item.subtype || item.medium || item.genre]
+        .filter(Boolean)
+        .join(' · ');
+
+      return `
+        <article class="status-card">
+          <div class="status-card__label">${escapeHtml(label)}</div>
+          <h3 class="status-card__title">${escapeHtml(item.title || '')}</h3>
+          <p class="status-card__meta">${escapeHtml(creatorLine)}</p>
+        </article>
+      `;
+    }
+
+    function getSteamCoverUrl(appId) {
+      if (!appId) return '';
+      return `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
+    }
+
+    function isVideoGameWithCover(item) {
+      return !!(item && item.type === 'Video Games' && item.id);
+    }
+
+    function renderStatusCardContent(item, typeLabel, emptyText) {
+      if (!item) {
+        return `
+          <article class="status-mini-card">
+            <div class="status-mini-label">${escapeHtml(typeLabel)}</div>
+            <div class="status-mini-empty">${escapeHtml(emptyText)}</div>
+          </article>
+        `;
+      }
+
+      const creatorLine = [item.creator, item.subtype || item.medium || item.genre]
+        .filter(Boolean)
+        .join(' · ');
+
+      if (isVideoGameWithCover(item)) {
+        const coverUrl = getSteamCoverUrl(item.id);
+
+        return `
+          <article class="status-mini-card status-mini-card--cover">
+            <img
+              class="status-mini-card__cover-image"
+              src="${coverUrl}"
+              alt="${escapeHtml(item.title || 'Video game')} cover"
+              loading="lazy"
+              onerror="this.closest('.status-mini-card').classList.add('status-mini-card--cover-fallback'); this.remove();"
+            />
+
+            <div class="status-mini-card__cover-overlay">
+              <div class="status-mini-label">${escapeHtml(typeLabel)}</div>
+              <h3 class="status-mini-title">${escapeHtml(item.title || '')}</h3>
+              <p class="status-mini-meta">${escapeHtml(creatorLine)}</p>
+            </div>
+          </article>
+        `;
+      }
+
+      return `
+        <article class="status-mini-card">
+          <div class="status-mini-label">${escapeHtml(typeLabel)}</div>
+          <h3 class="status-mini-title">${escapeHtml(item.title || '')}</h3>
+          <p class="status-mini-meta">${escapeHtml(creatorLine)}</p>
+        </article>
+      `;
     }
 
     function renderCurrentPanel() {
