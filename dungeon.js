@@ -27,7 +27,11 @@
     const dungeonText = document.getElementById("startupDungeonText");
     const finalTitle = document.getElementById("startupFinalTitle");
     const finalText = document.getElementById("startupFinalText");
-
+    const finalChoice = document.getElementById("startupFinalChoice");
+    const finalYesBtn = document.getElementById("startupFinalYes");
+    const finalNoBtn = document.getElementById("startupFinalNo");
+    const finalFollowup = document.getElementById("startupFinalFollowup");
+    
     const bagHelp = document.getElementById("startupBagHelp");
     const keyHelp = document.getElementById("startupKeyHelp");
     const viewportHelp = document.getElementById("startupViewportHelp");
@@ -63,21 +67,30 @@
 
     const FINAL_STEP_TITLE = "<em></em>";
 
-    const FINAL_STEP_TEXT = `
-      <em>As you make your way down the corridor...</em> [[pause=2150]] <br><br>
-      Heh. [[pause=1400]] <br><br>
-      Did I make you think I was going to force you play through a game to navigate this site? [[pause=1800]] <br><br>
-      Okay, yeah, you got me. That would be incredibly on-brand for me. [[pause=1200]] <br><br>
-      Now for the actual site:
+    const FINAL_STEP_TEXT_BEFORE_CHOICE = `
+        <em>As you make your way down the corridor...</em> [[pause=2150]] <br><br>
+        Heh. [[pause=1400]] <br><br>
+        Did I make you think I was going to force you to play through a game to navigate this site?
+    `;
+    
+    const FINAL_STEP_TEXT_AFTER_YES = `
+        Okay, yeah, you got me. That would be incredibly on-brand for me. [[pause=1200]] <br><br>
+        Maybe I will commit to the bit harder next time.
+    `;
+    
+    const FINAL_STEP_TEXT_AFTER_NO = `
+        Really? Then I clearly need to lean harder into the bit. [[pause=1200]] <br><br>
+        It will get there someday.
     `;
 
     if (
-      !modal || !step1 || !step2 || !step3 || !continueBtn || !proceedBtn || !finalContinueBtn ||
-      !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
-      !gateScene || !gateObject || !advanceObject || !objectTooltip ||
-      !dungeonTitle || !dungeonText || !finalTitle || !finalText ||
-      !inventoryCloseBtn || !bagHelp || !keyHelp || !viewportHelp || !textHelp || !advanceHelp
-    ) return;
+        !modal || !step1 || !step2 || !step3 || !continueBtn || !proceedBtn || !finalContinueBtn ||
+        !bagButton || !inventoryPanel || !inventoryNote || !keyItem ||
+        !gateScene || !gateObject || !advanceObject || !objectTooltip ||
+        !dungeonTitle || !dungeonText || !finalTitle || !finalText ||
+        !finalChoice || !finalYesBtn || !finalNoBtn || !finalFollowup ||
+        !inventoryCloseBtn || !bagHelp || !keyHelp || !viewportHelp || !textHelp || !advanceHelp
+      ) return;
 
     const hasSeenModal = !DEBUG_ALWAYS_SHOW_INTRO && localStorage.getItem(STORAGE_KEY) === "true";
 
@@ -250,6 +263,34 @@
       step3.classList.remove("is-active");
     }
 
+    function hideFinalChoice() {
+        finalChoice.hidden = true;
+        finalYesBtn.disabled = true;
+        finalNoBtn.disabled = true;
+      }
+      
+      function showFinalChoice() {
+        finalChoice.hidden = false;
+        finalYesBtn.disabled = false;
+        finalNoBtn.disabled = false;
+      }
+      
+      function continueFinalStepAfterChoice(choice) {
+        hideFinalChoice();
+      
+        const nextText = choice === "yes"
+          ? FINAL_STEP_TEXT_AFTER_YES
+          : FINAL_STEP_TEXT_AFTER_NO;
+      
+        typePopupText(finalFollowup, nextText, {
+          speed: 22,
+          startDelay: 120,
+          onComplete: () => {
+            finalContinueBtn.hidden = false;
+          }
+        });
+      }
+
     function showStep(stepNumber) {
     hideObjectTooltip();
 
@@ -288,28 +329,28 @@
         setInventoryOpen(false);
         clearSelectedInventoryItem();
         inventoryNote.textContent = "";
-
+      
         finalTitle.innerHTML = "";
         finalText.innerHTML = "";
-
-        finalContinueBtn.hidden = true;   // keep button hidden while typing
-
+        finalFollowup.innerHTML = "";
+      
+        hideFinalChoice();
+        finalContinueBtn.hidden = true;
+      
         typePopupText(finalTitle, FINAL_STEP_TITLE, {
           speed: 30,
           startDelay: 100,
           onComplete: () => {
-
-            typePopupText(finalText, FINAL_STEP_TEXT, {
+            typePopupText(finalText, FINAL_STEP_TEXT_BEFORE_CHOICE, {
               speed: 22,
               startDelay: 140,
               onComplete: () => {
-                finalContinueBtn.hidden = false;   // reveal button after typing
+                showFinalChoice();
               }
             });
-
           }
         });
-
+      
         return;
       }
 
@@ -781,9 +822,17 @@
       showStep(3);
     });
 
-    finalContinueBtn.addEventListener("click", () => {
-      closeModal();
-    });
+    finalYesBtn.addEventListener("click", () => {
+        continueFinalStepAfterChoice("yes");
+      });
+      
+      finalNoBtn.addEventListener("click", () => {
+        continueFinalStepAfterChoice("no");
+      });
+      
+      finalContinueBtn.addEventListener("click", () => {
+        closeModal();
+      });
 
     document.addEventListener("keydown", (event) => {
       if (!modal.classList.contains("is-open")) return;

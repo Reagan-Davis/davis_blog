@@ -968,8 +968,36 @@
 
       <h2 id="startupFinalTitle" class="startup-modal__title"></h2>
 
-      <p class="startup-modal__text" id="startupFinalText"></p>
-
+      <div class="startup-final-sequence">
+        <p class="startup-modal__text" id="startupFinalText"></p>
+      
+        <div
+          class="startup-inline-choice"
+          id="startupFinalChoice"
+          hidden
+          role="group"
+          aria-label="Response options"
+        >
+          <button
+            type="button"
+            class="startup-inline-choice__button"
+            id="startupFinalYes"
+          >
+            Yes
+          </button>
+      
+          <button
+            type="button"
+            class="startup-inline-choice__button"
+            id="startupFinalNo"
+          >
+            No
+          </button>
+        </div>
+      
+        <p class="startup-modal__text" id="startupFinalFollowup"></p>
+      </div>
+      
       <div class="startup-modal__actions">
         <button class="startup-modal__button" id="startupModalFinalContinue" type="button" hidden>
           Continue to Site
