@@ -48,6 +48,24 @@
         "rank": 5
       },
       {
+        "slug": "firefly",
+        "title": "Firefly",
+        "type": "TV",
+        "subtype": "Sci-Fi",
+        "cover_url": "https://image.tmdb.org/t/p/w600_and_h900_face/vZcKsy4sGAvWMVqLluwYuoi11Kj.jpg",
+        "year": 2002,
+        "creator": "Joss Whedon",
+        "creatorRole": "director",
+        "status": "completed",
+        "owned": true,
+        "favorite": true,
+        "blurb": "",
+        "description": "",
+        "tags": ["tv-show"],
+        "keywords": ["sci-fi"],
+        "rank": 5
+      },
+      {
         "slug": "sharpe",
         "title": "Sharpe",
         "type": "TV",

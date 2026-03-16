@@ -143,6 +143,11 @@
 
           <aside class="side-stack" aria-label="Featured items">
             <section class="panel home-status-panel">
+              <h2 style="font-size:1.12rem; margin-bottom:0.8rem;">All-Time Favorites</h2>
+              <div id="favoriteGrid" class="status-grid status-grid-favorite" aria-live="polite"></div>
+            </section>
+
+            <section class="panel home-status-panel">
               <h2 style="font-size:1.12rem; margin-bottom:0.8rem;">Recently Finished</h2>
               <div id="finishedGrid" class="status-grid status-grid-finished" aria-live="polite"></div>
             </section>
@@ -1947,6 +1952,7 @@
     const heroQuoteText = document.getElementById('heroQuoteText');
     const heroQuoteCharacter = document.getElementById('heroQuoteCharacter');
     const heroQuoteSource = document.getElementById('heroQuoteSource');
+    const favoriteGrid = document.getElementById('favoriteGrid');
     const finishedGrid = document.getElementById('finishedGrid');
     const spotifyToggle = document.getElementById('spotifyToggle');
     const spotifyPopup = document.getElementById('spotifyPopup');
@@ -5427,6 +5433,16 @@
         indices: finishedIndices,
         panelKey: 'finished',
         emptyText: 'Nothing marked finished yet.'
+      });
+    }
+
+    function renderFavoritePanel() {
+      renderStatusPanelGrid({
+        gridElement: favoriteGrid,
+        getItemsForType: getFavoriteItemsForType,
+        indices: favoriteIndices,
+        panelKey: 'favorite',
+        emptyText: 'Nothing marked favorite yet.'
       });
     }
 
