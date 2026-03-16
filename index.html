@@ -1980,6 +1980,7 @@
     const currentTypes = ["Literature", "Movies", "TV", "Music", "Video Games"];
     const currentIndices = Object.fromEntries(currentTypes.map(type => [type, 0]));
     const finishedIndices = Object.fromEntries(currentTypes.map(type => [type, 0]));
+    const favoriteIndices = Object.fromEntries(currentTypes.map(type => [type, 0]));
 
     const allViews = {
       homeView,
@@ -2046,6 +2047,7 @@
 
     let currentPanelRotationTimer = null;
     let finishedPanelRotationTimer = null;
+    let favoritePanelRotationTimer = null;
 
     function rotatePanelIndices(getItemsForType, indices) {
       currentTypes.forEach((type) => {
@@ -2059,6 +2061,11 @@
     function startHomePanelRotation() {
       stopHomePanelRotation();
 
+      favoritePanelRotationTimer = setInterval(() => {
+        rotatePanelIndices(getFavoriteItemsForType, favoriteIndices);
+        renderFavoritePanel();
+      }, 8000);
+
       finishedPanelRotationTimer = setInterval(() => {
         rotatePanelIndices(getFinishedItemsForType, finishedIndices);
         renderFinishedPanel();
@@ -2071,6 +2078,11 @@
     }
 
     function stopHomePanelRotation() {
+      if (favoritePanelRotationTimer) {
+        clearInterval(favoritePanelRotationTimer);
+        favoritePanelRotationTimer = null;
+      }
+
       if (finishedPanelRotationTimer) {
         clearInterval(finishedPanelRotationTimer);
         finishedPanelRotationTimer = null;
@@ -4094,7 +4106,11 @@
     }
 
     function getFinishedItemsForType(type) {
-      return items.filter(item => item.type === type && item.status === 'completed');
+      return items.filter(item =>
+        item.type === type &&
+        item.status === 'completed' &&
+        item.recent !== false
+      );
     }
 
     function cycleFinishedItem(type, direction) {
@@ -4811,32 +4827,52 @@
       grid.innerHTML = visible.map(item => {
         const rank = getRankValue(item);
         const primaryQuote = getPrimaryQuoteForTitle(item.title);
+        const coverUrl = getItemCoverUrl(item);
 
         return `
-          <article class="card">
+          <article class="card vault-card ${coverUrl ? 'vault-card--side-cover' : ''}">
             <div class="entry-status-dot ${getScoreClass(rank)}" aria-label="${getRankLabel(rank)}"></div>
-            <div class="card-body">
-              <div class="entry-meta">${escapeHtml(item.type)} · ${formatYear(item.year)}</div>
-              ${item.subtype ? `<div class="subtype-line">${escapeHtml(item.subtype)}</div>` : ''}
-              <div class="entry-header">
-                <div class="title-wrap">
-                  <h3>${escapeHtml(item.title)}</h3>
-                  <div class="creator-line">${escapeHtml(item.creator)}</div>
-                  <div class="meta-row">
-                    <span class="badge status-${escapeHtml(item.status || 'todo')}">${escapeHtml(getStatusLabel(item.status))}</span>
-                    ${item.owned ? `<span class="badge owned-yes">Owned</span>` : ''}
+
+            <div class="card-body vault-card__body ${coverUrl ? 'vault-card__body--with-cover' : ''}">
+              <div class="vault-card__main">
+                <div class="entry-meta">${escapeHtml(item.type)} · ${formatYear(item.year)}</div>
+                ${item.subtype ? `<div class="subtype-line">${escapeHtml(item.subtype)}</div>` : ''}
+
+                <div class="entry-header">
+                  <div class="title-wrap">
+                    <h3>${escapeHtml(item.title)}</h3>
+                    <div class="creator-line">${escapeHtml(item.creator)}</div>
+                    <div class="meta-row">
+                      <span class="badge status-${escapeHtml(item.status || 'todo')}">${escapeHtml(getStatusLabel(item.status))}</span>
+                      ${item.owned ? `<span class="badge owned-yes">Owned</span>` : ''}
+                    </div>
                   </div>
                 </div>
+
+                <div class="muted">${escapeHtml(item.blurb || '')}</div>
+
+                ${primaryQuote ? `
+                  <div class="inline-quote" aria-label="Top quote from ${escapeHtml(item.title)}">
+                    <blockquote>“${escapeHtml(primaryQuote.text)}”</blockquote>
+                    ${primaryQuote.character ? `<div class="quote-character">${escapeHtml(primaryQuote.character)}</div>` : ''}
+                    <div class="quote-source">${escapeHtml(formatQuoteCredit(primaryQuote))}</div>
+                  </div>
+                ` : ''}
               </div>
-              <div class="muted">${escapeHtml(item.blurb)}</div>
-              ${primaryQuote ? `
-                <div class="inline-quote" aria-label="Top quote from ${escapeHtml(item.title)}">
-                  <blockquote>“${escapeHtml(primaryQuote.text)}”</blockquote>
-                  ${primaryQuote.character ? `<div class="quote-character">${escapeHtml(primaryQuote.character)}</div>` : ''}
-                  <div class="quote-source">${escapeHtml(formatQuoteCredit(primaryQuote))}</div>
+
+              ${coverUrl ? `
+                <div class="vault-card__side-media">
+                  <img
+                    class="vault-card__side-cover-image"
+                    src="${escapeHtml(coverUrl)}"
+                    alt="${escapeHtml(item.title)} cover"
+                    loading="lazy"
+                    onerror="this.closest('.vault-card').classList.add('vault-card--side-cover-fallback'); this.closest('.vault-card__side-media')?.remove();"
+                  />
                 </div>
               ` : ''}
-              <div class="card-footer">
+
+              <div class="card-footer vault-card__footer">
                 <span class="comment-meta">Discussion</span>
                 <button class="footer-link" type="button" data-open-entry="${escapeHtml(item.slug)}" aria-label="Open entry ${escapeHtml(item.title)}">Open entry →</button>
               </div>
@@ -5274,6 +5310,18 @@
       renderCurrentPanel();
     }
 
+    function getFavoriteItemsForType(type) {
+      return items.filter(item => item.type === type && item.favorite === true);
+    }
+
+    function cycleFavoriteItem(type, direction) {
+      const matches = getFavoriteItemsForType(type);
+      if (!matches.length) return;
+
+      favoriteIndices[type] = (favoriteIndices[type] + direction + matches.length) % matches.length;
+      renderFavoritePanel();
+    }
+
     function renderStatusPanelGrid({
       gridElement,
       getItemsForType,
@@ -5512,6 +5560,8 @@
         if (panelKey === 'current') {
           cycleCurrentItem(type, direction);
         } else if (panelKey === 'finished') {
+          cycleFinishedItem(type, direction);
+        } else if (panelKey === 'favorite') {
           cycleFinishedItem(type, direction);
         }
         return;
@@ -5829,6 +5879,7 @@
       renderBrandGlobe();
       renderItems();
       renderRankings();
+      renderFavoritePanel();
       renderCurrentPanel();
       renderFinishedPanel();
       startHomePanelRotation();
