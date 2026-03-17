@@ -107,7 +107,8 @@ function initGame() {
     content: CONTENT,
     dom,
     viewportSystem,
-    typePopupText
+    typePopupText,
+    tutorialSystem
   });
 
   let dialogueRenderer;

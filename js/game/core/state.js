@@ -8,7 +8,8 @@ export function createInitialState() {
         helpTimers: {
           bagHint: null,
           textHint: null,
-          bagReturn: null,
+          textHide: null,
+          bagAfterText: null,
           advanceHint: null
         }
       },

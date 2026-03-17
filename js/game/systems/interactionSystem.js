@@ -30,7 +30,26 @@ export function createInteractionSystem({
       state.tutorial.hasClickedGateOnce = true;
       tutorialSystem?.hideViewportHelp();
       tutorialSystem?.showTextHelp();
-      tutorialSystem?.showBagHelp();
+
+      if (state.ui.textHelpHideTimer) {
+        window.clearTimeout(state.ui.textHelpHideTimer);
+        state.ui.textHelpHideTimer = null;
+      }
+
+      if (state.ui.bagHelpShowTimer) {
+        window.clearTimeout(state.ui.bagHelpShowTimer);
+        state.ui.bagHelpShowTimer = null;
+      }
+
+      state.ui.textHelpHideTimer = window.setTimeout(() => {
+        tutorialSystem?.hideTextHelp();
+        state.ui.textHelpHideTimer = null;
+
+        state.ui.bagHelpShowTimer = window.setTimeout(() => {
+          tutorialSystem?.showBagHelp();
+          state.ui.bagHelpShowTimer = null;
+        }, 1800);
+      }, 2600);
     }
 
     if (obj.type === "exit") {
