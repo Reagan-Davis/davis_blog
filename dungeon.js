@@ -1,6 +1,6 @@
 (function () {
     const STORAGE_KEY = "rrr_site_notice_seen";
-    const DEBUG_ALWAYS_SHOW_INTRO = true;
+    const DEBUG_ALWAYS_SHOW_INTRO = false;
 
     const modal = document.getElementById("startupModal");
     const backdrop = modal?.querySelector(".startup-modal__backdrop");
