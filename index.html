@@ -1049,6 +1049,64 @@
     </div>
   </div>
 
+  <div id="homeCarouselModal" class="home-carousel-modal" hidden aria-hidden="true">
+    <div class="home-carousel-modal__backdrop" data-home-carousel-close></div>
+
+    <div
+      class="home-carousel-modal__dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="homeCarouselTitle"
+    >
+      <button
+        class="home-carousel-modal__close"
+        type="button"
+        id="homeCarouselClose"
+        aria-label="Close preview"
+      >
+        ×
+      </button>
+
+      <div class="home-carousel-modal__top">
+        <div class="stat-label" id="homeCarouselPanelLabel">Favorites</div>
+        <div class="home-carousel-modal__count" id="homeCarouselCount">1 / 1</div>
+      </div>
+
+      <h2 id="homeCarouselTitle" class="home-carousel-modal__title"></h2>
+
+      <div class="home-carousel-stage">
+        <button
+          class="home-carousel-nav home-carousel-nav--prev"
+          type="button"
+          id="homeCarouselPrev"
+          aria-label="Previous item"
+        >
+          ‹
+        </button>
+
+        <div class="home-carousel-track" id="homeCarouselTrack"></div>
+
+        <button
+          class="home-carousel-nav home-carousel-nav--next"
+          type="button"
+          id="homeCarouselNext"
+          aria-label="Next item"
+        >
+          ›
+        </button>
+      </div>
+
+      <div class="home-carousel-meta" id="homeCarouselMeta"></div>
+      <p class="home-carousel-blurb" id="homeCarouselBlurb"></p>
+
+      <div class="home-carousel-actions">
+        <button class="btn primary" type="button" id="homeCarouselOpenEntry">
+          Go to Vault Entry
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <div class="container">
       <div class="panel footer-card">
@@ -1238,6 +1296,18 @@
     const spotifyStatusText = document.getElementById('spotifyStatusText');
     const spotifyOpenLink = document.getElementById('spotifyOpenLink');
 
+    const homeCarouselModal = document.getElementById('homeCarouselModal');
+    const homeCarouselClose = document.getElementById('homeCarouselClose');
+    const homeCarouselPrev = document.getElementById('homeCarouselPrev');
+    const homeCarouselNext = document.getElementById('homeCarouselNext');
+    const homeCarouselTrack = document.getElementById('homeCarouselTrack');
+    const homeCarouselTitle = document.getElementById('homeCarouselTitle');
+    const homeCarouselMeta = document.getElementById('homeCarouselMeta');
+    const homeCarouselBlurb = document.getElementById('homeCarouselBlurb');
+    const homeCarouselCount = document.getElementById('homeCarouselCount');
+    const homeCarouselPanelLabel = document.getElementById('homeCarouselPanelLabel');
+    const homeCarouselOpenEntry = document.getElementById('homeCarouselOpenEntry');
+
     const openSuggestionWheelBtn = document.getElementById('openSuggestionWheelBtn');
     const suggestionWheelModal = document.getElementById('suggestionWheelModal');
     const spinSuggestionWheelBtn = document.getElementById('spinSuggestionWheelBtn');
@@ -1245,6 +1315,15 @@
     const suggestionWheelSvg = document.getElementById('suggestionWheelSvg');
     const wheelCategoryLabel = document.getElementById('wheelCategoryLabel');
     const wheelResultCard = document.getElementById('wheelResultCard');
+
+    const homeCarouselState = {
+      open: false,
+      panelKey: null,
+      items: [],
+      activeIndex: 0,
+      touchStartX: 0,
+      touchDeltaX: 0
+    };
 
     const VAULT_PAGE_SIZE = 12;
 
@@ -2929,6 +3008,131 @@
       }
 
       ensureMapForView(viewId);
+    }
+
+    function getHomeCarouselItems(panelKey) {
+      let getter = null;
+
+      if (panelKey === 'favorite') {
+        getter = getFavoriteItemsForType;
+      } else if (panelKey === 'finished') {
+        getter = getFinishedItemsForType;
+      } else if (panelKey === 'current') {
+        getter = getCurrentItemsForType;
+      } else {
+        return [];
+      }
+
+      const seen = new Set();
+
+      return currentTypes.flatMap(type => getter(type) || []).filter(item => {
+        if (!item?.slug || seen.has(item.slug)) return false;
+        seen.add(item.slug);
+        return true;
+      });
+    }
+
+    function getHomeCarouselPanelLabel(panelKey) {
+      if (panelKey === 'favorite') return 'All-Time Favorites';
+      if (panelKey === 'finished') return 'Recently Finished';
+      if (panelKey === 'current') return 'In Progress';
+      return 'Preview';
+    }
+
+    function renderHomeCarousel() {
+      const items = homeCarouselState.items || [];
+      const count = items.length;
+
+      if (!count) {
+        homeCarouselTrack.innerHTML = '';
+        homeCarouselTitle.textContent = '';
+        homeCarouselMeta.textContent = '';
+        homeCarouselBlurb.textContent = '';
+        homeCarouselCount.textContent = '0 / 0';
+        homeCarouselOpenEntry.disabled = true;
+        return;
+      }
+
+      const index = ((homeCarouselState.activeIndex % count) + count) % count;
+      homeCarouselState.activeIndex = index;
+
+      const current = items[index];
+      const prev = items[(index - 1 + count) % count];
+      const next = items[(index + 1) % count];
+
+      const currentCover = getItemCoverUrl(current);
+      const prevCover = getItemCoverUrl(prev);
+      const nextCover = getItemCoverUrl(next);
+
+      homeCarouselPanelLabel.textContent = getHomeCarouselPanelLabel(homeCarouselState.panelKey);
+      homeCarouselCount.textContent = `${index + 1} / ${count}`;
+      homeCarouselTitle.textContent = current.title || '';
+
+      homeCarouselMeta.textContent = [
+        current.creator,
+        current.year,
+        current.subtype || current.medium || current.genre,
+        current.status
+      ].filter(Boolean).join(' · ');
+
+      homeCarouselBlurb.textContent =
+        current.blurb || current.description || 'No description added yet.';
+
+      homeCarouselTrack.innerHTML = `
+        <div class="home-carousel-card home-carousel-card--side is-left" data-carousel-jump="-1">
+          ${prevCover ? `<img src="${escapeHtml(prevCover)}" alt="${escapeHtml(prev.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(prev.title || '')}</div>`}
+        </div>
+
+        <div class="home-carousel-card home-carousel-card--center">
+          ${currentCover ? `<img src="${escapeHtml(currentCover)}" alt="${escapeHtml(current.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(current.title || '')}</div>`}
+        </div>
+
+        <div class="home-carousel-card home-carousel-card--side is-right" data-carousel-jump="1">
+          ${nextCover ? `<img src="${escapeHtml(nextCover)}" alt="${escapeHtml(next.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(next.title || '')}</div>`}
+        </div>
+      `;
+
+      homeCarouselOpenEntry.disabled = !current.slug;
+      homeCarouselOpenEntry.setAttribute('data-open-entry', current.slug || '');
+    }
+
+    function openHomeCarousel(panelKey, slug) {
+      const items = getHomeCarouselItems(panelKey);
+      if (!items.length) return;
+
+      const startIndex = Math.max(0, items.findIndex(item => item.slug === slug));
+
+      homeCarouselState.open = true;
+      homeCarouselState.panelKey = panelKey;
+      homeCarouselState.items = items;
+      homeCarouselState.activeIndex = startIndex >= 0 ? startIndex : 0;
+
+      stopHomePanelRotation();
+
+      homeCarouselModal.hidden = false;
+      homeCarouselModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('home-carousel-open');
+
+      renderHomeCarousel();
+    }
+
+    function closeHomeCarousel() {
+      homeCarouselState.open = false;
+      homeCarouselState.panelKey = null;
+      homeCarouselState.items = [];
+      homeCarouselState.activeIndex = 0;
+
+      homeCarouselModal.hidden = true;
+      homeCarouselModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('home-carousel-open');
+
+      startHomePanelRotation();
+    }
+
+    function rotateHomeCarousel(direction) {
+      if (!homeCarouselState.items.length) return;
+      homeCarouselState.activeIndex += direction;
+      renderHomeCarousel();
     }
 
     function getVisibleItems() {
@@ -4735,9 +4939,10 @@
             <div
               class="status-mini-link"
               data-open-entry="${escapeHtml(activeItem.slug)}"
+              data-home-panel="${escapeHtml(panelKey)}"
               role="button"
               tabindex="0"
-              aria-label="Open ${escapeHtml(activeItem.title || 'entry')}"
+              aria-label="Open ${escapeHtml(activeItem.title || 'entry')} preview"
             >
               ${cardInner}
               ${cycleControls}
@@ -4926,6 +5131,13 @@
 
       if (statusCard && !event.target.closest('[data-status-cycle]')) {
         const slug = statusCard.getAttribute('data-open-entry');
+        const panelKey = statusCard.getAttribute('data-home-panel');
+
+        if (slug && panelKey) {
+          openHomeCarousel(panelKey, slug);
+          return;
+        }
+
         if (slug) {
           openEntry(slug);
           return;
@@ -5049,7 +5261,15 @@
 
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
+
         const slug = clickableCard.getAttribute('data-open-entry');
+        const panelKey = clickableCard.getAttribute('data-home-panel');
+
+        if (slug && panelKey) {
+          openHomeCarousel(panelKey, slug);
+          return;
+        }
+
         if (slug) {
           openEntry(slug);
         }
@@ -5077,6 +5297,71 @@
         closeSuggestionWheel();
       }
     });
+
+    homeCarouselClose?.addEventListener('click', closeHomeCarousel);
+    homeCarouselPrev?.addEventListener('click', () => rotateHomeCarousel(-1));
+    homeCarouselNext?.addEventListener('click', () => rotateHomeCarousel(1));
+
+    homeCarouselOpenEntry?.addEventListener('click', () => {
+      const slug = homeCarouselOpenEntry.getAttribute('data-open-entry');
+      if (!slug) return;
+
+      closeHomeCarousel();
+      openEntry(slug);
+    });
+
+    homeCarouselModal?.addEventListener('click', (event) => {
+      if (event.target.closest('[data-home-carousel-close]')) {
+        closeHomeCarousel();
+        return;
+      }
+
+      const jumpCard = event.target.closest('[data-carousel-jump]');
+      if (jumpCard) {
+        rotateHomeCarousel(Number(jumpCard.getAttribute('data-carousel-jump')) || 0);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && homeCarouselState.open) {
+        closeHomeCarousel();
+        return;
+      }
+
+      if (!homeCarouselState.open) return;
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        rotateHomeCarousel(-1);
+      }
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        rotateHomeCarousel(1);
+      }
+    });
+
+    homeCarouselTrack?.addEventListener('touchstart', (event) => {
+      const touch = event.changedTouches[0];
+      homeCarouselState.touchStartX = touch.clientX;
+      homeCarouselState.touchDeltaX = 0;
+    }, { passive: true });
+
+    homeCarouselTrack?.addEventListener('touchmove', (event) => {
+      const touch = event.changedTouches[0];
+      homeCarouselState.touchDeltaX = touch.clientX - homeCarouselState.touchStartX;
+    }, { passive: true });
+
+    homeCarouselTrack?.addEventListener('touchend', () => {
+      if (homeCarouselState.touchDeltaX <= -45) {
+        rotateHomeCarousel(1);
+      } else if (homeCarouselState.touchDeltaX >= 45) {
+        rotateHomeCarousel(-1);
+      }
+
+      homeCarouselState.touchStartX = 0;
+      homeCarouselState.touchDeltaX = 0;
+    }, { passive: true });
 
     function restoreLastLocation() {
       const savedView = localStorage.getItem(STORAGE_KEYS.activeView);
