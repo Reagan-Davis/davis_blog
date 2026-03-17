@@ -468,7 +468,7 @@
               1. I do not tend to say a lot unless around individuals or groups entirely composed of people I know pretty well. Even then, not a lot.<br><br>
               2. Over text or email, I tend to be one incredibly wordy SOB. That is the English language for you. I only wish I could say I was able to write anywhere near as much for my academic papers.<br><br>
               Over the period ranging from January 2021 to January 2026, I typed roughly 2 million words across my notes app and various text documents on my computer. That is excluding anything and everything school or work related. Throw in all of the notebooks I have filled up... I do not want to know the total.<br><br> 
-              Much of it needs to go somewhere or towards something. <br><br>
+              Much of it needs to go somewhere or towards something. Productive. Reflective. Something. Anything.<br><br>
               <div class="section-divider"></div>
               Metrics. Metrics are everything. At least that is what I have been telling myself lately.<br><br>
               At the start of 2026 I set out to do a great many things outside of my comfort zone. Some worked out pretty well. Others not so much. But the year is far from over, and time waits for no man.<br><br>
@@ -525,6 +525,48 @@
   </main>
 
   <div class="startup-modal" id="startupModal" aria-hidden="true">
+    
+      <div class="startup-achievements-anchor">
+        <button
+          class="startup-achievements-button"
+          id="startupAchievementsButton"
+          type="button"
+          aria-expanded="false"
+          aria-controls="startupAchievementsPanel"
+          aria-label="Open achievements"
+          title="Achievements"
+        >
+          ★
+        </button>
+
+          <div class="startup-achievements-popover" id="startupAchievementsPanel" hidden>
+            <div class="startup-achievements-popover__head">
+              <div class="startup-achievements-title">Achievements</div>
+              <button
+                type="button"
+                class="startup-achievements-close"
+                id="startupAchievementsClose"
+                aria-label="Close achievements"
+                title="Close achievements"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="startup-achievements-divider"></div>
+
+            <div class="startup-achievement-entry">
+              <div class="startup-achievement-entry__top">
+                <div class="startup-achievement-entry__title">Doors Unlocked</div>
+                <div class="startup-achievement-entry__value" id="startupAchievementDoorsValue">0/10</div>
+              </div>
+
+              <div class="startup-achievement-progress" aria-hidden="true">
+                <div class="startup-achievement-progress__fill" id="startupAchievementDoorsFill"></div>
+              </div>
+            </div>
+        </div>
+      </div>
     <div class="startup-modal__backdrop"></div>
 
     <!-- Step 1 -->
@@ -563,6 +605,7 @@
       aria-modal="true"
       aria-labelledby="startupDungeonTitle"
     >
+
       <p class="startup-modal__eyebrow">Dungeon Entryway</p>
 
       <h2 id="startupDungeonTitle" class="startup-modal__title">

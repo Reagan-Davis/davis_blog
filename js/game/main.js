@@ -80,6 +80,21 @@ function initGame() {
   }
 
   const state = createInitialState();
+
+  function renderAchievements() {
+    const current = state.achievements.stats.doorsUnlocked || 0;
+    const target = 10;
+    const percent = Math.max(0, Math.min(100, (current / target) * 100));
+
+    if (dom.achievementsDoorsValue) {
+      dom.achievementsDoorsValue.textContent = `${current}/${target}`;
+    }
+
+    if (dom.achievementsDoorsFill) {
+      dom.achievementsDoorsFill.style.width = `${percent}%`;
+    }
+  }
+
   const tooltipUI = createTooltipUI(dom, state);
   const typePopupText = createTypePopupText();
   const tutorialSystem = createTutorialSystem({ state, dom });
@@ -94,7 +109,8 @@ function initGame() {
   const inventorySystem = createInventorySystem({
     state,
     dom,
-    viewportSystem
+    viewportSystem,
+    content: CONTENT
   });
 
   const dialogueSystem = createDialogueSystem({
@@ -152,6 +168,8 @@ function initGame() {
     }
   });
 
+  renderAchievements();
+
   dom.dialogueContinueBtn?.addEventListener("click", () => {
     const node = dialogueSystem.getActiveNode();
     if (!node?.continueAction) return;
@@ -170,11 +188,11 @@ function initGame() {
 
   tutorialSystem.hideAll();
 
-  dom.introContinueBtn?.addEventListener("click", () => {
-    screenSystem.showScreen("scene");
-    tutorialSystem.hideAll();
-    sceneRenderer.renderCurrentScene({ full: true });
-  });
+    dom.introContinueBtn?.addEventListener("click", () => {
+      screenSystem.showScreen("scene");
+      tutorialSystem.hideAll();
+      sceneRenderer.renderCurrentScene();
+    });
 
   dom.sceneProceedBtn?.addEventListener("click", () => {
     if (!state.world.unlockedObjects.gate) return;
@@ -215,24 +233,24 @@ function initGame() {
     });
   });
 
-  dom.keyItem?.addEventListener("click", () => {
-    const selected = state.inventory.selectedItemId === "rusted_key";
+    dom.keyItem?.addEventListener("click", () => {
+      const selected = state.inventory.selectedItemId === "tutorial_key";
 
-    if (selected) {
-      inventorySystem.clearSelectedItem();
-      dom.inventoryNote.textContent = "";
-      dom.keyItem.classList.remove("is-selected");
-      tutorialSystem.hideViewportHelp();
-    } else {
-      inventorySystem.setSelectedItem("rusted_key");
-      dom.inventoryNote.textContent = "Rusted key selected.";
-      dom.keyItem.classList.add("is-selected");
-      tutorialSystem.hideKeyHelp();
-      tutorialSystem.hideTextHelp();
-      tutorialSystem.hideBagHelp();
-      tutorialSystem.showViewportHelp();
-    }
-  });
+      if (selected) {
+        inventorySystem.clearSelectedItem();
+        dom.inventoryNote.textContent = "";
+        dom.keyItem.classList.remove("is-selected");
+        tutorialSystem.hideViewportHelp();
+      } else {
+        inventorySystem.setSelectedItem("tutorial_key");
+        dom.inventoryNote.textContent = "Tutorial key selected.";
+        dom.keyItem.classList.add("is-selected");
+        tutorialSystem.hideKeyHelp();
+        tutorialSystem.hideTextHelp();
+        tutorialSystem.hideBagHelp();
+        tutorialSystem.showViewportHelp();
+      }
+    });
 
   dom.bagButton?.addEventListener("click", () => {
     const isHidden = dom.inventoryPanel?.hidden ?? true;
@@ -252,6 +270,16 @@ function initGame() {
     }
   });
 
+  dom.achievementsButton?.addEventListener("click", () => {
+    const isHidden = dom.achievementsPanel?.hidden ?? true;
+
+    if (dom.achievementsPanel) {
+      dom.achievementsPanel.hidden = !isHidden;
+    }
+
+    dom.achievementsButton?.setAttribute("aria-expanded", String(isHidden));
+  });
+
   dom.inventoryCloseBtn?.addEventListener("click", () => {
     if (dom.inventoryPanel) {
       dom.inventoryPanel.hidden = true;
@@ -261,10 +289,24 @@ function initGame() {
     tutorialSystem.hideViewportHelp();
   });
 
+  dom.achievementsCloseBtn?.addEventListener("click", () => {
+    if (dom.achievementsPanel) {
+      dom.achievementsPanel.hidden = true;
+    }
+    dom.achievementsButton?.setAttribute("aria-expanded", "false");
+  });
+
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && dom.inventoryPanel && !dom.inventoryPanel.hidden) {
-      dom.inventoryPanel.hidden = true;
-      dom.bagButton?.setAttribute("aria-expanded", "false");
+    if (event.key === "Escape") {
+      if (dom.inventoryPanel && !dom.inventoryPanel.hidden) {
+        dom.inventoryPanel.hidden = true;
+        dom.bagButton?.setAttribute("aria-expanded", "false");
+      }
+
+      if (dom.achievementsPanel && !dom.achievementsPanel.hidden) {
+        dom.achievementsPanel.hidden = true;
+        dom.achievementsButton?.setAttribute("aria-expanded", "false");
+      }
     }
   });
 

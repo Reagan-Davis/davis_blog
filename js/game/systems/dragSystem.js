@@ -46,7 +46,7 @@ export function createDragSystem({
     ghost.className = "startup-drag-ghost";
     ghost.setAttribute("aria-hidden", "true");
 
-    if (itemId === "rusted_key") {
+    if (itemId === "tutorial_key") {
       ghost.innerHTML = `<span class="startup-key-icon" aria-hidden="true">🗝</span>`;
     } else {
       ghost.textContent = itemId;
@@ -131,7 +131,7 @@ export function createDragSystem({
     dragState.itemId = null;
     dragState.pointerId = null;
 
-    if (state.inventory.selectedItemId !== "rusted_key") {
+    if (state.inventory.selectedItemId !== "tutorial_key") {
       dom.keyItem?.classList.remove("is-selected");
     }
   }
@@ -143,7 +143,7 @@ export function createDragSystem({
     dom.keyItem.style.touchAction = "none";
 
     dom.keyItem.addEventListener("pointerdown", (event) => {
-      onPointerDown(event, "rusted_key");
+      onPointerDown(event, "tutorial_key");
     });
 
     window.addEventListener("pointermove", updateDrag);

@@ -77,13 +77,34 @@ export function createInteractionSystem({
     }
 
     if (obj.type === "lockable") {
+      const wasAlreadyUnlocked = !!state.world.unlockedObjects[objectId];
+      if (wasAlreadyUnlocked) return false;
+
       inventorySystem.consumeItem(itemId);
       inventorySystem.clearSelectedItem();
 
       state.world.unlockedObjects[objectId] = true;
 
+      state.achievements.stats.doorsUnlocked =
+        (state.achievements.stats.doorsUnlocked || 0) + 1;
+
       tutorialSystem?.hideAll();
       dom.inventoryNote.textContent = "The key turns in the lock.";
+
+      const currentDoorsUnlocked = state.achievements.stats.doorsUnlocked || 0;
+      const targetDoorsUnlocked = 10;
+      const percentDoorsUnlocked = Math.max(
+        0,
+        Math.min(100, (currentDoorsUnlocked / targetDoorsUnlocked) * 100)
+      );
+
+      if (dom.achievementsDoorsValue) {
+        dom.achievementsDoorsValue.textContent = `${currentDoorsUnlocked}/${targetDoorsUnlocked}`;
+      }
+
+      if (dom.achievementsDoorsFill) {
+        dom.achievementsDoorsFill.style.width = `${percentDoorsUnlocked}%`;
+      }
 
       dom.sceneRoot?.classList.add("is-unlocking");
 

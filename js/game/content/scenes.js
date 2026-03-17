@@ -19,7 +19,7 @@ export const SCENES = {
         description: "A Rusted Gate",
         type: "lockable",
         startsEnabled: true,
-        acceptsItems: ["rusted_key"],
+        acceptsItems: ["tutorial_key"],
         locked: true,
         lockVisual: {
           type: "svg_markup",
