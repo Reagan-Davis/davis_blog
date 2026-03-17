@@ -5949,3 +5949,169 @@ body.home-carousel-open {
     height: 40px;
   }
 }
+
+.home-carousel-track {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(260px, 1fr) minmax(0, 0.7fr);
+  gap: 1rem;
+  align-items: center;
+  justify-items: center;
+  min-height: 0;
+}
+
+.home-carousel-card {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 2 / 3;
+}
+
+.home-carousel-card--center {
+  max-width: 340px;
+  box-shadow: var(--shadow);
+}
+
+.home-carousel-card--side {
+  max-width: 180px;
+  opacity: 0.42;
+  transform: scale(0.9);
+  cursor: pointer;
+}
+
+.home-carousel-card__image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #0c0f14;
+}
+
+@media (max-width: 680px) {
+  .home-carousel-modal__dialog {
+    width: calc(100vw - 0.7rem);
+    max-height: calc(100vh - 0.7rem);
+    padding: 0.7rem 0.7rem 0.85rem;
+  }
+
+  .home-carousel-modal__top {
+    margin-bottom: 0.2rem;
+  }
+
+  .home-carousel-modal__title {
+    font-size: 1.12rem;
+    line-height: 1.02;
+    margin-bottom: 0.45rem;
+    padding-right: 2.2rem;
+  }
+
+  .home-carousel-stage {
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    gap: 0.2rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .home-carousel-track {
+    grid-template-columns: minmax(46px, 0.24fr) minmax(0, 1fr) minmax(46px, 0.24fr);
+    gap: 0.18rem;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .home-carousel-card {
+    width: 100%;
+    max-width: 92px;
+  }
+
+  .home-carousel-card--center {
+    max-width: min(42vw, 160px);
+  }
+
+  .home-carousel-card--side {
+    max-width: 62px;
+    opacity: 0.42;
+    transform: scale(0.92);
+  }
+
+  .home-carousel-nav {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+  }
+
+  .home-carousel-meta {
+    margin-top: 0.45rem;
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  .home-carousel-blurb {
+    margin-top: 0.35rem;
+    font-size: 0.76rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .home-carousel-actions {
+    margin-top: 0.55rem;
+  }
+
+  .home-carousel-actions .btn {
+    width: 100%;
+    min-height: 38px;
+    padding: 0.62rem 0.8rem;
+    font-size: 0.82rem;
+  }
+}
+
+.home-carousel-card {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 2 / 3;
+}
+
+.home-carousel-card--center {
+  max-width: 340px;
+  box-shadow: var(--shadow);
+}
+
+.home-carousel-card--side {
+  max-width: 180px;
+  opacity: 0.42;
+  transform: scale(0.9);
+  cursor: pointer;
+}
+
+@media (max-width: 680px) {
+  .home-carousel-track {
+    grid-template-columns: minmax(54px, 0.28fr) minmax(0, 1fr) minmax(54px, 0.28fr);
+    gap: 0.2rem;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .home-carousel-card {
+    width: 100%;
+    max-width: 96px;
+  }
+
+  .home-carousel-card--center {
+    max-width: min(42vw, 160px);
+  }
+
+  .home-carousel-card--side {
+    max-width: 68px;
+    opacity: 0.5;
+    transform: scale(0.94);
+  }
+}

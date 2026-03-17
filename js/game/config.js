@@ -1,6 +1,6 @@
 window.StartupDungeonConfig = {
     STORAGE_KEY: "rrr_site_notice_seen",
-    DEBUG_ALWAYS_SHOW_INTRO: true,
+    DEBUG_ALWAYS_SHOW_INTRO: false,
   
     LOCK_SVG_MARKUP: `
       <g class="startup-gate-lock" id="startupGeneratedLock" transform="translate(320 250)">

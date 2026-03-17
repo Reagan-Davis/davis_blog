@@ -3080,15 +3080,15 @@
 
       homeCarouselTrack.innerHTML = `
         <div class="home-carousel-card home-carousel-card--side is-left" data-carousel-jump="-1">
-          ${prevCover ? `<img src="${escapeHtml(prevCover)}" alt="${escapeHtml(prev.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(prev.title || '')}</div>`}
+          ${prevCover ? `<img class="home-carousel-card__image" src="${escapeHtml(prevCover)}" alt="${escapeHtml(prev.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(prev.title || '')}</div>`}
         </div>
 
         <div class="home-carousel-card home-carousel-card--center">
-          ${currentCover ? `<img src="${escapeHtml(currentCover)}" alt="${escapeHtml(current.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(current.title || '')}</div>`}
+          ${currentCover ? `<img class="home-carousel-card__image" src="${escapeHtml(currentCover)}" alt="${escapeHtml(current.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(current.title || '')}</div>`}
         </div>
 
         <div class="home-carousel-card home-carousel-card--side is-right" data-carousel-jump="1">
-          ${nextCover ? `<img src="${escapeHtml(nextCover)}" alt="${escapeHtml(next.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(next.title || '')}</div>`}
+          ${nextCover ? `<img class="home-carousel-card__image" src="${escapeHtml(nextCover)}" alt="${escapeHtml(next.title || '')} cover">` : `<div class="home-carousel-card__fallback">${escapeHtml(next.title || '')}</div>`}
         </div>
       `;
 
