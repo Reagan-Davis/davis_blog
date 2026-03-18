@@ -54,6 +54,34 @@ function createTooltipUI(dom, state) {
   };
 }
 
+const startupConfig = window.StartupDungeonConfig || {};
+const INTRO_STORAGE_KEY = startupConfig.STORAGE_KEY || "rrr_site_notice_seen";
+const DEBUG_ALWAYS_SHOW_INTRO = Boolean(startupConfig.DEBUG_ALWAYS_SHOW_INTRO);
+
+function hasCompletedIntro() {
+  try {
+    return localStorage.getItem(INTRO_STORAGE_KEY) === "true";
+  } catch (error) {
+    return false;
+  }
+}
+
+function markIntroCompleted() {
+  try {
+    localStorage.setItem(INTRO_STORAGE_KEY, "true");
+  } catch (error) {
+    // ignore storage failures
+  }
+}
+
+function clearIntroCompleted() {
+  try {
+    localStorage.removeItem(INTRO_STORAGE_KEY);
+  } catch (error) {
+    // ignore storage failures
+  }
+}
+
 function initGame() {
   const dom = getDom();
 
@@ -162,6 +190,7 @@ function initGame() {
     },
     onContinue: (action) => {
       if (action?.type === "close_modal") {
+        markIntroCompleted();
         dom.modal?.classList.remove("is-open");
         dom.modal?.setAttribute("aria-hidden", "true");
       }
@@ -175,18 +204,23 @@ function initGame() {
     if (!node?.continueAction) return;
 
     if (node.continueAction.type === "close_modal") {
+      markIntroCompleted();
       dom.modal?.classList.remove("is-open");
       dom.modal?.setAttribute("aria-hidden", "true");
     }
   });
 
-  // Always show on page load for now.
-  dom.modal?.classList.add("is-open");
-  dom.modal?.setAttribute("aria-hidden", "false");
+    const shouldShowIntro = DEBUG_ALWAYS_SHOW_INTRO || !hasCompletedIntro();
 
-  screenSystem.showScreen("intro");
-
-  tutorialSystem.hideAll();
+    if (shouldShowIntro) {
+      dom.modal?.classList.add("is-open");
+      dom.modal?.setAttribute("aria-hidden", "false");
+      screenSystem.showScreen("intro");
+      tutorialSystem.hideAll();
+    } else {
+      dom.modal?.classList.remove("is-open");
+      dom.modal?.setAttribute("aria-hidden", "true");
+    }
 
     dom.introContinueBtn?.addEventListener("click", () => {
       screenSystem.showScreen("scene");
