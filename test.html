@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <meta name="color-scheme" content="light dark" />
+  <title>Dungeon Prototype Modal Test</title>
+
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem("rr-theme");
+      const theme = savedTheme === "light" ? "light" : "dark";
+      document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    })();
+  </script>
+
+  <link rel="stylesheet" href="./test.css" />
+</head>
+<body>
+  <main class="test-page">
+    <h1>Website Content Underneath</h1>
+    <p>This stands in for the real website. The dungeon prototype opens above it.</p>
+    <button id="openDungeonPrototype" type="button">Open Dungeon Prototype</button>
+  </main>
+
+    <div id="dungeon-prototype-modal" class="startup-modal" aria-hidden="true" inert>
+    <div class="startup-modal__backdrop" data-close-modal="true"></div>
+
+    <div
+        class="startup-modal__dialog startup-modal__dialog--dungeon"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="startupDungeonTitle"
+    >
+        <div class="startup-dungeon-shell">
+        <div class="startup-dungeon-toolbar startup-dungeon-toolbar--floating" aria-label="Dungeon controls">
+            <button
+            class="startup-dungeon-toolbar__button"
+            type="button"
+            data-dp-panel-toggle="inventory-panel"
+            aria-label="Inventory"
+            title="Inventory"
+            >
+            <span aria-hidden="true">🎒</span>
+            </button>
+
+            <button
+            class="startup-dungeon-toolbar__button"
+            type="button"
+            data-dp-panel-toggle="achievements-panel"
+            aria-label="Achievements"
+            title="Achievements"
+            >
+            <span aria-hidden="true">🏆</span>
+            </button>
+
+            <button
+            class="startup-dungeon-toolbar__button"
+            type="button"
+            data-dp-panel-toggle="map-panel"
+            aria-label="Map"
+            title="Map"
+            >
+            <span aria-hidden="true">🗺️</span>
+            </button>
+
+            <button
+            class="startup-dungeon-toolbar__button"
+            type="button"
+            data-dp-panel-toggle="settings-panel"
+            aria-label="Settings"
+            title="Settings"
+            >
+            <span aria-hidden="true">⚙️</span>
+            </button>
+
+            <button
+            class="startup-dungeon-toolbar__button"
+            type="button"
+            data-dp-panel-toggle="editor-panel"
+            aria-label="Editor"
+            title="Editor"
+            >
+            <span aria-hidden="true">✎</span>
+            </button>
+
+            <button
+            id="dpCloseButton"
+            class="startup-dungeon-toolbar__button startup-dungeon-toolbar__button--close"
+            type="button"
+            aria-label="Close"
+            title="Close"
+            >
+            <span aria-hidden="true">✕</span>
+            </button>
+        </div>
+
+        <section class="startup-modal__panel startup-modal__panel--dungeon">
+            <div id="app" class="startup-modal__content startup-modal__content--dungeon">
+            <header class="startup-dungeon-header">
+                <p class="startup-modal__eyebrow">The Dungeon</p>
+
+                <h1 id="startupDungeonTitle" class="startup-modal__title">
+                <em>Entryway</em>
+                </h1>
+            </header>
+
+            <div class="startup-dungeon-body">
+                <div class="startup-dungeon-main-shell">
+                <div class="startup-dungeon-viewport-block">
+                    <div
+                    id="dpViewportHelp"
+                    class="startup-help-popup startup-help-popup--viewport"
+                    hidden
+                    >
+                    Certain objects in the viewport can be interacted with. Try clicking the gate.
+                    </div>
+
+                    <section
+                    id="viewport-panel"
+                    class="startup-dungeon-viewport-panel"
+                    aria-label="Dungeon viewport"
+                    ></section>
+
+                    <div
+                    id="dpAdvanceHelp"
+                    class="startup-help-popup startup-help-popup--advance"
+                    hidden
+                    >
+                    The marker ahead will let you proceed once active.
+                    </div>
+                </div>
+
+                <section
+                    id="scene-panel"
+                    class="startup-dungeon-scene-copy"
+                    aria-live="polite"
+                ></section>
+
+                <div
+                    id="dpTextHelp"
+                    class="startup-help-popup startup-help-popup--dungeon-text"
+                    hidden
+                >
+                    Interactions will describe what you are looking at.
+                </div>
+
+                <section
+                    id="dialogue-panel"
+                    class="startup-dungeon-dialogue"
+                    aria-live="polite"
+                ></section>
+                </div>
+            </div>
+
+            <section
+                id="inventory-panel"
+                class="startup-inventory-popover startup-dungeon-overlay"
+                hidden
+                aria-label="Inventory"
+            ></section>
+
+            <section
+                id="achievements-panel"
+                class="startup-achievements-popover startup-dungeon-overlay"
+                hidden
+                aria-label="Achievements"
+            ></section>
+
+            <section
+                id="map-panel"
+                class="dp-generic-popover startup-dungeon-overlay"
+                hidden
+                aria-label="Map"
+            ></section>
+
+            <section
+                id="settings-panel"
+                class="dp-generic-popover startup-dungeon-overlay"
+                hidden
+                aria-label="Settings"
+            ></section>
+
+            <section
+                id="editor-panel"
+                class="dp-generic-popover dp-generic-popover--editor startup-dungeon-overlay"
+                hidden
+                aria-label="Editor"
+            ></section>
+            </div>
+        </section>
+        </div>
+    </div>
+    </div>
+
+  <script type="module" src="js/game_new/main.js"></script>
+</body>
+</html>

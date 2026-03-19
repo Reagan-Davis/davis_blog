@@ -168,7 +168,7 @@
         "description": "",
         "tags": ["film"],
         "keywords": ["action"],
-        "rank": 4
+        "rank": 5
       },
       {
         "slug": "batman-1989",
@@ -225,7 +225,7 @@
         "description": "",
         "tags": ["film"],
         "keywords": ["action"],
-        "rank": 4
+        "rank": 5
       },
       {
         "slug": "mad-max-the-road-warrior",
@@ -263,7 +263,7 @@
         "description": "",
         "tags": ["film"],
         "keywords": ["action"],
-        "rank": 4
+        "rank": 5
       },
       {
         "slug": "firefly",
@@ -282,6 +282,63 @@
         "description": "",
         "tags": ["tv-show"],
         "keywords": ["sci-fi"],
+        "rank": 5
+      },
+      {
+        "slug": "dexter",
+        "title": "Dexter",
+        "type": "TV",
+        "subtype": "Crime",
+        "cover_url": "https://image.tmdb.org/t/p/w600_and_h900_face/q8dWfc4JwQuv3HayIZeO84jAXED.jpg",
+        "year": 2006,
+        "creator": "James Manos Jr.",
+        "creatorRole": "creator",
+        "status": "completed",
+        "owned": true,
+        "favorite": true,
+        "recent": false,
+        "blurb": "",
+        "description": "",
+        "tags": ["tv-show"],
+        "keywords": ["crime", "thriller"],
+        "rank": 5
+      },
+      {
+        "slug": "buffy-the-vampire-slayer",
+        "title": "Buffy the Vampire Slayer",
+        "type": "TV",
+        "subtype": "Fantasy",
+        "cover_url": "https://image.tmdb.org/t/p/w600_and_h900_face/y7fVZkyheCEQHDUEHwNmYENGfT2.jpg",
+        "year": 1997,
+        "creator": "Joss Whedon",
+        "creatorRole": "creator",
+        "status": "completed",
+        "owned": true,
+        "favorite": true,
+        "recent": false,
+        "blurb": "",
+        "description": "",
+        "tags": ["tv-show"],
+        "keywords": ["fantasy", "supernatural"],
+        "rank": 5
+      },
+      {
+        "slug": "lost",
+        "title": "LOST",
+        "type": "TV",
+        "subtype": "Drama",
+        "cover_url": "https://image.tmdb.org/t/p/w600_and_h900_face/og6S0aTZU6YUJAbqxeKjCa3kY1E.jpg",
+        "year": 2004,
+        "creator": "J.J. Abrams",
+        "creatorRole": "creator",
+        "status": "completed",
+        "owned": true,
+        "favorite": true,
+        "recent": false,
+        "blurb": "",
+        "description": "",
+        "tags": ["tv-show"],
+        "keywords": ["mystery", "drama"],
         "rank": 5
       },
       {
@@ -309,6 +366,23 @@
         "cover_url": "https://image.tmdb.org/t/p/w600_and_h900_face/wgMS8irQKfMrR6mJhKtK6vbxDTC.jpg",
         "year": 2025,
         "creator": "Glen Powell",
+        "creatorRole": "director",
+        "status": "completed",
+        "owned": true,
+        "blurb": "",
+        "description": "",
+        "tags": ["tv-show"],
+        "keywords": ["comedy"],
+        "rank": 5
+      },
+      {
+        "slug": "murderbot",
+        "title": "Murderbot",
+        "type": "TV",
+        "subtype": "Comedy",
+        "cover_url": "https://image.tmdb.org/t/p/w600_and_h900_face/mIKfKo2uDk3itzAPYIcSeYr4KtF.jpg",
+        "year": 2025,
+        "creator": "Weitz Brothers",
         "creatorRole": "director",
         "status": "completed",
         "owned": true,
