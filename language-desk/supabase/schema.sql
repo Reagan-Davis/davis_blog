@@ -65,7 +65,10 @@ begin
   insert into public.profiles (id, github_id, login, avatar_url)
   values (
     new.id,
-    nullif(new.raw_user_meta_data->>'provider_id', '')::bigint,
+    coalesce(
+      nullif(new.raw_user_meta_data->>'provider_id', '')::bigint,
+      nullif(new.raw_user_meta_data->>'sub', '')::bigint
+    ),
     coalesce(
       new.raw_user_meta_data->>'user_name',
       new.raw_user_meta_data->>'preferred_username',

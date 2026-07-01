@@ -107,16 +107,24 @@
       if (error) throw error;
     },
 
+    githubIdentity(user) {
+      return user.identities?.find((identity) => identity.provider === 'github') || null;
+    },
+
     async ensureProfile(session) {
       const client = window.supabaseClient;
       const meta = session.user.user_metadata || {};
+      const identity = this.githubIdentity(session.user);
+      const identityData = identity?.identity_data || {};
       const login =
+        identityData.user_name ||
+        identityData.preferred_username ||
         meta.user_name ||
         meta.preferred_username ||
         meta.name ||
         session.user.email?.split('@')[0] ||
         'github-user';
-      const githubRaw = meta.provider_id || meta.sub;
+      const githubRaw = identity?.id || meta.provider_id || meta.sub;
       const githubId = githubRaw ? Number(githubRaw) : null;
 
       const { error } = await client.from('profiles').upsert(
@@ -124,7 +132,7 @@
           id: session.user.id,
           github_id: Number.isFinite(githubId) ? githubId : null,
           login,
-          avatar_url: meta.avatar_url || null,
+          avatar_url: identityData.avatar_url || meta.avatar_url || null,
           updated_at: new Date().toISOString()
         },
         { onConflict: 'id' }

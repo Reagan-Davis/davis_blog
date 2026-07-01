@@ -8,7 +8,22 @@
   }
 
   function redirectUrl() {
-    return window.location.origin + window.location.pathname;
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    return url.toString();
+  }
+
+  function showAuthError(message) {
+    console.error(message);
+    window.AppAuth.setSyncStatus('error');
+    const label = el('userLabel');
+    if (label) label.title = message;
+  }
+
+  function clearAuthError() {
+    const label = el('userLabel');
+    if (label) label.removeAttribute('title');
   }
 
   function updateAuthUi() {
@@ -46,7 +61,11 @@
       }
     }
 
-    const syncText = signedIn ? 'Supabase cloud' : configured ? 'Local browser only' : 'Local (Supabase not configured)';
+    const syncText = signedIn
+      ? 'Supabase cloud'
+      : configured
+        ? 'Local browser only'
+        : 'Local (Supabase not configured)';
     if (subtitle) subtitle.textContent = signedIn ? 'Progress synced to your account' : syncText;
     if (account) account.textContent = signedIn ? 'GitHub @' + profileLogin : 'Not signed in';
     if (storageMode) storageMode.textContent = syncText;
@@ -56,6 +75,7 @@
     sessionUser = session?.user || null;
     profileLogin = null;
     avatarUrl = null;
+    clearAuthError();
 
     if (sessionUser && window.isSupabaseConfigured()) {
       try {
@@ -68,7 +88,7 @@
         window.AppAuth.setSyncStatus('ready');
       } catch (err) {
         console.error('Failed to load cloud progress', err);
-        window.AppAuth.setSyncStatus('error');
+        showAuthError(err.message || 'Could not load cloud progress');
         const guest = window.AppStorage.activateGuestSession();
         window.user = guest.user;
         window.store = guest.store;
@@ -82,6 +102,30 @@
 
     updateAuthUi();
     if (typeof window.initApp === 'function') window.initApp();
+  }
+
+  async function handleOAuthReturn(client) {
+    const params = new URLSearchParams(window.location.search);
+    const authError = params.get('error_description') || params.get('error');
+    if (authError) {
+      showAuthError(decodeURIComponent(authError.replace(/\+/g, ' ')));
+      history.replaceState({}, document.title, redirectUrl());
+      return;
+    }
+
+    const authCode = params.get('code');
+    if (authCode) {
+      const { error } = await client.auth.exchangeCodeForSession(authCode);
+      if (error) {
+        showAuthError(error.message);
+      }
+      history.replaceState({}, document.title, redirectUrl());
+      return;
+    }
+
+    if (window.location.hash.includes('access_token')) {
+      history.replaceState({}, document.title, redirectUrl());
+    }
   }
 
   window.AppAuth = {
@@ -120,16 +164,23 @@
 
     async signInWithGitHub() {
       if (!window.supabaseClient) {
-        alert('Supabase is not configured. Copy js/config.example.js to js/config.js and add your project URL and anon key.');
+        alert(
+          'Supabase is not configured yet.\n\n' +
+            '1. Create a Supabase project\n' +
+            '2. Copy js/config.example.js values into js/config.js\n' +
+            '3. Enable GitHub auth in Supabase and add redirect URLs'
+        );
         return;
       }
+      window.AppAuth.setSyncStatus('loading');
       const { error } = await window.supabaseClient.auth.signInWithOAuth({
         provider: 'github',
         options: { redirectTo: redirectUrl() }
       });
       if (error) {
         console.error(error);
-        alert('GitHub sign-in failed. Check Supabase GitHub provider settings.');
+        window.AppAuth.setSyncStatus('error');
+        alert('GitHub sign-in failed: ' + error.message);
       }
     },
 
@@ -156,20 +207,17 @@
       }
 
       const client = window.supabaseClient;
+      await handleOAuthReturn(client);
 
-      const params = new URLSearchParams(window.location.search);
-      const authCode = params.get('code');
-      if (authCode) {
-        await client.auth.exchangeCodeForSession(authCode);
-        history.replaceState({}, document.title, redirectUrl());
-      } else if (window.location.hash.includes('access_token')) {
-        history.replaceState({}, document.title, redirectUrl());
-      }
-
-      const { data } = await client.auth.getSession();
+      const { data, error } = await client.auth.getSession();
+      if (error) showAuthError(error.message);
       await applySession(data.session);
 
-      client.auth.onAuthStateChange(async (_event, session) => {
+      client.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_OUT') {
+          await applySession(null);
+          return;
+        }
         if (session?.user?.id === sessionUser?.id) return;
         await applySession(session);
       });

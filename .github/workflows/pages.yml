@@ -24,13 +24,23 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Write Supabase config
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          cat > language-desk/js/config.js <<EOF
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::warning::SUPABASE_URL or SUPABASE_ANON_KEY secret missing — using committed config.js if present"
+            if [ ! -f language-desk/js/config.js ]; then
+              echo "window.APP_CONFIG = { supabaseUrl: '', supabaseAnonKey: '' };" > language-desk/js/config.js
+            fi
+          else
+            cat > language-desk/js/config.js <<EOF
           window.APP_CONFIG = {
-            supabaseUrl: '${{ secrets.SUPABASE_URL }}',
-            supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY }}'
+            supabaseUrl: '${SUPABASE_URL}',
+            supabaseAnonKey: '${SUPABASE_ANON_KEY}'
           };
           EOF
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
