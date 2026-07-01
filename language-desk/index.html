@@ -1,0 +1,131 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Language Learning Prototype</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="topbar">
+    <div class="brand"><div class="sigil">Я</div><div><h1>Language Desk</h1><p>2000s-style language trainer · skill maps · per-language progress</p></div></div>
+    <div class="topnav" role="navigation" aria-label="Main sections">
+      <button id="learnTab" class="tabbtn active" onclick="setPage('learn')">Lessons</button>
+      <button id="journeyTab" class="tabbtn" onclick="setPage('journey')">Journey</button>
+      <button id="practiceTab" class="tabbtn" onclick="setPage('practice')">Practice</button>
+      <button id="characterTab" class="tabbtn" onclick="setPage('character')">Character</button>
+      <button id="dictionaryTab" class="tabbtn" onclick="setPage('dictionary')">Dictionary</button>
+      <button id="grammarTab" class="tabbtn" onclick="setPage('grammar')">Grammar</button>
+      <button id="reviewTab" class="tabbtn" onclick="setPage('review')">Review</button>
+      <button id="settingsTab" class="tabbtn" onclick="setPage('settings')">Settings</button>
+    </div>
+    <div class="userbox">
+      <img id="userAvatar" class="user-avatar" alt="" hidden />
+      <span id="userLabel">Guest</span>
+      <span id="syncStatus" class="sync-status" aria-live="polite"></span>
+      <button id="signInBtn" class="ghost auth-btn" type="button">GitHub sign in</button>
+      <button id="signOutBtn" class="ghost auth-btn" type="button" hidden>Sign out</button>
+      <select id="languageSelect"><option value="ru">Russian</option><option value="fr">French</option><option value="de">German</option></select>
+    </div>
+</div>
+
+<div class="app">
+  <div class="page active" id="learnPage">
+    <div class="layout learn-layout">
+      <main class="panel lesson"><div class="lesson-head"><div><div class="qtype" id="qtype">Question</div><div class="prompt" id="prompt">дом</div><div class="hint" id="hint"></div></div><button id="speakBtn" class="dark">Pronounce</button></div><div class="lesson-body"><div id="answerArea"></div><div class="feedback" id="feedback"></div></div><div class="lesson-footer"><button id="skipBtn">Skip</button><button id="nextBtn" class="primary" hidden>Next</button></div></main>
+      <aside class="panel pad"><div class="panel-title"><div><h2>Active deck</h2><div class="small" id="deckNote">Unlocked content appears here.</div></div></div><div class="deck" id="deck"></div></aside>
+    </div>
+  </div>
+
+  <div class="page" id="journeyPage">
+    <div class="portal-page two-col">
+      <section class="panel pad"><div class="panel-title"><div><h2>Journey</h2><div class="small">Unit path for the selected language.</div></div></div><div id="journeyList" class="unit-list"></div></section>
+      <aside class="panel pad"><div class="panel-title"><h2>Course file</h2></div><div class="info-table"><div><b>Mode</b><span>Guided path</span></div><div><b>Completion</b><span id="journeyCompletion">0%</span></div><div><b>Next focus</b><span id="journeyFocus">Core vocabulary</span></div></div></aside>
+    </div>
+  </div>
+
+  <div class="page" id="practicePage">
+    <div class="portal-page two-col">
+      <section class="panel pad"><div class="panel-title"><div><h2>Practice</h2><div class="small">Free practice modes. These route back into the same dynamic question engine for now.</div></div></div><div class="module-grid">
+        <button onclick="newQuestion();setPage('learn')">Vocabulary drill</button><button onclick="newQuestion();setPage('learn')">Sentence builder</button><button onclick="newQuestion();setPage('learn')">Listening habit</button><button onclick="newQuestion();setPage('learn')">Weak words</button><button onclick="newQuestion();setPage('learn')">Timed review</button><button onclick="newQuestion();setPage('learn')">Grammar forms</button>
+      </div></section>
+      <aside class="panel pad"><div class="panel-title"><h2>Practice notes</h2></div><p class="bodycopy">This page is a launcher. Later it can select specific generators instead of drawing from the full unlocked pool.</p></aside>
+    </div>
+  </div>
+
+  <div class="page" id="dictionaryPage">
+    <div class="portal-page two-col">
+      <section class="panel pad"><div class="panel-title"><div><h2>Dictionary</h2><div class="small">Starter word list from the active deck.</div></div></div><div class="dict-search"><input id="dictFilter" placeholder="Search words..." oninput="renderUtilityPages()"></div><div class="dictionary-list" id="dictionaryList"></div></section>
+      <aside class="panel pad"><div class="panel-title"><h2>Entry format</h2></div><p class="bodycopy">Each entry can eventually expand into declension, examples, audio, related words, frequency, and known status.</p></aside>
+    </div>
+  </div>
+
+  <div class="page" id="grammarPage">
+    <div class="portal-page two-col">
+      <section class="panel pad"><div class="panel-title"><div><h2>Grammar</h2><div class="small">Reference pages unlock alongside the skill tree.</div></div></div><div class="grammar-list" id="grammarList"></div></section>
+      <aside class="panel pad"><div class="panel-title"><h2>Design note</h2></div><p class="bodycopy">This should stay concise: explanations, examples, and practice buttons. No giant textbook wall.</p></aside>
+    </div>
+  </div>
+
+  <div class="page" id="reviewPage">
+    <div class="portal-page two-col">
+      <section class="panel pad"><div class="panel-title"><div><h2>Review Calendar</h2><div class="small">Month view for due reviews and study activity.</div></div></div><div id="reviewCalendar" class="review-calendar"></div></section>
+      <aside class="panel pad"><div class="panel-title"><h2>Review queue</h2></div><div class="review-box"><b id="reviewDue">0</b><span>items due today</span><button class="primary" onclick="newQuestion();setPage('learn')">Start review</button></div><div class="review-summary"><div><b id="reviewWeek">0</b><span class="small">due this week</span></div><div><b id="reviewMonth">0</b><span class="small">studied days</span></div><div><b id="reviewStreak">0</b><span class="small">streak</span></div></div><div class="review-queue"><h3>Queues</h3><ul><li>Vocabulary cards</li><li>Grammar forms</li><li>Sentence builder mistakes</li></ul></div></aside>
+    </div>
+  </div>
+
+  <div class="page" id="settingsPage">
+    <div class="portal-page two-col">
+      <section class="panel pad"><div class="panel-title"><div><h2>Settings</h2><div class="small">Account and sync.</div></div></div><div class="info-table settings-table"><div><b>Account</b><span id="settingsAccount">Not signed in</span></div><div><b>Sound</b><span>Browser speech synthesis</span></div><div><b>Theme</b><span>2005–2009 education portal</span></div><div><b>Storage</b><span id="settingsStorage">Local browser only</span></div></div></section>
+      <aside class="panel pad"><div class="panel-title"><h2>Progress export</h2></div><button type="button" onclick="alert(exportCurrentProgress())">Show current language JSON</button></aside>
+    </div>
+  </div>
+
+  <div class="page" id="characterPage">
+    <div class="character-layout">
+      <aside class="panel character-sidebar">
+        <div class="character"><div class="portrait"><div class="avatar">🧭</div><div><div class="ctitle">Russian Learner</div><div class="small light" id="userSubtitle">Sign in to sync progress</div></div></div><div class="xpbar"><div class="xpfill" id="xpfill"></div></div><div class="small light" id="levelLine">Level 1 · 0 / 100 XP</div><div class="stat-table"><div><span>XP</span><b id="xp">0</b></div><div><span>Level</span><b id="level">1</b></div><div><span>Correct</span><b id="correct">0</b></div><div><span>Words/forms</span><b id="words">0</b></div></div></div>
+        <div class="navtabs"><div class="resource"><b id="points">0</b><br><span class="small">Skill points available</span></div><button class="ghost danger" onclick="resetLang()">Reset Russian progress</button></div>
+        <div class="achievement-list" id="achievements"></div>
+      </aside>
+      <section class="panel skill-wrap" id="treePanel"><div class="panel-title"><div><h2>Skill map</h2><div class="small">Earn one skill point per level. Shared foundations branch into language-specific grammar tracks.</div></div><div class="legend"><span class="key">Gold = available</span><span class="key">Green = owned</span><span class="key">Faded = locked</span></div></div><div class="tree-shell"><div class="tree-toolbar"><span class="small">Drag map to pan. Mouse wheel or buttons to zoom.</span><div class="zoom-controls"><button id="zoomOut">−</button><button id="zoomReset">Reset</button><button id="zoomIn">+</button></div></div><div class="tree-viewport" id="treeViewport"><div class="tree-stage" id="treeStage"><div class="tree" id="tree"></div></div></div></div></section>
+    </div>
+  </div>
+
+</div>
+
+<div class="confirm-backdrop" id="resetDialog" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+  <div class="confirm-box">
+    <div class="confirm-head" id="resetTitle">Confirm reset</div>
+    <div class="confirm-body" id="resetText">This will reset progress for the selected language in this browser.</div>
+    <div class="confirm-actions">
+      <button id="cancelReset">Cancel</button>
+      <button class="danger-confirm" id="confirmReset">Reset progress</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-backdrop" id="debugDialog" role="dialog" aria-modal="true" aria-labelledby="debugTitle">
+  <div class="confirm-box">
+    <div class="confirm-head debug-head" id="debugTitle">Debug XP</div>
+    <div class="confirm-body">
+      Add XP to the currently selected language.
+      <div class="debug-row"><label for="debugXpInput">Amount</label><input id="debugXpInput" type="number" step="1" min="0" placeholder="Example: 500" /></div>
+      <div class="debug-note">Press Enter to apply. Press Esc or Cancel to close.</div>
+    </div>
+    <div class="confirm-actions">
+      <button id="cancelDebug">Cancel</button>
+      <button class="danger-confirm" id="applyDebugXp">Add XP</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="app.js"></script>
+<script src="js/bootstrap.js"></script>
+</body>
+</html>
